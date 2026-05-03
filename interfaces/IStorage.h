@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ISTORAGE_H
+#define ISTORAGE_H
+
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -11,3 +13,5 @@ public:
     virtual std::unordered_map<std::string, std::vector<std::string>> fetchAllData() = 0;
     virtual bool loadData() = 0;
 };
+
+#endif // ISTORAGE_H
