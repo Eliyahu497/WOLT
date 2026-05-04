@@ -16,7 +16,7 @@ include_directories(
     src/repository
     # src/core
     # src/io
-    # src/commands
+     src/commands
     # src/recommendation
 )
 
@@ -28,7 +28,7 @@ add_library(recommender_core
     # src/io/TerminalInput.cpp        
     # src/io/TerminalOutput.cpp
     src/repository/FileStorage.cpp          
-    # src/commands/CmdAdd.cpp               
+     src/commands/CmdAdd.cpp               
     # src/commands/CmdRecommend.cpp
     # src/commands/CmdHelp.cpp
     # src/recommendation/RecommendationEngine.cpp 
@@ -61,7 +61,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(recommender_tests 
-    # test/test_commands.cpp
+    test/test_commands.cpp
     test/test_repository.cpp
     # test/test_algorithm.cpp
 )
