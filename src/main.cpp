@@ -7,6 +7,9 @@ int main() {
     auto inputHandler = std::make_shared<TerminalInput>();
     auto outputHandler = std::make_shared<TerminalOutput>();
     auto storage = std::make_shared<FileStorage>("data/database.txt");
+
+    storage->loadData();
+    
     RecommenderSystem app(inputHandler, outputHandler, storage);
     app.start();
     return 0;

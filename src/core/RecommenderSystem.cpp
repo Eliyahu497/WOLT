@@ -2,6 +2,7 @@
 #include <sstream>
 #include "CmdAdd.h"
 #include "CmdRecommend.h"
+#include "CmdHelp.h"
 
 RecommenderSystem::RecommenderSystem(std::shared_ptr<IInputHandler> input,
                                      std::shared_ptr<IOutputHandler> output,
@@ -23,16 +24,15 @@ void RecommenderSystem::start() {
 
         if (commandMap.find(commandName) != commandMap.end()) {
             commandMap[commandName]->execute(args);
-        } else {
-            outputHandler->printLine("Unknown command: " + commandName);
-        }
+        } 
     }
 }
 
 void RecommenderSystem::registerCommands() {
-    // רישום פקודות[cite: 2]
     commandMap["add"] = std::make_shared<CmdAdd>(storage);
     commandMap["recommend"] = std::make_shared<CmdRecommend>(*storage, *outputHandler);
+    commandMap["help"] = std::make_shared<CmdHelp>(outputHandler);
+
 }
 
 std::vector<std::string> RecommenderSystem::parseInput(const std::string& rawLine) {
