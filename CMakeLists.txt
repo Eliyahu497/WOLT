@@ -17,7 +17,7 @@ include_directories(
     # src/core
     # src/io
      src/commands
-    # src/recommendation
+     src/recommendation
 )
 
 # =========================================================
@@ -31,7 +31,7 @@ add_library(recommender_core
      src/commands/CmdAdd.cpp               
     # src/commands/CmdRecommend.cpp
     # src/commands/CmdHelp.cpp
-    # src/recommendation/RecommendationEngine.cpp 
+     src/recommendation/RecommendationEngine.cpp 
 )
 
 target_compile_options(recommender_core PRIVATE -Wall -Wextra -Wpedantic)
@@ -63,7 +63,7 @@ enable_testing()
 add_executable(recommender_tests 
     test/test_commands.cpp
     test/test_repository.cpp
-    # test/test_algorithm.cpp
+     test/test_algorithm.cpp
 )
 
 target_link_libraries(recommender_tests PRIVATE recommender_core GTest::gtest_main)
