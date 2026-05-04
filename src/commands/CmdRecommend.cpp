@@ -22,9 +22,14 @@ void CmdRecommend::execute(const std::vector<std::string>& args) {
     if (recommendations.empty()) {
         output.printLine("No recommendations available.");
     } else {
-        output.printLine("Recommended products:");
-        for (const auto& item : recommendations) {
-            output.printLine("- " + item);
+        // הדפסה בשורה אחת עם רווחים כפי שמופיע בתמונה
+        std::string result = "";
+        for (size_t i = 0; i < recommendations.size(); ++i) {
+            result += recommendations[i];
+            if (i < recommendations.size() - 1) {
+                result += " ";
+    }
         }
+        output.printLine(result);
     }
 }
