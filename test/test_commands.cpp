@@ -1,6 +1,9 @@
+
 #include <gtest/gtest.h>
 #include "../src/commands/CmdAdd.h"
+#include "CmdHelp.h"
 #include "../src/interfaces/IStorage.h"
+#include "IOutputHandler.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -24,6 +27,14 @@ public:
     // We don't need these for the CmdAdd test, so we provide empty implementations
     std::unordered_map<std::string, std::vector<std::string>> fetchAllData() override { return {}; }
     bool loadData() override { return true; }
+};
+
+class MockOutputHandler : public IOutputHandler {
+public:
+    std::vector<std::string> messages;
+    void printLine(const std::string& text) override {
+        messages.push_back(text);
+    }
 };
 
 /**
@@ -53,4 +64,15 @@ TEST(CmdAddTest, ExecuteCorrectlyParsesArguments) {
     // Check if the product IDs match
     EXPECT_EQ(mockStorage->lastProducts[0], "p101");
     EXPECT_EQ(mockStorage->lastProducts[1], "p102");
+}
+TEST(CmdHelpTest, PrintsHelpMenuCorrectly) {
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdHelp helpCommand(mockOut);
+    std::vector<std::string> emptyArgs;
+    helpCommand.execute(emptyArgs);
+    ASSERT_EQ(mockOut->messages.size(), 3);
+    EXPECT_FALSE(mockOut->messages.empty());
+    EXPECT_EQ(mockOut->messages[0], "add [userid] [productid1] [productid2] …");
+    EXPECT_EQ(mockOut->messages[1], "recommend [userid] [productid]");
+    EXPECT_EQ(mockOut->messages[2], "help");
 }
