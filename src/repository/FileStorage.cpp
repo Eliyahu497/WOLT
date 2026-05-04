@@ -22,13 +22,9 @@ bool FileStorage::loadData() {
         std::string userId, productId;
         
         // Read the first word as userId
-        if (std::getline(ss, userId, ' ')) {
-            // Read remaining words as productIds
-            while (std::getline(ss, productId, ' ')) {
-                if (!productId.empty()) {
-                    // Add the valid product ID to the user's view history
-                    data[userId].push_back(productId);
-                }
+            if (ss >> userId) {
+            while (ss >> productId) {
+                data[userId].push_back(productId);
             }
         }
     }
