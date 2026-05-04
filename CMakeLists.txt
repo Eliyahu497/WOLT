@@ -20,6 +20,7 @@ add_library(recommender_core
     src/repository/FileStorage.cpp          
     src/commands/CmdAdd.cpp                
     src/commands/CmdRecommend.cpp 
+    src/commands/CmdHelp.cpp 
     src/recommendation/RecommendationEngine.cpp 
 )
 
