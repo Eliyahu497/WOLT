@@ -6,23 +6,21 @@ CmdRecommend::CmdRecommend(IStorage& storage, IOutputHandler& output)
 
 void CmdRecommend::execute(const std::vector<std::string>& args) {
     if (args.size() < 2) {
-        output.printLine("Error: Usage: recommend <userId> <productId>");
         return;
     }
 
     std::string userId = args[0];
     std::string productId = args[1];
 
-    // שימוש בשם הפונקציה הנכון מהממשק
+    // Using the correct function name from the interface
     auto allData = storage.fetchAllData();
 
-    // הפעלת מנוע ההמלצות שלך
+// Running your recommendation engine
     std::vector<std::string> recommendations = engine.computeRecommendations(userId, productId, allData);
 
     if (recommendations.empty()) {
-        output.printLine("No recommendations available.");
+        return; 
     } else {
-        // הדפסה בשורה אחת עם רווחים כפי שמופיע בתמונה
         std::string result = "";
         for (size_t i = 0; i < recommendations.size(); ++i) {
             result += recommendations[i];

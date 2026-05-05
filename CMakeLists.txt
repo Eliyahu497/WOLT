@@ -26,7 +26,7 @@ add_library(recommender_core
 
 target_compile_options(recommender_core PRIVATE -Wall -Wextra -Wpedantic)
 
-# בניית האפליקציה הראשית[cite: 2]
+# Building the main application[cite: 2]
 add_executable(wolt_recommender_app src/main.cpp)
 target_link_libraries(wolt_recommender_app PRIVATE recommender_core)
 
