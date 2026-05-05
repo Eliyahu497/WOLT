@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 FileStorage::FileStorage(const std::string& path) : filePath(path) {}
 
@@ -37,7 +38,12 @@ bool FileStorage::loadData() {
 void FileStorage::addViews(const std::string& userId, const std::vector<std::string>& productIds) {
     // Update the in-memory map
     for (const auto& pid : productIds) {
-        data[userId].push_back(pid);
+        //if productId is new add it
+        if (std::find(data[userId].begin(), data[userId].end(), pid) == data[userId].end()) {
+            data[userId].push_back(pid);
+        }
+        //data[userId].push_back(pid);
+
     }
     // Update the physical file to maintain persistence
     flushToFile();
