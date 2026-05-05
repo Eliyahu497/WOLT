@@ -2,7 +2,10 @@
 #define IOUTPUTHANDLER_H
 
 #include <string>
-
+/**
+ * @brief An interface for handling input operations.
+ * Classes implementing this interface must define how to read a line of input from a specific source.
+ */
 class IOutputHandler {
 public:
     virtual ~IOutputHandler() = default;
