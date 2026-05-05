@@ -39,6 +39,12 @@ std::vector<std::string> RecommenderSystem::parseInput(const std::string& rawLin
     std::vector<std::string> args;
     std::stringstream ss(rawLine);
     std::string word;
+    for (char c : rawLine) {
+        if(std::isspace(static_cast<unsigned char>(c)) && c != ' ') {
+            return args;
+        }
+    }
+
     while (ss >> word) {
         args.push_back(word);
     }
