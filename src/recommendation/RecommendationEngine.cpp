@@ -34,8 +34,14 @@ vector<string> RecommendationEngine::computeRecommendations(const string& userId
     // Sort by relevance score, then by ID[cite: 1]
     sort(rankedProducts.begin(), rankedProducts.end(), [](const pair<string, int>& a, const pair<string, int>& b) {
         if (a.second != b.second) return a.second > b.second;
-        return a.first < b.first;
-    });
+        // If scores are equal, sort by product ID numerically
+        try {
+            return stoi(a.first) < stoi(b.first);
+        } catch (...) {
+            // Fallback: If for some reason the ID is not a valid number, fallback to string comparison
+            return a.first < b.first;
+        }   
+     });
 
     vector<string> finalRecommendations;
     for (int i = 0; i < min((int)rankedProducts.size(), 10); ++i) {
