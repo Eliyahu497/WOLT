@@ -24,6 +24,17 @@ public:
         addViewsCalled = true;
     }
 
+    // --- Added for Exercise 2 to resolve compilation errors ---
+
+    bool userExists(const std::string& userId) override { 
+        // Dummy implementation to allow compilation
+        return false; 
+    }
+
+    void removeViews(const std::string& userId, const std::vector<std::string>& productIds) override {
+        // Dummy implementation to allow compilation
+    }
+
     // We don't need these for the CmdAdd test, so we provide empty implementations
     std::unordered_map<std::string, std::vector<std::string>> fetchAllData() override { return {}; }
     bool loadData() override { return true; }
@@ -75,4 +86,32 @@ TEST(CmdHelpTest, PrintsHelpMenuCorrectly) {
     EXPECT_EQ(mockOut->messages[0], "add [userid] [productid1] [productid2] …");
     EXPECT_EQ(mockOut->messages[1], "recommend [userid] [productid]");
     EXPECT_EQ(mockOut->messages[2], "help");
+}
+
+// ============================================================================
+// --- Exercise 2 Empty Test Placeholders for TDD ---
+// ============================================================================
+
+/**
+ * @brief Placeholder test for the upcoming POST command logic.
+ */
+TEST(CmdPostTest, ExecutePostSuccessPlaceholder) {
+    // TODO: Implement TDD tests for CmdPost
+    EXPECT_TRUE(true); 
+}
+
+/**
+ * @brief Placeholder test for the upcoming PATCH command logic.
+ */
+TEST(CmdPatchTest, ExecutePatchSuccessPlaceholder) {
+    // TODO: Implement TDD tests for CmdPatch
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @brief Placeholder test for the upcoming DELETE command logic.
+ */
+TEST(CmdDeleteTest, ExecuteDeleteSuccessPlaceholder) {
+    // TODO: Implement TDD tests for CmdDelete
+    EXPECT_TRUE(true);
 }

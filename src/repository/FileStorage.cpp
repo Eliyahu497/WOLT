@@ -73,3 +73,39 @@ void FileStorage::flushToFile() {
 std::unordered_map<std::string, std::vector<std::string>> FileStorage::fetchAllData() {
     return data;
 }
+
+/**
+ * @brief Checks if the user exists in the in-memory 'data' map.
+ */
+bool FileStorage::userExists(const std::string& userId) {
+    // We check our O(1) in-memory cache instead of reading the disk
+    return data.find(userId) != data.end();
+}
+
+/**
+ * @brief Removes specific product views for a user and rewrites the database file.
+ */
+void FileStorage::removeViews(const std::string& userId, const std::vector<std::string>& productIds) {
+    auto it = data.find(userId);
+    
+    // If the user is not found, there is nothing to remove
+    if (it == data.end()) {
+        return;
+    }
+
+    // Get a reference to the user's actual product list in memory (no copies)
+    std::vector<std::string>& userProducts = it->second;
+
+    for (const std::string& pid : productIds) {
+        // Erase-Remove Idiom: 
+        // std::remove shifts matching elements to the end of the vector.
+        // vector.erase physically shrinks the size of the vector.
+        userProducts.erase(
+            std::remove(userProducts.begin(), userProducts.end(), pid),
+            userProducts.end()
+        );
+    }
+
+    // Update the physical database.txt file to keep the deletion persistent
+    flushToFile();
+}
