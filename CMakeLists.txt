@@ -22,8 +22,8 @@ add_library(recommender_core
     src/commands/CmdRecommend.cpp 
     src/commands/CmdHelp.cpp 
     src/recommendation/RecommendationEngine.cpp 
-    //
     src/commands/CmdPost.cpp
+    src/commands/CmdPatch.cpp
 )
 
 target_compile_options(recommender_core PRIVATE -Wall -Wextra -Wpedantic)
