@@ -5,6 +5,8 @@
 #include "CmdHelp.h"
 #include "CmdPost.h"
 #include "CmdPatch.h"
+#include "CmdDelete.h"
+
 
 /**
  * @brief Constructs a new Recommender System object and registers available commands.
@@ -21,7 +23,8 @@ RecommenderSystem::RecommenderSystem(std::shared_ptr<IInputHandler> input,
 }
 
 /**
- * @brief Starts the main loop of the system.
+ * @brief Starts
+ *  the main loop of the system.
  * Continuously reads input, parses it into arguments, and executes the corresponding command
  * if it exists in the command map.
  */
@@ -52,6 +55,7 @@ void RecommenderSystem::registerCommands() {
     // Register Exercise 2 write commands
     commandMap["post"] = std::make_shared<CmdPost>(storage, outputHandler);
     commandMap["patch"] = std::make_shared<CmdPatch>(storage, outputHandler);
+    commandMap["delete"] = std::make_shared<CmdDelete>(storage, outputHandler);
 }
 
 /**

@@ -6,6 +6,7 @@
 #include "IOutputHandler.h"
 #include "../src/commands/CmdPost.h"
 #include "../src/commands/CmdPatch.h"
+#include "../src/commands/CmdDelete.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -19,6 +20,7 @@ public:
     std::string lastUserId;
     std::vector<std::string> lastProducts;
     bool addViewsCalled = false;
+    bool removeViewsCalled = false; // New flag for testing DELETE
 
     // Control flag to simulate user existence dynamically in tests
     bool mockUserExistsValue = false;
@@ -39,6 +41,9 @@ public:
     }
 
     void removeViews(const std::string& userId, const std::vector<std::string>& productIds) override {
+        lastUserId = userId;
+        lastProducts = productIds;
+        removeViewsCalled = true; // Mark as called
     }
 
 };
@@ -190,10 +195,50 @@ TEST(CmdPatchTest, FailWhenUserDoesNotExist) {
     ASSERT_EQ(mockOut->messages.size(), 1);
     EXPECT_EQ(mockOut->messages[0], "404 Not Found"); // Verify correct 404 error code
 }
+
 /**
- * @brief Placeholder test for the upcoming DELETE command logic.
+ * @brief Test Case 1: Verifies that DELETE succeeds and returns "204 No Content"
+ * when attempting to remove views from an existing user.
  */
-TEST(CmdDeleteTest, ExecuteDeleteSuccessPlaceholder) {
-    // TODO: Implement TDD tests for CmdDelete
-    EXPECT_TRUE(true);
+TEST(CmdDeleteTest, SuccessWhenUserExists) {
+    // --- 1. Arrange ---
+    auto mockStorage = std::make_shared<MockStorage>();
+    mockStorage->mockUserExistsValue = true; // Simulate that the user exists
+
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdDelete command(mockStorage, mockOut);
+
+    std::vector<std::string> args = {"shira", "101", "102"};
+
+    // --- 2. Act ---
+    command.execute(args);
+
+    // --- 3. Assert ---
+    EXPECT_TRUE(mockStorage->removeViewsCalled); // Verify that removeViews was executed
+    EXPECT_EQ(mockStorage->lastUserId, "shira");
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "204 No Content"); // Verify correct status code
+}
+
+/**
+ * @brief Test Case 2: Verifies that DELETE fails and returns "404 Not Found"
+ * when attempting to delete views from a non-existent user.
+ */
+TEST(CmdDeleteTest, FailWhenUserDoesNotExist) {
+    // --- 1. Arrange ---
+    auto mockStorage = std::make_shared<MockStorage>();
+    mockStorage->mockUserExistsValue = false; // Simulate that the user does NOT exist
+
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdDelete command(mockStorage, mockOut);
+
+    std::vector<std::string> args = {"shira", "101"};
+
+    // --- 2. Act ---
+    command.execute(args);
+
+    // --- 3. Assert ---
+    EXPECT_FALSE(mockStorage->removeViewsCalled); // Assert that NO database deletion was executed
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "404 Not Found"); // Verify correct 404 error code
 }
