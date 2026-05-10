@@ -3,6 +3,8 @@
 #include "CmdAdd.h"
 #include "CmdRecommend.h"
 #include "CmdHelp.h"
+#include "CmdPost.h"
+#include "CmdPatch.h"
 
 /**
  * @brief Constructs a new Recommender System object and registers available commands.
@@ -47,6 +49,9 @@ void RecommenderSystem::registerCommands() {
     commandMap["add"] = std::make_shared<CmdAdd>(storage);
     commandMap["recommend"] = std::make_shared<CmdRecommend>(*storage, *outputHandler);
     commandMap["help"] = std::make_shared<CmdHelp>(outputHandler);
+    // Register Exercise 2 write commands
+    commandMap["post"] = std::make_shared<CmdPost>(storage, outputHandler);
+    commandMap["patch"] = std::make_shared<CmdPatch>(storage, outputHandler);
 }
 
 /**

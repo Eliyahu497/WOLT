@@ -5,6 +5,7 @@
 #include "../src/interfaces/IStorage.h"
 #include "IOutputHandler.h"
 #include "../src/commands/CmdPost.h"
+#include "../src/commands/CmdPatch.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -144,13 +145,51 @@ TEST(CmdPostTest, FailWhenUserAlreadyExists) {
 }
 
 /**
- * @brief Placeholder test for the upcoming PATCH command logic.
+ * @brief Test Case 1: Verifies that PATCH succeeds and returns "204 No Content"
+ * when attempting to update an already existing user.
  */
-TEST(CmdPatchTest, ExecutePatchSuccessPlaceholder) {
-    // TODO: Implement TDD tests for CmdPatch
-    EXPECT_TRUE(true);
+TEST(CmdPatchTest, SuccessWhenUserExists) {
+    // --- 1. Arrange ---
+    auto mockStorage = std::make_shared<MockStorage>();
+    mockStorage->mockUserExistsValue = true; // Simulate that the user already exists
+    
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdPatch command(mockStorage, mockOut);
+    
+    std::vector<std::string> args = {"shira", "103", "104"};
+
+    // --- 2. Act ---
+    command.execute(args);
+
+    // --- 3. Assert ---
+    EXPECT_TRUE(mockStorage->addViewsCalled); // Verify that data was pushed to storage
+    EXPECT_EQ(mockStorage->lastUserId, "shira");
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "204 No Content"); // Verify correct success code
 }
 
+/**
+ * @brief Test Case 2: Verifies that PATCH fails and returns "404 Not Found"
+ * when attempting to patch a non-existent user.
+ */
+TEST(CmdPatchTest, FailWhenUserDoesNotExist) {
+    // --- 1. Arrange ---
+    auto mockStorage = std::make_shared<MockStorage>();
+    mockStorage->mockUserExistsValue = false; // Simulate that the user does NOT exist!
+    
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdPatch command(mockStorage, mockOut);
+    
+    std::vector<std::string> args = {"shira", "103"};
+
+    // --- 2. Act ---
+    command.execute(args);
+
+    // --- 3. Assert ---
+    EXPECT_FALSE(mockStorage->addViewsCalled); // Assert that NO database write was executed
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "404 Not Found"); // Verify correct 404 error code
+}
 /**
  * @brief Placeholder test for the upcoming DELETE command logic.
  */
