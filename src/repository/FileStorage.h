@@ -50,6 +50,20 @@ public:
      * @return true if the data was successfully loaded, false if the file could not be opened.
      */
     bool loadData() override;
+
+    /**
+     * @brief Check if a user already exists in the system.
+     * @param userId The unique identifier of the user.
+     * @return true if the user exists in memory, false otherwise.
+     */
+    bool userExists(const std::string& userId) override;
+
+    /**
+     * @brief Remove specific product views for a given user.
+     * @param userId The unique identifier of the user.
+     * @param productIds A list of product IDs to be removed from the user's history.
+     */
+    void removeViews(const std::string& userId, const std::vector<std::string>& productIds) override;
 };
 
 #endif // FILESTORAGE_H
