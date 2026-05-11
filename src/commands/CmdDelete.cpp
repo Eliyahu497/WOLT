@@ -1,4 +1,6 @@
 #include "CmdDelete.h"
+#include "../utils/ValidationUtils.h"
+#include <algorithm>
 
 /**
  * @brief Constructor initializing command dependencies.
@@ -11,11 +13,11 @@ CmdDelete::CmdDelete(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputH
  * Validates arguments, checks if the user exists, and removes specified product views.
  */
 void CmdDelete::execute(const std::vector<std::string>& args) {
-    // Step 1: Basic validation - Ensure we received at least a UserId and one ProductId
-    // if (args.size() < 2) {
-    //     output->printLine("400 Bad Request");
-    //     return;
-    // }
+   // Step 1: Syntactic validation (Length + Number check) -> 400 Bad Request
+    if (!utils::validateWriteArguments(args)) {
+        output->printLine("400 Bad Request");
+        return;
+    }
 
     std::string userId = args[0];
 
@@ -25,8 +27,25 @@ void CmdDelete::execute(const std::vector<std::string>& args) {
         return;
     }
 
-    // Step 3: Extract the product IDs to be deleted (all arguments after the UserId)
+    // Extract the product IDs to be deleted (all arguments after the UserId)
     std::vector<std::string> productIds(args.begin() + 1, args.end());
+
+    // Step 3: Logical validation - Ensure ALL requested products currently exist in the user's views
+    auto allData = storage->fetchAllData();
+    auto it = allData.find(userId);
+    if (it == allData.end()) {
+        output->printLine("404 Not Found");
+        return;
+    }
+
+    const auto& currentViews = it->second;
+    for (const auto& prodId : productIds) {
+        // If even one product to delete is not found in the user's views, fail with 404
+        if (std::find(currentViews.begin(), currentViews.end(), prodId) == currentViews.end()) {
+            output->printLine("404 Not Found");
+            return;
+        }
+    }
 
     // Step 4: Call the storage layer to remove these views
     storage->removeViews(userId, productIds);

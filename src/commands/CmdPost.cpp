@@ -1,4 +1,5 @@
 #include "CmdPost.h"
+#include "../utils/ValidationUtils.h"
 
 /**
  * @brief Constructor initializing command dependencies.
@@ -11,8 +12,8 @@ CmdPost::CmdPost(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandl
  * Validates arguments, checks user existence, and updates the database.
  */
 void CmdPost::execute(const std::vector<std::string>& args) {
-    // Step 1: Basic validation - Ensure we received at least a UserId and one ProductId
-    if (args.size() < 2) {
+    // Step 1: Syntactic validation using our shared utility
+    if (!utils::validateWriteArguments(args)) {
         output->printLine("400 Bad Request");
         return;
     }
@@ -21,7 +22,7 @@ void CmdPost::execute(const std::vector<std::string>& args) {
 
     // Step 2: Check if the user already exists using Ex2 storage method
     if (storage->userExists(userId)) {
-        output->printLine("400 Bad Request"); // Duplicate user creation is invalid for POST
+        output->printLine("400 Bad Request");
         return;
     }
 

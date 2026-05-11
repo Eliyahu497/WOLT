@@ -31,7 +31,11 @@ public:
         addViewsCalled = true;
     }
 
-    std::unordered_map<std::string, std::vector<std::string>> fetchAllData() override { return {}; }
+    std::unordered_map<std::string, std::vector<std::string>> fetchAllData() override { 
+    std::unordered_map<std::string, std::vector<std::string>> mockMap;
+    mockMap["shira"] = {"101", "102", "103", "104"};
+    return mockMap; 
+}
     bool loadData() override { return true; }
 
     // --- Added for Exercise 2 to resolve compilation errors ---
@@ -114,7 +118,7 @@ TEST(CmdPostTest, SuccessWhenUserDoesNotExist) {
     auto mockOut = std::make_shared<MockOutputHandler>();
     CmdPost command(mockStorage, mockOut);
     
-    std::vector<std::string> args = {"shira", "p101", "p102"};
+    std::vector<std::string> args = {"shira", "101", "102"};
 
     // --- 2. Act ---
     command.execute(args);
@@ -138,7 +142,7 @@ TEST(CmdPostTest, FailWhenUserAlreadyExists) {
     auto mockOut = std::make_shared<MockOutputHandler>();
     CmdPost command(mockStorage, mockOut);
     
-    std::vector<std::string> args = {"shira", "p101"};
+    std::vector<std::string> args = {"shira", "101"};
 
     // --- 2. Act ---
     command.execute(args);
