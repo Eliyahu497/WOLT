@@ -1,16 +1,19 @@
 #ifndef SOCKETINPUT_H
 #define SOCKETINPUT_H
 
+#include "IInputHandler.h" // הוספת הממשק
 #include <string>
-#include <vector>
 
-class SocketInput {
+class SocketInput : public IInputHandler { // ירושה מהממשק
 private:
-    int _clientSocket; // המזהה של הסוקט מול הלקוח
+    int _clientSocket;
 
 public:
     SocketInput(int clientSocket);
-    std::string readLine(); // הפונקציה המרכזית
+    virtual ~SocketInput() = default;
+    
+    // מימוש הפונקציה מהממשק
+    virtual std::string readLine() override; 
 };
 
 #endif
