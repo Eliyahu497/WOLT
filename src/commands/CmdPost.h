@@ -14,22 +14,20 @@
 class CmdPost : public ICommand {
 private:
     std::shared_ptr<IStorage> storage;       // Pointer to the persistent storage layer
-    std::shared_ptr<IOutputHandler> output;   // Pointer to the network/console output handler
-
 public:
     /**
      * @brief Constructor for CmdPost.
      * @param storage Shared pointer to the database/storage interface.
      * @param output Shared pointer to the output handler interface.
      */
-    CmdPost(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandler> output);
+    CmdPost(std::shared_ptr<IStorage> storage);
 
     /**
      * @brief Executes the POST command logic.
      * Validates arguments, checks user existence, and updates the database.
      * @param args Command arguments containing the UserId followed by ProductIds.
      */
-    void execute(const std::vector<std::string>& args) override;
+    void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDPOST_H

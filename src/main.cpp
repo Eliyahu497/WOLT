@@ -1,16 +1,16 @@
 #include <memory>
-#include "RecommenderSystem.h"
+#include "RecommenderServer.h"
 #include "TerminalInput.h"
 #include "TerminalOutput.h"
 #include "FileStorage.h"
-int main() {
-    auto inputHandler = std::make_shared<TerminalInput>();
-    auto outputHandler = std::make_shared<TerminalOutput>();
-    auto storage = std::make_shared<FileStorage>("data/database.txt");
+#include <iostream>
+#include <string>
 
+int main() {
+    int port = std::stoi(argv[1]);
+    auto storage = std::make_shared<FileStorage>("data/database.txt");
     storage->loadData();
-    
-    RecommenderSystem app(inputHandler, outputHandler, storage);
+    RecommenderServer app(port, storage);
     app.start();
     return 0;
 }

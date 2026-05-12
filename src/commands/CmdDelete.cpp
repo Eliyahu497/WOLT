@@ -5,14 +5,14 @@
 /**
  * @brief Constructor initializing command dependencies.
  */
-CmdDelete::CmdDelete(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandler> output)
-    : storage(storage), output(output) {}
+CmdDelete::CmdDelete(std::shared_ptr<IStorage> storage)
+    : storage(storage) {}
 
 /**
  * @brief Executes the DELETE command logic.
  * Validates arguments, checks if the user exists, and removes specified product views.
  */
-void CmdDelete::execute(const std::vector<std::string>& args) {
+void CmdDelete::execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) {
    // Step 1: Syntactic validation (Length + Number check) -> 400 Bad Request
     if (!utils::validateWriteArguments(args)) {
         output->printLine("400 Bad Request");

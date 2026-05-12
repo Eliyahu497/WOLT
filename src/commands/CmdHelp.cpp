@@ -11,8 +11,14 @@ CmdHelp::CmdHelp(std::shared_ptr<IOutputHandler> out) : output(out) {}
  * 
  * @param args A vector of string arguments passed to the command (not used in this specific command).
  */
-void CmdHelp::execute(const std::vector<std::string>& args) {
-    output->printLine("add [userid] [productid1] [productid2] …");
-    output->printLine("recommend [userid] [productid]");
-    output->printLine("help");
+void CmdHelp::execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) {
+    if (!args.empty()) {
+        output->printLine("400 Bad Request");
+        return;
+    }
+    output->printLine("DELETE, arguments: [userid] [productid1] [productid2] …");
+    output->printLine("GET, arguments: [userid] [productid]");
+    output->printLine("PATCH, arguments: [userid] [productid1] [productid2] …");
+    output->printLine("POST, arguments: [userid] [productid1] [productid2] …");
+    output->printLine("HELP");
 }

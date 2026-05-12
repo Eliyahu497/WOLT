@@ -9,7 +9,7 @@ public:
     virtual ~ICommand() = default;
     
     // Every command receives its arguments as a vector of strings
-    virtual void execute(const std::vector<std::string>& args) = 0;
+    virtual void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) = 0;
 };
 
 #endif // ICOMMAND_H
