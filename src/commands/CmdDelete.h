@@ -14,19 +14,18 @@
 class CmdDelete : public ICommand {
 private:
     std::shared_ptr<IStorage> storage;       // Pointer to the persistent storage layer
-    std::shared_ptr<IOutputHandler> output;   // Pointer to the network/console output handler
 
 public:
     /**
      * @brief Constructor for CmdDelete.
      */
-    CmdDelete(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandler> output);
+    CmdDelete(std::shared_ptr<IStorage> storage);
 
     /**
      * @brief Executes the DELETE command logic.
      * @param args Command arguments containing the UserId followed by ProductIds to delete.
      */
-    void execute(const std::vector<std::string>& args) override;
+    void execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDDELETE_H

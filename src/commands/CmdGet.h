@@ -13,8 +13,8 @@ private:
     RecommendationEngine engine;
 
 public:
-    CmdRecommend(IStorage& storage, IOutputHandler& output);
-    void execute(const std::vector<std::string>& args) override;
+    CmdRecommend(IStorage& storage);
+    void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) override;
 };
 
 #endif

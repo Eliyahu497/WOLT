@@ -25,5 +25,5 @@ public:
      * 
      * @param args A vector of string arguments (typically empty for the help command).
      */
-    void execute(const std::vector<std::string>& args) override;
+    void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) override;
 };

@@ -14,19 +14,18 @@
 class CmdPatch : public ICommand {
 private:
     std::shared_ptr<IStorage> storage;       // Pointer to the persistent storage layer
-    std::shared_ptr<IOutputHandler> output;   // Pointer to the network/console output handler
 
 public:
     /**
      * @brief Constructor for CmdPatch.
      */
-    CmdPatch(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandler> output);
+    CmdPatch(std::shared_ptr<IStorage> storage);
 
     /**
      * @brief Executes the PATCH command logic.
      * @param args Command arguments containing the UserId followed by ProductIds to append.
      */
-    void execute(const std::vector<std::string>& args) override;
+    void execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDPATCH_H

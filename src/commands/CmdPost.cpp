@@ -4,14 +4,14 @@
 /**
  * @brief Constructor initializing command dependencies.
  */
-CmdPost::CmdPost(std::shared_ptr<IStorage> storage, std::shared_ptr<IOutputHandler> output)
-    : storage(storage), output(output) {}
+CmdPost::CmdPost(std::shared_ptr<IStorage> storage)
+    : storage(storage) {}
 
 /**
  * @brief Executes the POST command logic.
  * Validates arguments, checks user existence, and updates the database.
  */
-void CmdPost::execute(const std::vector<std::string>& args) {
+void CmdPost::execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) {
     // Step 1: Syntactic validation using our shared utility
     if (!utils::validateWriteArguments(args)) {
         output->printLine("400 Bad Request");
