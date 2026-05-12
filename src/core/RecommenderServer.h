@@ -45,4 +45,5 @@ private:
      * @return std::vector<std::string> A list of extracted string arguments.
      */
     std::vector<std::string> parseInput(const std::string& rawLine);
+    void handleClient(int clientSocket);
 };

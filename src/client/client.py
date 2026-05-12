@@ -47,9 +47,8 @@ def connect_to_server(ip, port):
         # Transition to the command loop over the same connection
         run_interaction_loop(client_socket)
         
-    except Exception:
-        # In case of a connection failure, simply terminate the program
-        pass
+    except Exception as e:
+        print(f"Failed to connect: {e}")
     finally:
         # Close the connection at the end
         client_socket.close()

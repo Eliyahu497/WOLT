@@ -1,19 +1,17 @@
 #include "CmdGet.h"
 #include <algorithm>
+#include <memory>
+CmdGet::CmdGet(std::shared_ptr<IStorage> storage) : storage(storage) {}
 
-CmdGet::CmdGet(IStorage& storage) 
-    : storage(storage) {}
-
-
-void CmdGet::execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) {
+void CmdGet::execute(const std::vector<std::string>& args, std::shared_ptr<IOutputHandler> output) {
     if (args.size() != 2) {
         output->printLine("400 Bad Request");
         return;
     }
     std::string userId = args[0];
     std::string productId = args[1];
-    auto allData = storage.fetchAllData();
-        std::vector<std::string> recommendations = engine.computeRecommendations(userId, productId, allData);
+auto allData = storage->fetchAllData();       
+ std::vector<std::string> recommendations = engine.computeRecommendations(userId, productId, allData);
 
     if (recommendations.empty()) {
         output->printLine("404 Not Found");

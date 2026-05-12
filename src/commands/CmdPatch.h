@@ -25,7 +25,7 @@ public:
      * @brief Executes the PATCH command logic.
      * @param args Command arguments containing the UserId followed by ProductIds to append.
      */
-    void execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) override;
+    void execute(const std::vector<std::string>& args, std::shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDPATCH_H

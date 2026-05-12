@@ -12,18 +12,17 @@ private:
     /**
      * @brief A shared pointer to the output handler used to display text to the user.
      */
-    std::shared_ptr<IOutputHandler> output;
 public:
     /**
      * @brief Constructs a new CmdHelp object.
      * 
      * @param out A shared pointer to an IOutputHandler implementation.
      */
-    CmdHelp(std::shared_ptr<IOutputHandler> out);
+    CmdHelp();
     /**
      * @brief Executes the help command, printing all available commands and their usage.
      * 
      * @param args A vector of string arguments (typically empty for the help command).
      */
-    void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) override;
+    void execute(const std::vector<std::string>& args, std::shared_ptr<IOutputHandler> output) override;
 };

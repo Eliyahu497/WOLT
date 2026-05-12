@@ -25,7 +25,7 @@ public:
      * @brief Executes the DELETE command logic.
      * @param args Command arguments containing the UserId followed by ProductIds to delete.
      */
-    void execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) override;
+    void execute(const std::vector<std::string>& args,  std::shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDDELETE_H

@@ -1,7 +1,7 @@
 #include "CmdDelete.h"
 #include "../utils/ValidationUtils.h"
 #include <algorithm>
-
+#include <memory>
 /**
  * @brief Constructor initializing command dependencies.
  */
@@ -12,7 +12,7 @@ CmdDelete::CmdDelete(std::shared_ptr<IStorage> storage)
  * @brief Executes the DELETE command logic.
  * Validates arguments, checks if the user exists, and removes specified product views.
  */
-void CmdDelete::execute(const std::vector<std::string>& args,  shared_ptr<IOutputHandler> output) {
+void CmdDelete::execute(const std::vector<std::string>& args,  std::shared_ptr<IOutputHandler> output) {
    // Step 1: Syntactic validation (Length + Number check) -> 400 Bad Request
     if (!utils::validateWriteArguments(args)) {
         output->printLine("400 Bad Request");

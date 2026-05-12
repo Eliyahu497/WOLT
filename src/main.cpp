@@ -6,7 +6,10 @@
 #include <iostream>
 #include <string>
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        return 1;}
+
     int port = std::stoi(argv[1]);
     auto storage = std::make_shared<FileStorage>("data/database.txt");
     storage->loadData();

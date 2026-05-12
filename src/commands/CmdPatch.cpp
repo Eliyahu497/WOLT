@@ -1,6 +1,7 @@
 #include "CmdPatch.h"
 #include "../utils/ValidationUtils.h"
-
+#include <algorithm>
+#include <memory>
 /**
  * @brief Constructor initializing command dependencies.
  */
@@ -11,7 +12,7 @@ CmdPatch::CmdPatch(std::shared_ptr<IStorage> storage)
  * @brief Executes the PATCH command logic.
  * Validates arguments, checks if the user exists, and appends product views.
  */
-void CmdPatch::execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) {
+void CmdPatch::execute(const std::vector<std::string>& args, std::shared_ptr<IOutputHandler> output) {
     // Step 1: Syntactic validation using our shared utility
     if (!utils::validateWriteArguments(args)) {
         output->printLine("400 Bad Request");

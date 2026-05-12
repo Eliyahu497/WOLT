@@ -27,7 +27,7 @@ public:
      * Validates arguments, checks user existence, and updates the database.
      * @param args Command arguments containing the UserId followed by ProductIds.
      */
-    void execute(const std::vector<std::string>& args, shared_ptr<IOutputHandler> output) override;
+    void execute(const std::vector<std::string>& args, std::shared_ptr<IOutputHandler> output) override;
 };
 
 #endif // CMDPOST_H

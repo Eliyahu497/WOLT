@@ -1,6 +1,8 @@
 #include "SocketOutput.h"
 #include <sys/socket.h>
-
+#include <stdexcept> // זה ה-Include שחסר עבור runtime_error
+#include <string>
+#include <unistd.h>
 SocketOutput::SocketOutput(int clientSocket) : _clientSocket(clientSocket) {}
 
 void SocketOutput::printLine(const std::string& text) {

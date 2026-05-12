@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # 4. Set the working directory inside the container (equivalent to 'cd /app')
@@ -18,7 +19,6 @@ WORKDIR /app
 COPY . .
 
 # 6. Create a build directory, configure the project with CMake, and compile it
-RUN mkdir build && cd build && cmake .. && make
-
+RUN mkdir build && cd build && cmake .. && make wolt_recommender_app
 # 7. Set the default command to execute when the container starts
 CMD ["./build/wolt_recommender_app"]
