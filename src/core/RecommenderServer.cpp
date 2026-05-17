@@ -73,7 +73,10 @@ void RecommenderServer::handleClient(int clientSocket) {
     while (true) {
         std::string rawLine = input->readLine();
         std::vector<std::string> args = parseInput(rawLine);
-        if (args.empty()) output->printLine("400 Bad Request");
+        if (args.empty()) {
+            output->printLine("400 Bad Request");
+            continue;
+        }
         std::string commandName = to_lowers(args[0]);
         args.erase(args.begin()); 
         if (commandMap.find(commandName) != commandMap.end()) {
