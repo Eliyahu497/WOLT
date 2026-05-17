@@ -1,6 +1,6 @@
 
 #include <gtest/gtest.h>
-#include "../src/commands/CmdAdd.h"
+
 #include "CmdHelp.h"
 #include "../src/interfaces/IStorage.h"
 #include "IOutputHandler.h"
@@ -60,46 +60,20 @@ public:
     }
 };
 
-/**
- * @brief Unit test for CmdAdd to ensure it parses arguments correctly.
- * Note: Product IDs must be valid integers due to recent validation updates.
- */
-TEST(CmdAddTest, ExecuteCorrectlyParsesArguments) {
-    // --- 1. Arrange ---
-    auto mockStorage = std::make_shared<MockStorage>();
-    CmdAdd command(mockStorage);
-    
-    // Simulating input with valid integer product IDs: add user1 101 102
-    std::vector<std::string> args = {"user1", "101", "102"};
 
-    // --- 2. Act ---
-    command.execute(args);
-
-    // --- 3. Assert ---
-    // Check if the storage was actually called
-    EXPECT_TRUE(mockStorage->addViewsCalled);
-    
-    // Check if the UserId was passed correctly
-    EXPECT_EQ(mockStorage->lastUserId, "user1");
-    
-    // Check if the number of products is correct
-    ASSERT_EQ(mockStorage->lastProducts.size(), 2);
-    
-    // Check if the product IDs match
-    EXPECT_EQ(mockStorage->lastProducts[0], "101");
-    EXPECT_EQ(mockStorage->lastProducts[1], "102");
-}
 
 TEST(CmdHelpTest, PrintsHelpMenuCorrectly) {
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdHelp helpCommand(mockOut);
+    CmdHelp helpCommand;
     std::vector<std::string> emptyArgs;
-    helpCommand.execute(emptyArgs);
-    ASSERT_EQ(mockOut->messages.size(), 3);
+    helpCommand.execute(emptyArgs, mockOut);
+    ASSERT_EQ(mockOut->messages.size(), 5);
     EXPECT_FALSE(mockOut->messages.empty());
-    EXPECT_EQ(mockOut->messages[0], "add [userid] [productid1] [productid2] …");
-    EXPECT_EQ(mockOut->messages[1], "recommend [userid] [productid]");
-    EXPECT_EQ(mockOut->messages[2], "help");
+    EXPECT_EQ(mockOut->messages[0], "DELETE, arguments: [userid] [productid1] [productid2] …");
+    EXPECT_EQ(mockOut->messages[1], "GET, arguments: [userid] [productid]");
+    EXPECT_EQ(mockOut->messages[2], "PATCH, arguments: [userid] [productid1] [productid2] …");
+    EXPECT_EQ(mockOut->messages[3], "POST, arguments: [userid] [productid1] [productid2] …");
+    EXPECT_EQ(mockOut->messages[4], "HELP");
 }
 
 // ============================================================================
@@ -116,12 +90,12 @@ TEST(CmdPostTest, SuccessWhenUserDoesNotExist) {
     mockStorage->mockUserExistsValue = false; // Simulate that the user does not exist
     
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdPost command(mockStorage, mockOut);
+    CmdPost command(mockStorage);
     
     std::vector<std::string> args = {"shira", "101", "102"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_TRUE(mockStorage->addViewsCalled); // Verify that data was pushed to storage
@@ -140,12 +114,12 @@ TEST(CmdPostTest, FailWhenUserAlreadyExists) {
     mockStorage->mockUserExistsValue = true; // Simulate that the user already exists!
     
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdPost command(mockStorage, mockOut);
+    CmdPost command(mockStorage);
     
     std::vector<std::string> args = {"shira", "101"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_FALSE(mockStorage->addViewsCalled); // Assert that NO database write was executed
@@ -163,12 +137,12 @@ TEST(CmdPatchTest, SuccessWhenUserExists) {
     mockStorage->mockUserExistsValue = true; // Simulate that the user already exists
     
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdPatch command(mockStorage, mockOut);
+    CmdPatch command(mockStorage);
     
     std::vector<std::string> args = {"shira", "103", "104"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_TRUE(mockStorage->addViewsCalled); // Verify that data was pushed to storage
@@ -187,12 +161,12 @@ TEST(CmdPatchTest, FailWhenUserDoesNotExist) {
     mockStorage->mockUserExistsValue = false; // Simulate that the user does NOT exist!
     
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdPatch command(mockStorage, mockOut);
+    CmdPatch command(mockStorage);
     
     std::vector<std::string> args = {"shira", "103"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_FALSE(mockStorage->addViewsCalled); // Assert that NO database write was executed
@@ -210,12 +184,12 @@ TEST(CmdDeleteTest, SuccessWhenUserExists) {
     mockStorage->mockUserExistsValue = true; // Simulate that the user exists
 
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdDelete command(mockStorage, mockOut);
+    CmdDelete command(mockStorage);
 
     std::vector<std::string> args = {"shira", "101", "102"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_TRUE(mockStorage->removeViewsCalled); // Verify that removeViews was executed
@@ -234,12 +208,12 @@ TEST(CmdDeleteTest, FailWhenUserDoesNotExist) {
     mockStorage->mockUserExistsValue = false; // Simulate that the user does NOT exist
 
     auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdDelete command(mockStorage, mockOut);
+    CmdDelete command(mockStorage);
 
     std::vector<std::string> args = {"shira", "101"};
 
     // --- 2. Act ---
-    command.execute(args);
+    command.execute(args, mockOut);
 
     // --- 3. Assert ---
     EXPECT_FALSE(mockStorage->removeViewsCalled); // Assert that NO database deletion was executed
