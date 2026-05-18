@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # --- שרת ה-C++ ---
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555" # חושפים את הפורט למקרה שנרצה לבדוק מבחוץ
+    volumes:
+      - "./data:/app/data" # שמירת הנתונים בסנכרון עם המחשב שלך
+    # השם של השירות הזה ברשת הפנימית הוא "server"
+
+  # --- לקוח הפייתון ---
+  client:
+    build:
+      context: ./src/client
+      dockerfile: Dockerfile
+    # הקסם כאן: במקום 127.0.0.1, הלקוח פונה פשוט לשם "server"
+    command: ["python", "client.py", "server", "5555"]
+    stdin_open: true # מאפשר ללקוח לקבל קלט (input)
+    tty: true        # מדמה טרמינל כדי שה-input יעבוד כמו שצריך
+    depends_on:
+      - server # מבטיח שהשרת יעלה לפני הלקוח

@@ -21,4 +21,4 @@ COPY . .
 # 6. Create a build directory, configure the project with CMake, and compile it
 RUN mkdir build && cd build && cmake .. && make
 # 7. Set the default command to execute when the container starts
-CMD ["./build/wolt_recommender_app"]
+CMD ["./build/wolt_recommender_app", "5555"]
