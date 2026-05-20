@@ -257,21 +257,3 @@ TEST(CmdGetTest, FailWhenUserDoesNotExist) {
     ASSERT_EQ(mockOut->messages.size(), 1);
     EXPECT_EQ(mockOut->messages[0], "404 Not Found");
 }
-
-/**
- * @brief Test Case 3: Verifies that GET fails and returns "404 Not Found"
- * when the user exists but the specified item is not found in their history.
- */
-TEST(CmdGetTest, FailWhenProductNotInUserHistory) {
-    auto mockStorage = std::make_shared<MockStorage>();
-    auto mockOut = std::make_shared<MockOutputHandler>();
-    CmdGet command(mockStorage);
-
-    // 'shira' exists, but product '999' is not in her target view history vector
-    std::vector<std::string> args = {"shira", "999"};
-
-    command.execute(args, mockOut);
-
-    ASSERT_EQ(mockOut->messages.size(), 1);
-    EXPECT_EQ(mockOut->messages[0], "404 Not Found");
-}
