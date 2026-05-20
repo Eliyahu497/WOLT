@@ -79,9 +79,11 @@ docker run -it --rm -p 8080:8080 -v "${PWD}/data:/app/data" wolt-recommender ./b
 Step B:
  Launch the Python Client (Terminal 2)
 Open a new terminal window on your machine, navigate to the project directory, and run the client script by providing the server's IP address and Port:
+
 ```bash
-docker run -it --rm wolt-client python client.py host.docker.internal 8080
+python3 src/client/client.py 127.0.0.1 8080
 ```
+
 ---
 
 ### Program Protocol & Supported Commands
