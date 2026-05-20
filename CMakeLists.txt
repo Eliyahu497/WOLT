@@ -4,7 +4,8 @@ project(WoltRecommender CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 1. הגדרת נתיבי ה-Headers (הוספתי את network כדי שהקומפיילר ימצא את SocketInput)
+
+
 include_directories(
     src/interfaces
     src/repository
@@ -15,7 +16,7 @@ include_directories(
     src/network
 )
 
-# 2. ריכוז כל קבצי המקור במשתנה אחד (למניעת כפילויות ובלגן)
+
 set(CORE_SOURCES
     src/core/RecommenderServer.cpp
     src/network/SocketInput.cpp
@@ -31,15 +32,15 @@ set(CORE_SOURCES
     src/commands/CmdDelete.cpp
 )
 
-# 3. יצירת ספריית הליבה - פעם אחת בלבד!
+
 add_library(recommender_core STATIC ${CORE_SOURCES})
 target_compile_options(recommender_core PRIVATE -Wall -Wextra -Wpedantic)
 
-# 4. בניית האפליקציה הראשית
+
 add_executable(wolt_recommender_app src/main.cpp)
 target_link_libraries(wolt_recommender_app PRIVATE recommender_core)
 
-# 5. הגדרות Google Test (נשאר כפי שהיה, רק מסודר יותר)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest

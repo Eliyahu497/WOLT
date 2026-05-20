@@ -14,11 +14,11 @@ std::string SocketInput::readLine() {
         bytesRead = recv(_clientSocket, &buffer, 1, 0);
 
         if (bytesRead == 0) {
-            // הלקוח התנתק (EOF)
+
             throw std::runtime_error("Client disconnected");
         }
         if (bytesRead < 0) {
-            // שגיאת רשת
+
             throw std::runtime_error("Socket read error");
         }
 
@@ -26,7 +26,7 @@ std::string SocketInput::readLine() {
             break; 
         }
         
-        // התעלמות מ-\r כדי לתמוך ב-Windows/Telnet
+
         if (buffer != '\r') {
             line += buffer;
         }

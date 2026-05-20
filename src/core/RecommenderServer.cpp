@@ -9,13 +9,13 @@
 #include "CmdDelete.h"
 #include <sys/socket.h>
 #include <sys/socket.h>
-#include <cstring>      // עבור memset
-#include <netinet/in.h> // עבור sockaddr_in ו-INADDR_ANY
-#include <unistd.h>     // עבור close()
+#include <cstring>
+#include <netinet/in.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 #include "../network/SocketInput.h"
 #include "../network/SocketOutput.h"
-#include <algorithm> // נדרש עבור טרנספורמציה של טקסט  // עבור htons()
+#include <algorithm>
 /**
  * @brief Constructs a new Recommender System object and registers available commands.
  * 
