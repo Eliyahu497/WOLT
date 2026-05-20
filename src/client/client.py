@@ -17,12 +17,25 @@ def run_interaction_loop(client_socket):
             message = user_input + "\n"
             client_socket.sendall(message.encode())
 
-            # Wait for a response from the server (the client is blocked until a response is received)
+            # Wait for the first chunk of response from the server (blocks until data is ready)
             response = client_socket.recv(4096).decode()
             
             # If the server closed the connection
             if not response:
                 break
+
+            # Read any additional lines/packets currently queued in the TCP buffer
+            client_socket.settimeout(0.05)
+            try:
+                while True:
+                    chunk = client_socket.recv(4096).decode()
+                    if not chunk:
+                        break
+                    response += chunk
+            except socket.timeout:
+                pass
+            finally:
+                client_socket.settimeout(None)
 
             # Print the output sent by the server to the screen
             # The server already sends a \n at the end, so we use end=""
