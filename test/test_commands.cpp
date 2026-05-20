@@ -7,6 +7,7 @@
 #include "../src/commands/CmdPost.h"
 #include "../src/commands/CmdPatch.h"
 #include "../src/commands/CmdDelete.h"
+#include "../src/commands/CmdGet.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -219,4 +220,58 @@ TEST(CmdDeleteTest, FailWhenUserDoesNotExist) {
     EXPECT_FALSE(mockStorage->removeViewsCalled); // Assert that NO database deletion was executed
     ASSERT_EQ(mockOut->messages.size(), 1);
     EXPECT_EQ(mockOut->messages[0], "404 Not Found"); // Verify correct 404 error code
+}
+
+/**
+ * @brief Test Case 1: Verifies that GET fails and returns "400 Bad Request"
+ * when given an incorrect number of arguments (e.g., missing product ID).
+ */
+TEST(CmdGetTest, FailOnIncorrectArgumentCount) {
+    auto mockStorage = std::make_shared<MockStorage>();
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdGet command(mockStorage);
+
+    // Providing only userId instead of [userid] [productid]
+    std::vector<std::string> args = {"shira"};
+
+    command.execute(args, mockOut);
+
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "400 Bad Request");
+}
+
+/**
+ * @brief Test Case 2: Verifies that GET fails and returns "404 Not Found"
+ * when looking up a user who does not exist in the database mapping.
+ */
+TEST(CmdGetTest, FailWhenUserDoesNotExist) {
+    auto mockStorage = std::make_shared<MockStorage>();
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdGet command(mockStorage);
+
+    // 'unknown_user' does not exist in our mockStorage's fetchAllData map
+    std::vector<std::string> args = {"unknown_user", "101"};
+
+    command.execute(args, mockOut);
+
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "404 Not Found");
+}
+
+/**
+ * @brief Test Case 3: Verifies that GET fails and returns "404 Not Found"
+ * when the user exists but the specified item is not found in their history.
+ */
+TEST(CmdGetTest, FailWhenProductNotInUserHistory) {
+    auto mockStorage = std::make_shared<MockStorage>();
+    auto mockOut = std::make_shared<MockOutputHandler>();
+    CmdGet command(mockStorage);
+
+    // 'shira' exists, but product '999' is not in her target view history vector
+    std::vector<std::string> args = {"shira", "999"};
+
+    command.execute(args, mockOut);
+
+    ASSERT_EQ(mockOut->messages.size(), 1);
+    EXPECT_EQ(mockOut->messages[0], "404 Not Found");
 }
