@@ -125,7 +125,7 @@ TEST(CmdPostTest, FailWhenUserAlreadyExists) {
     // --- 3. Assert ---
     EXPECT_FALSE(mockStorage->addViewsCalled); // Assert that NO database write was executed
     ASSERT_EQ(mockOut->messages.size(), 1); // Verify exactly one output line was written
-    EXPECT_EQ(mockOut->messages[0], "404 Bad Request"); // Verify correct error status code
+    EXPECT_EQ(mockOut->messages[0], "404 Not Found"); // Verify correct error status code
 }
 
 /**

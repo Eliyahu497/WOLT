@@ -17,7 +17,7 @@ void CmdGet::execute(const std::vector<std::string>& args, std::shared_ptr<IOutp
 
     // Check if user and product exist, otherwise 404
     auto it = allData.find(userId);
-    if (it == allData.end()) {
+    if (it == allData.end() || std::find(it->second.begin(), it->second.end(), productId) == it->second.end()) {
         output->printLine("404 Not Found");
         return;
     }
