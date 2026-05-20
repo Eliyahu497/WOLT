@@ -1,0 +1,26 @@
+{
+  "name": "wolt",
+  "version": "1.0.0",
+  "description": "Wolt RESTful API Web Server",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eliyahu497/WOLT.git"
+  },
+  "author": "shira , margalit and eliyahu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eliyahu497/WOLT/issues"
+  },
+  "homepage": "https://github.com/Eliyahu497/WOLT#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "uuid": "^14.0.0"
+  }
+}
