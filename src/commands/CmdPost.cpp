@@ -23,7 +23,7 @@ void CmdPost::execute(const std::vector<std::string>& args, std::shared_ptr<IOut
 
     // Step 2: Check if the user already exists using Ex2 storage method
     if (storage->userExists(userId)) {
-        output->printLine("400 Bad Request");
+        output->printLine("404 Not Found");
         return;
     }
 
