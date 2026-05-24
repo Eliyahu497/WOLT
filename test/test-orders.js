@@ -1,0 +1,35 @@
+const InMemoryDB = require('../InMemoryDB');
+const orderService = require('../services/OrderService');
+
+console.log("--- STARTING ORDER SERVICE LOCAL TEST ---");
+
+// 1. Seed simulated data into the memory arrays (Mocking Developer 1 & 2)
+InMemoryDB.users.push({ id: "user_shira", name: "Shira" });
+InMemoryDB.restaurants.push({
+    id: "rest_giraffe",
+    name: "Giraffe",
+    products: [{ id: "prod_sushi", name: "Sushi", price: 65 }]
+});
+
+console.log("Current Users in DB:", InMemoryDB.users);
+
+// 2. Test Order Creation
+try {
+    const itemPayload = [{ productId: "prod_sushi", quantity: 2 }];
+    const myOrder = orderService.create("user_shira", "rest_giraffe", itemPayload);
+    
+    console.log("\n✅ Success! Order Created:");
+    console.log(myOrder);
+    console.log(`Calculated Price (65 * 2): ${myOrder.total} NIS`);
+    
+    // 3. Test Retrieving Orders
+    const userOrders = orderService.getByUserId("user_shira");
+    console.log(`\n🔍 Found ${userOrders.length} orders for user_shira.`);
+    
+    // 4. Test Updating Order Status
+    orderService.update(myOrder.id, { status: "completed" });
+    console.log("\n🔄 Status Updated to:", orderService.getById(myOrder.id).status);
+    
+} catch (error) {
+    console.error("❌ Test Failed with error:", error.message);
+}
