@@ -11,6 +11,8 @@ app.get('/', (req, res) => {
 });
 
 // Later on (Step 5), Developer 3 will connect everyone's unified routers here!
+const restaurantRouter = require('./routes/restaurantRouter');
+app.use('/restaurants', restaurantRouter);
 
 // Start the server listening on the defined port
 app.listen(PORT, () => {
