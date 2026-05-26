@@ -1,8 +1,12 @@
 const net = require('net');
 
 class TCPClient {
-    // Setting default host and port. This can be customized later for Docker networks.
-    constructor(host = 'localhost', port = 5000) {
+    // Setting default host and port. This can be configured dynamically using environment variables
+    // (e.g. for Docker networks) or fall back to localhost:5000.
+    constructor(
+        host = process.env.TCP_HOST || 'localhost',
+        port = process.env.TCP_PORT ? Number(process.env.TCP_PORT) : 5000
+    ) {
         this.host = host;
         this.port = port;
     }
