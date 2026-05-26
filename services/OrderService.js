@@ -12,33 +12,55 @@ class OrderService {
             throw new Error("User not found");
         }
 
-        // 2. Find the restaurant to look up product prices
+        // 2. Validate that restaurantId is provided and correct
+        if (!restaurantId || typeof restaurantId !== 'string' || !restaurantId.trim()) {
+            throw new Error("Restaurant ID is required");
+        }
+
+        // 3. Verify that the restaurant exists in the database
         const restaurant = InMemoryDB.restaurants.find(r => r.id === restaurantId);
+        if (!restaurant) {
+            throw new Error("Restaurant not found");
+        }
+
+        // 4. Verify that items is a valid non-empty array
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            throw new Error("Order must contain at least one item");
+        }
+
         let totalPrice = 0;
 
-        // Map incoming items and calculate the total price dynamically
+        // 5. Map incoming items, validate them, and calculate the total price
         const orderItems = items.map(item => {
-            let productPrice = 50; // Mock fallback price if Developer 2's catalog isn't ready yet
-            
-            if (restaurant && restaurant.products) {
-                const product = restaurant.products.find(p => p.id === item.productId);
-                if (product) {
-                    productPrice = product.price;
-                }
+            // Verify that the product ID is provided
+            if (!item || !item.productId || typeof item.productId !== 'string' || !item.productId.trim()) {
+                throw new Error("Product ID is required for all items");
             }
-            
-            totalPrice += productPrice * item.quantity;
-            
+
+            // Verify that the product exists in the restaurant's menu
+            const product = restaurant.products ? restaurant.products.find(p => p.id === item.productId) : null;
+            if (!product) {
+                throw new Error(`Product ${item.productId} not found in restaurant`);
+            }
+
+            // Verify that the quantity is a positive integer greater than zero
+            const qty = Number(item.quantity);
+            if (!item.quantity || isNaN(qty) || !Number.isInteger(qty) || qty <= 0) {
+                throw new Error(`Quantity for product ${item.productId} must be a positive integer`);
+            }
+
+            totalPrice += product.price * qty;
+
             return {
                 productId: item.productId,
-                quantity: item.quantity
+                quantity: qty
             };
         });
 
-        // 3. Generate a secure unique ID for the order
+        // 6. Generate a secure unique ID for the order
         const orderId = crypto.randomUUID();
 
-        // 4. Instantiate the Order and save it to the global In-Memory DB
+        // 7. Instantiate the Order and save it to the global In-Memory DB
         const newOrder = new Order(orderId, userId, restaurantId, orderItems, 'pending', totalPrice);
         InMemoryDB.orders.push(newOrder);
 
