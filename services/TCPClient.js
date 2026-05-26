@@ -16,8 +16,12 @@ class TCPClient {
             client.connect(this.port, this.host, () => {
                 console.log(`[TCP Client] Connected to C++ RecommenderServer at ${this.host}:${this.port}`);
                 
-                // Prepare the command string according to the expected protocol
-                const payload = `addViews ${userId} ${productId}\n`;                
+                // Construct the command payload matching the C++ command protocol:
+                // Command syntax: PATCH [userid] [productid]
+                // (e.g., "PATCH user_shira prod_sushi")
+                const payload = `PATCH ${userId} ${productId}\n`;                
+                
+                // Write the command over the TCP socket to the C++ server
                 client.write(payload);
             });
 
