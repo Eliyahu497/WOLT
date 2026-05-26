@@ -20,7 +20,7 @@ async function runTests() {
     // Give the server 1 second to start and bind to the port
     await sleep(1000);
 
-    const baseUrl = 'http://localhost:3000/api/orders';
+    const baseUrl = 'http://localhost:1234/api/orders';
     const userIdHeader = { 
         'x-user-id': 'user_shira', 
         'Content-Type': 'application/json' 
