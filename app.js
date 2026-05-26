@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const PORT = 1234; 
 
+const restaurantRouter = require('./routes/restaurantRouter');
+
+<<<<<<< HEAD
 // 1. Import the routers 
 const orderRouter = require('./routes/orderRouter');
 
@@ -31,6 +34,12 @@ InMemoryDB.restaurants.push({
 // 
 
 // Start the server listening on the defined port
+=======
+app.use(express.json());
+
+app.use('/api/restaurants', restaurantRouter);
+
+>>>>>>> origin/main
 app.listen(PORT, () => {
-    console.log(`Server is running live on http://localhost:${PORT}`);
+    console.log(`REAL EXPRESS SERVER IS ALIVE ON PORT ${PORT}`);
 });
