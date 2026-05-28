@@ -5,6 +5,7 @@ const PORT = 1234; // Using the port from main (1234)
 // 1. Import the routers 
 const restaurantRouter = require('./routes/restaurantRouter');
 const orderRouter = require('./routes/orderRouter');
+const searchRouter = require('./routes/searchRouter');
 
 // Middleware to parse JSON bodies in incoming requests (for POST/PATCH endpoints)
 app.use(express.json());
@@ -12,6 +13,7 @@ app.use(express.json());
 // 2. Mount each router onto its strict, required HTTP URL prefix path
 app.use('/api/restaurants', restaurantRouter);
 app.use('/api/orders', orderRouter);
+app.use('/api/search', searchRouter);
 
 // Basic test route to verify that the server is live and working on the network
 app.get('/', (req, res) => {

@@ -1,0 +1,20 @@
+# 1. Base image: clean, lightweight Node.js 20 environment
+FROM node:20-alpine
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy dependency definitions
+COPY package*.json ./
+
+# 4. Install production dependencies only to keep the image lightweight
+RUN npm install --omit=dev
+
+# 5. Copy the source files (excludes files defined in .dockerignore)
+COPY . .
+
+# 6. Expose the port our Express web app runs on (1234)
+EXPOSE 1234
+
+# 7. Define the execution command to launch the web server
+CMD ["node", "app.js"]

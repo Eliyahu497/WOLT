@@ -56,6 +56,33 @@ class ProductService {
         restaurant.products.splice(index, 1);
         return true;
     }
+
+    // Search for products across all restaurants whose name or description matches the query
+    static search(query) {
+        if (!query) return [];
+        const lowerQuery = String(query).toLowerCase();
+        const results = [];
+
+        InMemoryDB.restaurants.forEach(restaurant => {
+            if (restaurant.products && Array.isArray(restaurant.products)) {
+                restaurant.products.forEach(product => {
+                    const nameMatch = product.name && String(product.name).toLowerCase().includes(lowerQuery);
+                    const descMatch = product.description && String(product.description).toLowerCase().includes(lowerQuery);
+                    if (nameMatch || descMatch) {
+                        results.push({
+                            id: product.id,
+                            name: product.name,
+                            description: product.description,
+                            price: product.price,
+                            restaurantId: restaurant.id
+                        });
+                    }
+                });
+            }
+        });
+
+        return results;
+    }
 }
 
 module.exports = ProductService;

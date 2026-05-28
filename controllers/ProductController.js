@@ -1,4 +1,5 @@
 const ProductService = require('../services/ProductService');
+const tcpClient = require('../services/TCPClient');
 
 class ProductController {
     // Get all products of a specific restaurant
@@ -34,7 +35,14 @@ class ProductController {
             }
 
             const userId = req.headers['x-user-id'];
-            // TODO: Call TCPClient.addProductView(userId, productId)
+            // If user ID header is present, report this product view to the C++ recommendation engine
+            if (userId) {
+                // We call this asynchronously so that a slow/offline C++ server
+                // does not block or crash the REST API response.
+                tcpClient.addProductView(userId, productId).catch(err => {
+                    console.error(`[TCP Client Error] Failed to report view to C++ server: ${err.message}`);
+                });
+            }
 
             return res.status(200).json(product);
         } catch (error) {

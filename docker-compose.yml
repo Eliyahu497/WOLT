@@ -10,6 +10,18 @@ services:
     volumes:
       - "./data:/app/data"
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "1234:1234"
+    environment:
+      - TCP_HOST=server
+      - TCP_PORT=5555
+    depends_on:
+      - server
+
 
 
   client:
