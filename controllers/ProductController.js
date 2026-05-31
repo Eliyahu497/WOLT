@@ -73,7 +73,8 @@ class ProductController {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
 
-            return res.status(201).json(newProduct);
+            res.setHeader('Location', `/api/restaurants/${restaurantId}/products/${newProduct.id}`);
+            return res.status(201).send();
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
@@ -99,7 +100,7 @@ class ProductController {
                 return res.status(404).json({ error: 'Product or Restaurant not found' });
             }
 
-            return res.status(200).json(updatedProduct);
+            return res.status(204).send();
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
