@@ -18,24 +18,11 @@ app.use('/api/orders', orderRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/users', userRouter);
 app.use('/api/tokens', existUserRouter);
+
 // Basic test route to verify that the server is live and working on the network
 app.get('/', (req, res) => {
     res.status(200).json({ message: "Wolt Web Server Backend is running perfectly!" });
 });
-
-// =========================================================================
-//  TEMPORARY MOCK DATA FOR DEVELOPER 3 TESTING (Delete before final merge)
-// =========================================================================
-const InMemoryDB = require('./InMemoryDB');
-
-// Seed a dummy user and a dummy restaurant with products directly into memory
-InMemoryDB.users.push({ id: "user_shira", name: "Shira" });
-InMemoryDB.restaurants.push({
-    id: "rest_giraffe",
-    name: "Giraffe",
-    products: [{ id: "prod_sushi", name: "Sushi", price: 65 }]
-});
-// 
 
 // Start the server listening on the defined port
 app.listen(PORT, () => {
