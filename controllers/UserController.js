@@ -8,12 +8,13 @@ class UserController {
         if (!name || !email || !phone || !address || !userName || !password)
             return res.status(400).json({ error: "missing fields" })
         if (!/^\d{10}$/.test(phone))
-            return res.status(400).json({ error: "phone number have to be exactly 10 digits" })
+            return res.status(400).json({ error: "phone number has to be exactly 10 digits" })
         if (userService.invalidUN(userName)) {
             return res.status(404).json({ error: "Invalid user name" })
         }
         const newUser = userService.createUser({ name, email, phone, address, userName, password })
-        res.status(201).send()
+        res.setHeader('Location', `/api/users/${newUser.id}`);
+        return res.status(201).send()
     }
 
     // GET /api/users/:id - Retrieve details of the current user
