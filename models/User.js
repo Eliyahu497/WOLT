@@ -5,7 +5,7 @@ class User {
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.userName = userName
+        this.userName = userName;
         this.password = password;
     }
 }
