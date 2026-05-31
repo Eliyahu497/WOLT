@@ -47,7 +47,8 @@ class RestaurantController {
             }
 
             const restaurant = RestaurantService.create({ name, description });
-            return res.status(201).json(restaurant);
+            res.setHeader('Location', `/api/restaurants/${restaurant.id}`);
+            return res.status(201).send();
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
@@ -68,7 +69,7 @@ class RestaurantController {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
 
-            return res.status(200).json(updatedRestaurant);
+            return res.status(204).send();
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
