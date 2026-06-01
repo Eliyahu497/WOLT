@@ -118,7 +118,7 @@ async function runTests() {
         }
         const data1 = await res1.json();
         console.log("✅ Success! Search for 'pizza' returned:", JSON.stringify(data1, null, 2));
-        
+
         // Verifications
         const hasPizzaHut = data1.restaurants.some(r => r.id === restId1);
         const hasPepperoni = data1.products.some(p => p.id === product1.id);

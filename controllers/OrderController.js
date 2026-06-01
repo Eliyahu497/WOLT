@@ -15,7 +15,7 @@ class OrderController {
             }
 
             const newOrder = orderService.create(userId, restaurantId, items);
-            
+
             // 210 Created status on successful resource initialization
             return res.status(201).json(newOrder);
         } catch (error) {
@@ -57,7 +57,7 @@ class OrderController {
         }
 
         // 204 No Content specifies a successful mutation with an empty response body
-        return res.status(204).send();
+        return res.status(204).json(updatedOrder);
     }
 
     // DELETE /api/orders/:id - Cancel/Remove an order

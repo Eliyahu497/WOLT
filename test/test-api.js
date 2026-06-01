@@ -29,14 +29,64 @@ async function runTests() {
     let createdOrderId = null;
 
     try {
+        // Seed user via API
+        console.log("Seeding test user...");
+        const userRes = await fetch('http://localhost:1234/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: "Shira",
+                email: "shira@example.com",
+                phone: "0501234567",
+                address: "Dizengoff 100",
+                userName: "shira_user",
+                password: "password123"
+            })
+        });
+        if (userRes.status !== 201) {
+            throw new Error(`Failed to seed user, status: ${userRes.status}`);
+        }
+        const locationHeader = userRes.headers.get('Location');
+        const userId = locationHeader.split('/').pop();
+        userIdHeader['x-user-id'] = userId;
+        console.log(`✅ Created User with ID: ${userId}`);
+
+        // Seed restaurant via API
+        console.log("Seeding test restaurant...");
+        const restRes = await fetch('http://localhost:1234/api/restaurants', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar" })
+        });
+        if (restRes.status !== 201) {
+            throw new Error(`Failed to seed restaurant, status: ${restRes.status}`);
+        }
+        const locationHeaderRest = restRes.headers.get('Location');
+        const restId = locationHeaderRest.split('/').pop();
+        console.log(`✅ Created Restaurant with ID: ${restId}`);
+
+        // Seed product via API
+        console.log("Seeding test product...");
+        const prodRes = await fetch(`http://localhost:1234/api/restaurants/${restId}/products`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
+        });
+        if (prodRes.status !== 201) {
+            throw new Error(`Failed to seed product, status: ${prodRes.status}`);
+        }
+        const product = await prodRes.json();
+        const prodId = product.id;
+        console.log(`✅ Created Product with ID: ${prodId}`);
+
         // --- 1. Test POST /api/orders (Create Order) ---
         console.log("\n1. Testing POST /api/orders (Create Order)...");
         const createRes = await fetch(baseUrl, {
             method: 'POST',
             headers: userIdHeader,
             body: JSON.stringify({
-                restaurantId: 'rest_giraffe',
-                items: [{ productId: 'prod_sushi', quantity: 3 }]
+                restaurantId: restId,
+                items: [{ productId: prodId, quantity: 3 }]
             })
         });
 

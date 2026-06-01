@@ -3,9 +3,9 @@ const Order = require('../models/Order');
 const crypto = require('crypto'); // Built-in Node.js module to generate unique UUIDs
 
 class OrderService {
-    
-    // Create a new order in memory
-    create(userId, restaurantId, items) {
+
+    // Create a new order in memory (supports custom ID and status for updates)
+    create(userId, restaurantId, items, orderId = null, status = 'pending') {
         // 1. Validate that the user exists in the system
         const userExists = InMemoryDB.users.find(u => u.id === userId);
         if (!userExists) {
@@ -57,11 +57,11 @@ class OrderService {
             };
         });
 
-        // 6. Generate a secure unique ID for the order
-        const orderId = crypto.randomUUID();
+        // 6. Generate a secure unique ID for the order if not provided
+        const finalId = orderId || crypto.randomUUID();
 
         // 7. Instantiate the Order and save it to the global In-Memory DB
-        const newOrder = new Order(orderId, userId, restaurantId, orderItems, 'pending', totalPrice);
+        const newOrder = new Order(finalId, userId, restaurantId, orderItems, status, totalPrice);
         InMemoryDB.orders.push(newOrder);
 
         return newOrder;
@@ -77,13 +77,28 @@ class OrderService {
         return InMemoryDB.orders.find(order => order.id === id);
     }
 
-    // Update order details (e.g., changing status from 'pending' to 'completed')
+    // Update order details by deleting the old order and creating a new updated Order instance using create()
     update(id, data) {
-        const order = this.getById(id);
-        if (!order) return null;
+        const oldOrder = this.getById(id);
+        if (!oldOrder) return null;
 
-        if (data.status) order.status = data.status;
-        return order;
+        // Extract values, defaulting to old values if not provided in update request
+        const userId = oldOrder.userId;
+        const restaurantId = oldOrder.restaurantId;
+        const items = data.items || oldOrder.items;
+        const status = data.status || oldOrder.status;
+
+        // Delete the old order first
+        this.delete(id);
+
+        try {
+            // Re-create the order with the updated details, reusing the same ID and status
+            return this.create(userId, restaurantId, items, id, status);
+        } catch (error) {
+            // If validation in create fails, restore the original order in DB and rethrow error
+            InMemoryDB.orders.push(oldOrder);
+            throw error;
+        }
     }
 
     // Delete/Cancel an order from the memory array

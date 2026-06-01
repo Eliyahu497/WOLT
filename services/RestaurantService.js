@@ -16,15 +16,25 @@ class RestaurantService {
     // Generates an ID, creates a Restaurant, pushes to InMemoryDB.restaurants, returns it
     static create(data) {
         const id = uuidv4();
-        const newRestaurant = new Restaurant(id, data.name, data.description, data.products || []);
+
+        const userExists = InMemoryDB.users.find(u => u.id === data.owner);
+        if (!userExists) {
+            throw new Error("User not found");
+        }
+
+        const newRestaurant = new Restaurant(id, data.name, data.description, data.owner, data.products || []);
         InMemoryDB.restaurants.push(newRestaurant);
         return newRestaurant;
     }
 
     // Updates name/description. Returns updated object or null
-    static update(id, data) {
+    static update(id, data, ownerId) {
         const restaurant = this.getById(id);
         if (!restaurant) return null;
+
+        if (restaurant.owner !== ownerId) {
+            throw new Error("You are not the owner of this restaurant");
+        }
 
         if (data.name !== undefined) {
             restaurant.name = data.name;
@@ -36,11 +46,15 @@ class RestaurantService {
     }
 
     // Removes the restaurant using splice(). Returns boolean
-    static delete(id) {
-        const index = InMemoryDB.restaurants.findIndex(r => r.id === id);
-        if (index === -1) return false;
+    static delete(id, ownerId) {
+        const restaurant = this.getById(id);
+        if (!restaurant) return null;
 
-        InMemoryDB.restaurants.splice(index, 1);
+        if (restaurant.owner !== ownerId) {
+            throw new Error("You are not the owner of this restaurant");
+        }
+
+        InMemoryDB.restaurants = InMemoryDB.restaurants.filter(r => r.id !== id);
         return true;
     }
 
