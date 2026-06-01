@@ -80,8 +80,14 @@ class RestaurantController {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
             const updatedRestaurant = RestaurantService.update(id, { name, description }, owner);
+            if (!updatedRestaurant) {
+                return res.status(404).json({ error: 'Restaurant not found' });
+            }
             return res.status(204).send();
         } catch (error) {
+            if (error.message.includes("owner")) {
+                return res.status(403).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
@@ -100,10 +106,15 @@ class RestaurantController {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
 
-
-            RestaurantService.delete(id, owner);
+            const success = RestaurantService.delete(id, owner);
+            if (!success) {
+                return res.status(404).json({ error: 'Restaurant not found' });
+            }
             return res.status(204).send(); // 204 No Content for successful deletion
         } catch (error) {
+            if (error.message.includes("owner")) {
+                return res.status(403).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
