@@ -9,6 +9,10 @@ class OrderController {
             const userId = req.headers['x-user-id'];
             const { restaurantId, items } = req.body;
 
+            if (!restaurantId || !items || items.length === 0) {
+                return res.status(400).json({ error: "Missing required fields (restaurantId or items)" });
+            }
+
             // Basic protection fallback if Header is entirely missing
             if (!userId) {
                 return res.status(400).json({ error: "Missing required X-User-ID header" });

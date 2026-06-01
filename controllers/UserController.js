@@ -10,7 +10,7 @@ class UserController {
         if (!/^\d{10}$/.test(phone))
             return res.status(400).json({ error: "phone number has to be exactly 10 digits" })
         if (userService.invalidUN(userName)) {
-            return res.status(404).json({ error: "Invalid user name" })
+            return res.status(409).json({ error: "Username is already taken" })
         }
         const newUser = userService.createUser({ name, email, phone, address, userName, password })
         res.setHeader('Location', `/api/users/${newUser.id}`);
@@ -38,7 +38,7 @@ class UserController {
         const { userName, password } = req.body;
         const user = userService.validateCredentials(userName, password);
         if (!user) {
-            return res.status(404).json({ error: "Invalid user name or password" });
+            return res.status(401).json({ error: "Invalid user name or password" });
         }
         return res.status(200).json({ id: user.id });
     }
