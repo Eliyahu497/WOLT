@@ -13,7 +13,7 @@ const mockCppServer = net.createServer((socket) => {
     socket.on('data', (data) => {
         tcpReceivedData = data.toString();
         console.log(`[Mock C++ Server] Received payload: '${tcpReceivedData.trim()}'`);
-        
+
         // Respond with success (C++ server status code for PATCH success is usually "204 No Content")
         socket.write("204 No Content\n");
     });

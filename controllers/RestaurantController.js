@@ -1,4 +1,5 @@
 const RestaurantService = require('../services/RestaurantService');
+const userService = require('../services/UserService');
 
 class RestaurantController {
     // Retrieve all restaurants (or filter using query string if provided)
@@ -42,11 +43,21 @@ class RestaurantController {
     static createRestaurant(req, res) {
         try {
             const { name, description } = req.body;
+            const owner = req.headers['x-user-id'];
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
+
+            const user = userService.getUserById(owner);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
             if (!name) {
                 return res.status(400).json({ error: 'Name is required' });
             }
 
-            const restaurant = RestaurantService.create({ name, description });
+            const restaurant = RestaurantService.create({ name, description, owner });
             res.setHeader('Location', `/api/restaurants/${restaurant.id}`);
             return res.status(201).send();
         } catch (error) {
@@ -59,16 +70,16 @@ class RestaurantController {
         try {
             const { id } = req.params;
             const { name, description } = req.body;
+            const owner = req.headers['x-user-id'];
+
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
 
             if (!id) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
-
-            const updatedRestaurant = RestaurantService.update(id, { name, description });
-            if (!updatedRestaurant) {
-                return res.status(404).json({ error: 'Restaurant not found' });
-            }
-
+            const updatedRestaurant = RestaurantService.update(id, { name, description }, owner);
             return res.status(204).send();
         } catch (error) {
             return res.status(500).json({ error: error.message });
@@ -79,15 +90,18 @@ class RestaurantController {
     static deleteRestaurant(req, res) {
         try {
             const { id } = req.params;
+            const owner = req.headers['x-user-id'];
+
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
+
             if (!id) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
 
-            const success = RestaurantService.delete(id);
-            if (!success) {
-                return res.status(404).json({ error: 'Restaurant not found' });
-            }
 
+            RestaurantService.delete(id, owner);
             return res.status(204).send(); // 204 No Content for successful deletion
         } catch (error) {
             return res.status(500).json({ error: error.message });
