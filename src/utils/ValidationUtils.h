@@ -8,13 +8,12 @@
 namespace utils {
 
     /**
-     * @brief Validates if a string represents a valid positive integer.
+     * @brief Validates if a string represents a valid product ID (non-empty and contains no whitespace).
      */
     inline bool isValidProductId(const std::string& str) {
         if (str.empty()) return false;
         for (char c : str) {
-            if (!std::isdigit(static_cast<unsigned char>(c))) {
-                
+            if (std::isspace(static_cast<unsigned char>(c))) {
                 return false;
             }
         }
@@ -23,7 +22,7 @@ namespace utils {
 
     /**
      * @brief Validates the basic syntax of a write command (POST/PATCH/DELETE).
-     * Ensures at least a UserId and one ProductId are present, and all product IDs are numeric.
+     * Ensures at least a UserId and one ProductId are present, and all product IDs are valid string IDs (non-empty, no whitespace).
      */
     inline bool validateWriteArguments(const std::vector<std::string>& args) {
         if (args.size() < 2) {

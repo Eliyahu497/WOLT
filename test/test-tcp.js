@@ -3,7 +3,7 @@ const tcpClient = require('../services/TCPClient');
 
 console.log("--- STARTING TCP SOCKET INTEGRATION TEST ---");
 
-const TEST_PORT = 5000;
+const TEST_PORT = 5555;
 
 // 1. Spin up a temporary Mock TCP Server to mimic your C++ backend
 const mockCppServer = net.createServer((socket) => {
@@ -22,8 +22,8 @@ mockCppServer.listen(TEST_PORT, async () => {
 
     // 2. Trigger your actual TCPClient to make the connection call
     try {
-        console.log("\nTriggering addProductView()...");
-        const serverResponse = await tcpClient.addProductView("shira_123", "item_sushi_99");
+        console.log("\nTriggering reportInteraction()...");
+        const serverResponse = await tcpClient.reportInteraction("shira_123", "item_sushi_99");
         console.log(`\n✅ Integration Test Passed! Final parsed output: ${serverResponse}`);
     } catch (error) {
         console.error("\n❌ Integration Test Failed:", error.message);

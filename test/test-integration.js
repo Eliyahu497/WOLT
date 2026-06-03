@@ -3,7 +3,7 @@ const { spawn } = require('child_process');
 
 console.log("--- STARTING END-TO-END TCP & API INTEGRATION TEST ---");
 
-const TCP_PORT = 5000;
+const TCP_PORT = 5555;
 let tcpReceivedData = null;
 
 // 1. Spin up a temporary Mock TCP Server to mimic the C++ backend
@@ -43,32 +43,82 @@ mockCppServer.listen(TCP_PORT, () => {
         const baseUrl = 'http://localhost:1234/api';
 
         try {
-            // Seed a restaurant via POST
-            console.log("\n1. Seeding test restaurant...");
-            const restRes = await fetch(`${baseUrl}/restaurants`, {
+            // 1. Register a test user
+            console.log("\n1. Registering test user...");
+            const userRes = await fetch(`${baseUrl}/users`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: "Shira",
+                    email: "shira@example.com",
+                    phone: "0541234567",
+                    address: "Tel Aviv",
+                    userName: "shira_123",
+                    password: "password123"
+                })
+            });
+
+            if (userRes.status !== 201) {
+                const errText = await userRes.text();
+                throw new Error(`Failed to register user. Status: ${userRes.status}, Body: ${errText}`);
+            }
+
+            const userLocation = userRes.headers.get('location');
+            if (!userLocation) {
+                throw new Error("Missing Location header in user registration response");
+            }
+            const userId = userLocation.split('/').pop();
+            console.log(`✅ User registered successfully. ID: ${userId}`);
+
+            // 2. Seed a restaurant via POST (owned by the test user)
+            console.log("\n2. Seeding test restaurant...");
+            const restRes = await fetch(`${baseUrl}/restaurants`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId
+                },
                 body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar" })
             });
-            const restaurant = await restRes.json();
-            const restId = restaurant.id;
 
-            // Seed a product under that restaurant via POST
-            console.log("2. Seeding test product...");
+            if (restRes.status !== 201) {
+                const errText = await restRes.text();
+                throw new Error(`Failed to create restaurant. Status: ${restRes.status}, Body: ${errText}`);
+            }
+
+            const restLocation = restRes.headers.get('location');
+            if (!restLocation) {
+                throw new Error("Missing Location header in restaurant creation response");
+            }
+            const restId = restLocation.split('/').pop();
+            console.log(`✅ Restaurant created successfully. ID: ${restId}`);
+
+            // 3. Seed a product under that restaurant via POST
+            console.log("\n3. Seeding test product...");
             const prodRes = await fetch(`${baseUrl}/restaurants/${restId}/products`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
             });
-            const product = await prodRes.json();
-            const prodId = product.id;
 
-            // Trigger GET on the product with X-User-ID header
-            console.log(`\n3. Fetching product details for product ${prodId}...`);
+            if (prodRes.status !== 201) {
+                const errText = await prodRes.text();
+                throw new Error(`Failed to create product. Status: ${prodRes.status}, Body: ${errText}`);
+            }
+
+            const prodLocation = prodRes.headers.get('location');
+            if (!prodLocation) {
+                throw new Error("Missing Location header in product creation response");
+            }
+            const prodId = prodLocation.split('/').pop();
+            console.log(`✅ Product created successfully. ID: ${prodId}`);
+
+            // 4. Trigger GET on the product with X-User-ID header to report to C++
+            console.log(`\n4. Fetching product details for product ${prodId}...`);
             const getRes = await fetch(`${baseUrl}/restaurants/${restId}/products/${prodId}`, {
                 method: 'GET',
                 headers: {
-                    'x-user-id': 'user_shira',
+                    'x-user-id': userId,
                     'Content-Type': 'application/json'
                 }
             });
@@ -83,9 +133,9 @@ mockCppServer.listen(TCP_PORT, () => {
             // Wait a brief moment for TCP communication to complete
             await sleep(500);
 
-            // Verify that the Mock C++ server received the expected PATCH command
-            console.log("\n4. Verifying TCP Command received by C++ server...");
-            const expectedPayload = `PATCH user_shira ${prodId}\n`;
+            // 5. Verify that the Mock C++ server received the expected PATCH command
+            console.log("\n5. Verifying TCP Command received by C++ server...");
+            const expectedPayload = `PATCH ${userId} ${prodId}\n`;
 
             if (tcpReceivedData === expectedPayload) {
                 console.log(`✅ Success! Mock C++ server received correct payload: '${tcpReceivedData.trim()}'`);
