@@ -88,7 +88,7 @@ class OrderController {
 
             // Only delete if the product is not in any of the user's other orders
             const productsToDelete = removedProductIds.filter(pid => {
-                const isInOtherOrder = allOtherOrders.some(order => 
+                const isInOtherOrder = allOtherOrders.some(order =>
                     order.items.some(item => item.productId === pid)
                 );
                 return !isInOtherOrder;
@@ -138,7 +138,7 @@ class OrderController {
         // Only delete the products that are NOT present in any other active orders of this user
         const allOtherOrders = orderService.getByUserId(userId);
         const productsToDelete = productIds.filter(pid => {
-            const isInOtherOrder = allOtherOrders.some(o => 
+            const isInOtherOrder = allOtherOrders.some(o =>
                 o.items.some(item => item.productId === pid)
             );
             return !isInOtherOrder;

@@ -61,23 +61,56 @@ async function runTests() {
     }
 
     try {
+        // Register a test user first so they exist in DB
+        console.log("Registering test user...");
+        const userRes = await fetch(`${baseUrl}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: "Shira",
+                email: "shira@example.com",
+                phone: "0541234567",
+                address: "Dizengoff 100",
+                userName: "shira_val",
+                password: "password123"
+            })
+        });
+        if (userRes.status !== 201) {
+            const errText = await userRes.text();
+            throw new Error(`Failed to register user. Status: ${userRes.status}, Body: ${errText}`);
+        }
+        const userLocation = userRes.headers.get('Location');
+        const userId = userLocation.split('/').pop();
+        userIdHeader['x-user-id'] = userId;
+        console.log(`✅ User registered successfully. ID: ${userId}`);
+
         // --- Setup: Add a valid restaurant via API so we can order from it ---
+        console.log("Seeding restaurant 'Validation Diner'...");
         const restRes = await fetch(`${baseUrl}/restaurants`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: userIdHeader,
             body: JSON.stringify({ name: "Validation Diner", description: "Safe foods only" })
         });
-        const restaurant = await restRes.json();
-        const validRestId = restaurant.id;
+        if (restRes.status !== 201) {
+            throw new Error(`Failed to seed restaurant, status: ${restRes.status}`);
+        }
+        const restLocation = restRes.headers.get('Location');
+        const validRestId = restLocation.split('/').pop();
+        console.log(`✅ Created Restaurant (ID: ${validRestId})`);
 
         // Add a valid product to this restaurant
+        console.log("Seeding product 'Salad'...");
         const prodRes = await fetch(`${baseUrl}/restaurants/${validRestId}/products`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: userIdHeader,
             body: JSON.stringify({ name: "Salad", description: "Healthy greens", price: 40 })
         });
-        const product = await prodRes.json();
-        const validProdId = product.id;
+        if (prodRes.status !== 201) {
+            throw new Error(`Failed to seed product, status: ${prodRes.status}`);
+        }
+        const prodLocation = prodRes.headers.get('Location');
+        const validProdId = prodLocation.split('/').pop();
+        console.log(`✅ Created Product (ID: ${validProdId})`);
 
 
         // --- Test 1: Valid payload (should succeed) ---

@@ -23,11 +23,38 @@ async function runTests() {
     const baseUrl = 'http://localhost:1234/api';
 
     try {
+        // Register a test user
+        console.log("Registering test user...");
+        const userRes = await fetch(`${baseUrl}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: "Search Tester",
+                email: "search@example.com",
+                phone: "0547777777",
+                address: "Search Ave 1",
+                userName: "search_tester",
+                password: "password123"
+            })
+        });
+        if (userRes.status !== 201) {
+            const errText = await userRes.text();
+            throw new Error(`Failed to register user. Status: ${userRes.status}, Body: ${errText}`);
+        }
+        const userLocation = userRes.headers.get('Location');
+        const userId = userLocation.split('/').pop();
+        console.log(`✅ User registered successfully. ID: ${userId}`);
+
+        const authHeaders = {
+            'Content-Type': 'application/json',
+            'x-user-id': userId
+        };
+
         // 1. Seed Restaurant 1 via POST /api/restaurants
         console.log("\nSeeding Restaurant: 'Pizza Hut'...");
         const restRes1 = await fetch(`${baseUrl}/restaurants`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders,
             body: JSON.stringify({
                 name: "Pizza Hut",
                 description: "Great Italian Pizza and Pasta"
@@ -36,15 +63,15 @@ async function runTests() {
         if (restRes1.status !== 201) {
             throw new Error(`Failed to seed restaurant, status: ${restRes1.status}`);
         }
-        const restaurant1 = await restRes1.json();
-        const restId1 = restaurant1.id;
-        console.log(`✅ Created Restaurant: ${restaurant1.name} (ID: ${restId1})`);
+        const restLocation1 = restRes1.headers.get('Location');
+        const restId1 = restLocation1.split('/').pop();
+        console.log(`✅ Created Restaurant: Pizza Hut (ID: ${restId1})`);
 
         // Seed Product 1 under Restaurant 1 via POST /api/restaurants/:id/products
         console.log("Seeding Product: 'Pepperoni Pizza'...");
         const prodRes1 = await fetch(`${baseUrl}/restaurants/${restId1}/products`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders,
             body: JSON.stringify({
                 name: "Pepperoni Pizza",
                 description: "Hot cheesy pizza with pepperoni slices",
@@ -54,14 +81,16 @@ async function runTests() {
         if (prodRes1.status !== 201) {
             throw new Error(`Failed to seed product, status: ${prodRes1.status}`);
         }
-        const product1 = await prodRes1.json();
-        console.log(`✅ Created Product: ${product1.name}`);
+        const prodLocation1 = prodRes1.headers.get('Location');
+        const prodId1 = prodLocation1.split('/').pop();
+        const product1 = { id: prodId1, name: "Pepperoni Pizza" };
+        console.log(`✅ Created Product: ${product1.name} (ID: ${product1.id})`);
 
         // Seed Product 2 under Restaurant 1
         console.log("Seeding Product: 'Garlic Bread'...");
         const prodRes2 = await fetch(`${baseUrl}/restaurants/${restId1}/products`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders,
             body: JSON.stringify({
                 name: "Garlic Bread",
                 description: "Toasted bread with garlic butter",
@@ -71,15 +100,17 @@ async function runTests() {
         if (prodRes2.status !== 201) {
             throw new Error(`Failed to seed product, status: ${prodRes2.status}`);
         }
-        const product2 = await prodRes2.json();
-        console.log(`✅ Created Product: ${product2.name}`);
+        const prodLocation2 = prodRes2.headers.get('Location');
+        const prodId2 = prodLocation2.split('/').pop();
+        const product2 = { id: prodId2, name: "Garlic Bread" };
+        console.log(`✅ Created Product: ${product2.name} (ID: ${product2.id})`);
 
 
         // 2. Seed Restaurant 2 via POST /api/restaurants
         console.log("\nSeeding Restaurant: 'Sushi Bar'...");
         const restRes2 = await fetch(`${baseUrl}/restaurants`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders,
             body: JSON.stringify({
                 name: "Sushi Bar",
                 description: "Authentic Japanese sushi and rolls"
@@ -88,15 +119,15 @@ async function runTests() {
         if (restRes2.status !== 201) {
             throw new Error(`Failed to seed restaurant, status: ${restRes2.status}`);
         }
-        const restaurant2 = await restRes2.json();
-        const restId2 = restaurant2.id;
-        console.log(`✅ Created Restaurant: ${restaurant2.name} (ID: ${restId2})`);
+        const restLocation2 = restRes2.headers.get('Location');
+        const restId2 = restLocation2.split('/').pop();
+        console.log(`✅ Created Restaurant: Sushi Bar (ID: ${restId2})`);
 
         // Seed Product 3 under Restaurant 2
         console.log("Seeding Product: 'Veggie Roll'...");
         const prodRes3 = await fetch(`${baseUrl}/restaurants/${restId2}/products`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders,
             body: JSON.stringify({
                 name: "Veggie Roll",
                 description: "Fresh cucumber and avocado roll",
@@ -106,8 +137,10 @@ async function runTests() {
         if (prodRes3.status !== 201) {
             throw new Error(`Failed to seed product, status: ${prodRes3.status}`);
         }
-        const product3 = await prodRes3.json();
-        console.log(`✅ Created Product: ${product3.name}`);
+        const prodLocation3 = prodRes3.headers.get('Location');
+        const prodId3 = prodLocation3.split('/').pop();
+        const product3 = { id: prodId3, name: "Veggie Roll" };
+        console.log(`✅ Created Product: ${product3.name} (ID: ${product3.id})`);
 
 
         // --- Test Case 1: Search for "pizza" (should match Pizza Hut restaurant and Pepperoni Pizza product) ---

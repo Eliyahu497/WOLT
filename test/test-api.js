@@ -69,7 +69,7 @@ async function runTests() {
         console.log("Seeding test product...");
         const prodRes = await fetch(`http://localhost:1234/api/restaurants/${restId}/products`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: userIdHeader,
             body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
         });
         if (prodRes.status !== 201) {

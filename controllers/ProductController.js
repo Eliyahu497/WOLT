@@ -81,6 +81,9 @@ class ProductController {
             res.setHeader('Location', `/api/restaurants/${restaurantId}/products/${newProduct.id}`);
             return res.status(201).send();
         } catch (error) {
+            if (error.message.includes("owner")) {
+                return res.status(403).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
@@ -110,6 +113,9 @@ class ProductController {
 
             return res.status(204).send();
         } catch (error) {
+            if (error.message.includes("owner")) {
+                return res.status(403).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
@@ -133,6 +139,9 @@ class ProductController {
 
             return res.status(204).send(); // 204 No Content for successful deletion
         } catch (error) {
+            if (error.message.includes("owner")) {
+                return res.status(403).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
