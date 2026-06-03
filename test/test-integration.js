@@ -97,7 +97,10 @@ mockCppServer.listen(TCP_PORT, () => {
             console.log("\n3. Seeding test product...");
             const prodRes = await fetch(`${baseUrl}/restaurants/${restId}/products`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId
+                },
                 body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
             });
 
