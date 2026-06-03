@@ -289,6 +289,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
 * **Method & Path:** `POST /api/restaurants/:restaurantId/products`
 * **Headers:** 
   * `Content-Type: application/json`
+  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
 * **Path Parameters:**
   * `:restaurantId` (String, required): The UUID of the restaurant to add this product to.
 * **Request Body Fields:**
@@ -299,6 +300,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   ```bash
   curl -X POST http://localhost:1234/api/restaurants/restaurant_uuid_here/products \
     -H "Content-Type: application/json" \
+    -H "x-user-id: user_uuid_here" \
     -d '{
       "name": "Salmon Sushi",
       "description": "Sushi roll",
@@ -308,6 +310,8 @@ All API requests must use the base URL: `http://localhost:1234/api`
 * **Expected Responses:**
   * `201 Created`: Product created. Returns empty body and `Location: /api/restaurants/restaurant_uuid/products/product_uuid_here`.
   * `400 Bad Request`: Missing name or price, or invalid price value.
+  * `401 Unauthorized`: Missing `x-user-id` header.
+  * `403 Forbidden`: User is not the owner of this restaurant.
   * `404 Not Found`: Restaurant not found.
 
 #### B. Retrieve Menu (All Products of Restaurant)
@@ -362,6 +366,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
 * **Method & Path:** `PATCH /api/restaurants/:restaurantId/products/:productId`
 * **Headers:** 
   * `Content-Type: application/json`
+  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
 * **Path Parameters:**
   * `:restaurantId` (String, required): The UUID of the restaurant.
   * `:productId` (String, required): The UUID of the product.
@@ -373,6 +378,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   ```bash
   curl -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
     -H "Content-Type: application/json" \
+    -H "x-user-id: user_uuid_here" \
     -d '{
       "name": "Salmon Sushi Deluxe",
       "price": 65
@@ -380,19 +386,26 @@ All API requests must use the base URL: `http://localhost:1234/api`
   ```
 * **Expected Responses:**
   * `204 No Content`: Product updated successfully.
+  * `401 Unauthorized`: Missing `x-user-id` header.
+  * `403 Forbidden`: User is not the owner of this restaurant.
   * `404 Not Found`: Product or Restaurant not found.
 
 #### E. Delete Product
 * **Method & Path:** `DELETE /api/restaurants/:restaurantId/products/:productId`
+* **Headers:**
+  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
 * **Path Parameters:**
   * `:restaurantId` (String, required): The UUID of the restaurant.
   * `:productId` (String, required): The UUID of the product.
 * **Run Example (curl):**
   ```bash
-  curl -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here
+  curl -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
+    -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
   * `204 No Content`: Product deleted successfully.
+  * `401 Unauthorized`: Missing `x-user-id` header.
+  * `403 Forbidden`: User is not the owner of this restaurant.
   * `404 Not Found`: Product or Restaurant not found.
 
 ---
