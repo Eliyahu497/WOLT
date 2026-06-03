@@ -4,8 +4,8 @@ const crypto = require('crypto'); // Built-in Node.js module to generate unique 
 
 class OrderService {
 
-    // Create a new order in memory (supports custom ID and status for updates)
-    create(userId, restaurantId, items, orderId = null, status = 'pending') {
+    // Create a new order in memory (supports custom ID for updates)
+    create(userId, restaurantId, items, orderId = null) {
         // 1. Validate that the user exists in the system
         const userExists = InMemoryDB.users.find(u => u.id === userId);
         if (!userExists) {
@@ -61,7 +61,7 @@ class OrderService {
         const finalId = orderId || crypto.randomUUID();
 
         // 7. Instantiate the Order and save it to the global In-Memory DB
-        const newOrder = new Order(finalId, userId, restaurantId, orderItems, status, totalPrice);
+        const newOrder = new Order(finalId, userId, restaurantId, orderItems, totalPrice);
         InMemoryDB.orders.push(newOrder);
 
         return newOrder;
@@ -86,14 +86,13 @@ class OrderService {
         const userId = oldOrder.userId;
         const restaurantId = oldOrder.restaurantId;
         const items = data.items || oldOrder.items;
-        const status = data.status || oldOrder.status;
 
         // Delete the old order first
         this.delete(id);
 
         try {
-            // Re-create the order with the updated details, reusing the same ID and status
-            return this.create(userId, restaurantId, items, id, status);
+            // Re-create the order with the updated details, reusing the same ID
+            return this.create(userId, restaurantId, items, id);
         } catch (error) {
             // If validation in create fails, restore the original order in DB and rethrow error
             InMemoryDB.orders.push(oldOrder);

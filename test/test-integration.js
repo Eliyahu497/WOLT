@@ -19,7 +19,7 @@ const mockCppServer = net.createServer((socket) => {
     });
 });
 
-// Start Mock TCP Server listening on port 5000
+// Start Mock TCP Server listening on port 5555
 mockCppServer.listen(TCP_PORT, () => {
     console.log(`[Mock C++ Server] Listening on port ${TCP_PORT}...`);
 

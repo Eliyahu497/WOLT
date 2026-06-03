@@ -55,7 +55,7 @@ async function runTests() {
         console.log("Seeding test restaurant...");
         const restRes = await fetch('http://localhost:1234/api/restaurants', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: userIdHeader,
             body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar" })
         });
         if (restRes.status !== 201) {
@@ -73,10 +73,14 @@ async function runTests() {
             body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
         });
         if (prodRes.status !== 201) {
-            throw new Error(`Failed to seed product, status: ${prodRes.status}`);
+            const errText = await prodRes.text();
+            throw new Error(`Failed to seed product, status: ${prodRes.status}, body: ${errText}`);
         }
-        const product = await prodRes.json();
-        const prodId = product.id;
+        const locationHeaderProd = prodRes.headers.get('Location');
+        if (!locationHeaderProd) {
+            throw new Error("Missing Location header in product creation response");
+        }
+        const prodId = locationHeaderProd.split('/').pop();
         console.log(`✅ Created Product with ID: ${prodId}`);
 
         // --- 1. Test POST /api/orders (Create Order) ---
@@ -122,25 +126,27 @@ async function runTests() {
         const details = await detailsRes.json();
         console.log("✅ Success! Order details retrieved:", details);
 
-        // --- 4. Test PATCH /api/orders/:id (Update Order Status) ---
-        console.log(`\n4. Testing PATCH /api/orders/${createdOrderId} (Update Status)...`);
+        // --- 4. Test PATCH /api/orders/:id (Update Order Items) ---
+        console.log(`\n4. Testing PATCH /api/orders/${createdOrderId} (Update Items)...`);
         const patchRes = await fetch(`${baseUrl}/${createdOrderId}`, {
             method: 'PATCH',
             headers: userIdHeader,
-            body: JSON.stringify({ status: 'completed' })
+            body: JSON.stringify({
+                items: [{ productId: prodId, quantity: 3 }]
+            })
         });
         if (patchRes.status !== 204) {
             throw new Error(`Expected 204 status, got ${patchRes.status}`);
         }
-        console.log("✅ Success! Status updated (204 No Content).");
+        console.log("✅ Success! Items updated (204 No Content).");
 
-        // Verify status was indeed updated
+        // Verify total price and items were indeed updated
         const verifyRes = await fetch(`${baseUrl}/${createdOrderId}`, {
             method: 'GET',
             headers: userIdHeader
         });
         const verifiedOrder = await verifyRes.json();
-        console.log(`   Verification: Status is now '${verifiedOrder.status}'`);
+        console.log(`   Verification: New Total is now '${verifiedOrder.total}' NIS (was ${details.total} NIS)`);
 
         // --- 5. Test DELETE /api/orders/:id (Cancel Order) ---
         console.log(`\n5. Testing DELETE /api/orders/${createdOrderId} (Delete Order)...`);
