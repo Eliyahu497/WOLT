@@ -20,10 +20,12 @@ class ProductService {
     }
 
     // Generates ID, creates Product, pushes to the restaurant's products array, returns it or null if restaurant not found
-    static addProduct(restaurantId, data) {
+    static addProduct(restaurantId, data, owner) {
         const restaurant = InMemoryDB.restaurants.find(r => r.id === restaurantId);
         if (!restaurant) return null;
-
+        if (restaurant.owner !== owner) {
+            throw new Error("You are not the owner of this restaurant");
+        }
         const id = uuidv4();
         const newProduct = new Product(id, data.name, data.description, data.price);
         restaurant.products.push(newProduct);
@@ -31,9 +33,12 @@ class ProductService {
     }
 
     // Updates the product. Returns updated product or null if not found
-    static updateProduct(restaurantId, productId, data) {
+    static updateProduct(restaurantId, productId, data, owner) {
         const restaurant = InMemoryDB.restaurants.find(r => r.id === restaurantId);
         if (!restaurant) return null;
+        if (restaurant.owner !== owner) {
+            throw new Error("You are not the owner of this restaurant");
+        }
 
         const product = restaurant.products.find(p => p.id === productId);
         if (!product) return null;
@@ -46,9 +51,12 @@ class ProductService {
     }
 
     // Removes the product from the array. Returns boolean
-    static deleteProduct(restaurantId, productId) {
+    static deleteProduct(restaurantId, productId, owner) {
         const restaurant = InMemoryDB.restaurants.find(r => r.id === restaurantId);
         if (!restaurant) return false;
+        if (restaurant.owner !== owner) {
+            throw new Error("You are not the owner of this restaurant");
+        }
 
         const index = restaurant.products.findIndex(p => p.id === productId);
         if (index === -1) return false;
