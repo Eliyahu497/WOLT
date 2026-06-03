@@ -35,11 +35,13 @@ class ProductController {
             }
 
             const userId = req.headers['x-user-id'];
-            // If user ID header is present, report this product view to the C++ recommendation engine
+            // If user ID header is present, report this product view to the C++ recommendation engine.
+            // Under exercise 2 rules, we attempt a PATCH operation to append the product view to the user's existing history.
+            // If the user does not exist in the recommender system database, PATCH returns 404, in which case we fall back to a POST operation.
             if (userId) {
                 // We call this asynchronously so that a slow/offline C++ server
                 // does not block or crash the REST API response.
-                tcpClient.addProductView(userId, productId).catch(err => {
+                tcpClient.reportInteraction(userId, productId).catch(err => {
                     console.error(`[TCP Client Error] Failed to report view to C++ server: ${err.message}`);
                 });
             }
@@ -63,10 +65,10 @@ class ProductController {
                 return res.status(400).json({ error: 'Name and price are required' });
             }
 
-            const newProduct = ProductService.addProduct(restaurantId, { 
-                name, 
-                description, 
-                price: Number(price) 
+            const newProduct = ProductService.addProduct(restaurantId, {
+                name,
+                description,
+                price: Number(price)
             });
 
             if (!newProduct) {

@@ -1,4 +1,5 @@
 const orderService = require('../services/OrderService');
+const tcpClient = require('../services/TCPClient');
 
 class OrderController {
 
@@ -19,6 +20,14 @@ class OrderController {
             }
 
             const newOrder = orderService.create(userId, restaurantId, items);
+
+            // Report the purchase of items to the C++ recommendation engine.
+            // Under exercise 2 rules, we attempt a PATCH operation to append the purchased products to the user's existing history.
+            // If the user does not exist in the recommender system database, PATCH returns 404, in which case we fall back to a POST operation.
+            const productIds = items.map(item => item.productId);
+            tcpClient.reportInteraction(userId, productIds).catch(err => {
+                console.error(`[TCP Client Error] Failed to report purchase to C++ server: ${err.message}`);
+            });
 
             // 210 Created status on successful resource initialization
             return res.status(201).json(newOrder);
@@ -51,13 +60,34 @@ class OrderController {
         return res.status(200).json(order);
     }
 
-    // PATCH /api/orders/:id - Update order status
+    // PATCH /api/orders/:id - Update order status or items
     updateOrder(req, res) {
         const { id } = req.params;
-        const updatedOrder = orderService.update(id, req.body);
 
+        // Retrieve the old order before updating to compare items
+        const oldOrder = orderService.getById(id);
+        if (!oldOrder) {
+            return res.status(404).json({ error: "Order not found to update" });
+        }
+        const oldProductIds = oldOrder.items.map(item => item.productId);
+
+        const updatedOrder = orderService.update(id, req.body);
         if (!updatedOrder) {
             return res.status(404).json({ error: "Order not found to update" });
+        }
+
+        // If the items list is modified, update the user's history in the C++ RecommenderServer
+        if (req.body.items) {
+            const newProductIds = updatedOrder.items.map(item => item.productId);
+            // First DELETE the old product views
+            tcpClient.removePurchase(updatedOrder.userId, oldProductIds)
+                .then(() => {
+                    // Then PATCH (or POST) the new product views
+                    return tcpClient.reportInteraction(updatedOrder.userId, newProductIds);
+                })
+                .catch(err => {
+                    console.error(`[TCP Client Error] Failed to update purchase on C++ server: ${err.message}`);
+                });
         }
 
         // 204 No Content specifies a successful mutation with an empty response body
@@ -67,11 +97,27 @@ class OrderController {
     // DELETE /api/orders/:id - Cancel/Remove an order
     deleteOrder(req, res) {
         const { id } = req.params;
-        const isDeleted = orderService.delete(id);
 
+        // 1. Retrieve the order from database first
+        const order = orderService.getById(id);
+        if (!order) {
+            return res.status(404).json({ error: "Order not found to delete" });
+        }
+
+        // 2. Extract the details we need for the TCP command while the order still exists
+        const userId = order.userId;
+        const productIds = order.items.map(item => item.productId);
+
+        // 3. Delete the order from the local database
+        const isDeleted = orderService.delete(id);
         if (!isDeleted) {
             return res.status(404).json({ error: "Order not found to delete" });
         }
+
+        // 4. Send the DELETE command asynchronously to the C++ RecommenderServer
+        tcpClient.removePurchase(userId, productIds).catch(err => {
+            console.error(`[TCP Client Error] Failed to remove purchase from C++ server: ${err.message}`);
+        });
 
         return res.status(204).send();
     }
