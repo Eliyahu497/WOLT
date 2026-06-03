@@ -26,9 +26,9 @@ try {
     const userOrders = orderService.getByUserId("user_shira");
     console.log(`\n🔍 Found ${userOrders.length} orders for user_shira.`);
     
-    // 4. Test Updating Order Status
-    orderService.update(myOrder.id, { status: "completed" });
-    console.log("\n🔄 Status Updated to:", orderService.getById(myOrder.id).status);
+    // 4. Test Updating Order Items (e.g., changing quantity of sushi from 2 to 3)
+    orderService.update(myOrder.id, { items: [{ productId: "prod_sushi", quantity: 3 }] });
+    console.log("\n🔄 Items Updated, New Total (65 * 3):", orderService.getById(myOrder.id).total, "NIS");
     
 } catch (error) {
     console.error("❌ Test Failed with error:", error.message);

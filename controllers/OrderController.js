@@ -60,7 +60,7 @@ class OrderController {
         return res.status(200).json(order);
     }
 
-    // PATCH /api/orders/:id - Update order status or items
+    // PATCH /api/orders/:id - Update order items
     updateOrder(req, res) {
         const { id } = req.params;
 
@@ -79,15 +79,35 @@ class OrderController {
         // If the items list is modified, update the user's history in the C++ RecommenderServer
         if (req.body.items) {
             const newProductIds = updatedOrder.items.map(item => item.productId);
-            // First DELETE the old product views
-            tcpClient.removePurchase(updatedOrder.userId, oldProductIds)
-                .then(() => {
-                    // Then PATCH (or POST) the new product views
-                    return tcpClient.reportInteraction(updatedOrder.userId, newProductIds);
-                })
-                .catch(err => {
-                    console.error(`[TCP Client Error] Failed to update purchase on C++ server: ${err.message}`);
+            // Identify products that were removed from this specific order
+            const removedProductIds = oldProductIds.filter(pid => !newProductIds.includes(pid));
+
+            // Exclude the current updated order from the other orders check
+            const allOtherOrders = orderService.getByUserId(updatedOrder.userId)
+                .filter(order => order.id !== id);
+
+            // Only delete if the product is not in any of the user's other orders
+            const productsToDelete = removedProductIds.filter(pid => {
+                const isInOtherOrder = allOtherOrders.some(order => 
+                    order.items.some(item => item.productId === pid)
+                );
+                return !isInOtherOrder;
+            });
+
+            if (productsToDelete.length > 0) {
+                tcpClient.removePurchase(updatedOrder.userId, productsToDelete)
+                    .then(() => {
+                        return tcpClient.reportInteraction(updatedOrder.userId, newProductIds);
+                    })
+                    .catch(err => {
+                        console.error(`[TCP Client Error] Failed to update purchase on C++ server: ${err.message}`);
+                    });
+            } else {
+                // If no products need to be deleted, just report/append the new ones
+                tcpClient.reportInteraction(updatedOrder.userId, newProductIds).catch(err => {
+                    console.error(`[TCP Client Error] Failed to report purchase to C++ server: ${err.message}`);
                 });
+            }
         }
 
         // 204 No Content specifies a successful mutation with an empty response body
@@ -115,9 +135,20 @@ class OrderController {
         }
 
         // 4. Send the DELETE command asynchronously to the C++ RecommenderServer
-        tcpClient.removePurchase(userId, productIds).catch(err => {
-            console.error(`[TCP Client Error] Failed to remove purchase from C++ server: ${err.message}`);
+        // Only delete the products that are NOT present in any other active orders of this user
+        const allOtherOrders = orderService.getByUserId(userId);
+        const productsToDelete = productIds.filter(pid => {
+            const isInOtherOrder = allOtherOrders.some(o => 
+                o.items.some(item => item.productId === pid)
+            );
+            return !isInOtherOrder;
         });
+
+        if (productsToDelete.length > 0) {
+            tcpClient.removePurchase(userId, productsToDelete).catch(err => {
+                console.error(`[TCP Client Error] Failed to remove purchase from C++ server: ${err.message}`);
+            });
+        }
 
         return res.status(204).send();
     }
