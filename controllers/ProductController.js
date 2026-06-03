@@ -57,7 +57,10 @@ class ProductController {
         try {
             const { restaurantId } = req.params;
             const { name, description, price } = req.body;
-
+            const owner = req.headers['x-user-id'];
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
             if (!restaurantId) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
@@ -69,7 +72,7 @@ class ProductController {
                 name,
                 description,
                 price: Number(price)
-            });
+            },owner);
 
             if (!newProduct) {
                 return res.status(404).json({ error: 'Restaurant not found' });
@@ -87,7 +90,10 @@ class ProductController {
         try {
             const { restaurantId, productId } = req.params;
             const { name, description, price } = req.body;
-
+            const owner = req.headers['x-user-id'];
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
             if (!restaurantId || !productId) {
                 return res.status(400).json({ error: 'Restaurant ID and Product ID are required' });
             }
@@ -96,7 +102,7 @@ class ProductController {
                 name,
                 description,
                 price: price !== undefined ? Number(price) : undefined
-            });
+            },owner);
 
             if (!updatedProduct) {
                 return res.status(404).json({ error: 'Product or Restaurant not found' });
@@ -112,12 +118,15 @@ class ProductController {
     static deleteProduct(req, res) {
         try {
             const { restaurantId, productId } = req.params;
-
+            const owner = req.headers['x-user-id'];
+            if (!owner) {
+                return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
+            }
             if (!restaurantId || !productId) {
                 return res.status(400).json({ error: 'Restaurant ID and Product ID are required' });
             }
 
-            const success = ProductService.deleteProduct(restaurantId, productId);
+            const success = ProductService.deleteProduct(restaurantId, productId,owner);
             if (!success) {
                 return res.status(404).json({ error: 'Product or Restaurant not found' });
             }
