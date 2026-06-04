@@ -4,7 +4,7 @@ const RestaurantController = require('../controllers/RestaurantController');
 const ProductController = require('../controllers/ProductController');
 
 // --- Restaurant Routes ---
-// GET / - Retrieve all restaurants (supports search via query parameters)
+// GET / - Retrieve all restaurants
 router.get('/', RestaurantController.getAllRestaurants);
 
 // POST / - Create a new restaurant
