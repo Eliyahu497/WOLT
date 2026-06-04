@@ -2,17 +2,9 @@ const RestaurantService = require('../services/RestaurantService');
 const userService = require('../services/UserService');
 
 class RestaurantController {
-    // Retrieve all restaurants (or filter using query string if provided)
+    // Retrieve all restaurants
     static getAllRestaurants(req, res) {
         try {
-            const { q, search } = req.query;
-            const query = q || search;
-
-            if (query) {
-                const results = RestaurantService.search(query);
-                return res.status(200).json(results);
-            }
-
             const restaurants = RestaurantService.getAll();
             return res.status(200).json(restaurants);
         } catch (error) {

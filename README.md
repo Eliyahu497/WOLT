@@ -104,7 +104,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `password` (String, required): User password.
 * **Run Example (curl):**
   ```bash
-  curl -X POST http://localhost:1234/api/users \
+  curl -i -X POST http://localhost:1234/api/users \
     -H "Content-Type: application/json" \
     -d '{
       "name": "Shira",
@@ -129,7 +129,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `password` (String, required): The registered password.
 * **Run Example (curl):**
   ```bash
-  curl -X POST http://localhost:1234/api/tokens \
+  curl -i -X POST http://localhost:1234/api/tokens \
     -H "Content-Type: application/json" \
     -d '{
       "userName": "shira_123",
@@ -149,7 +149,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:id` (String, required): The UUID of the user to fetch.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/users/user_uuid_here
+  curl -i -X GET http://localhost:1234/api/users/user_uuid_here
   ```
 * **Expected Responses:**
   * `200 OK`: Returns the profile info (excluding password for security):
@@ -179,7 +179,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `description` (String, optional): Description of the culinary style/cuisine.
 * **Run Example (curl):**
   ```bash
-  curl -X POST http://localhost:1234/api/restaurants \
+  curl -i -X POST http://localhost:1234/api/restaurants \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -193,17 +193,12 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `401 Unauthorized`: Missing `x-user-id` header.
   * `404 Not Found`: Owner user ID in `x-user-id` header does not exist in database.
 
-#### B. Retrieve All Restaurants / Filtering
+#### B. Retrieve All Restaurants 
 * **Method & Path:** `GET /api/restaurants`
-* **Query Parameters:**
-  * `q` or `search` (String, optional): Search term to filter restaurants by name or description.
 * **Run Example (curl):**
   ```bash
   # Retrieve all restaurants
-  curl -X GET http://localhost:1234/api/restaurants
-
-  # Search for restaurants containing "Asian"
-  curl -X GET "http://localhost:1234/api/restaurants?q=Asian"
+  curl -i -X GET http://localhost:1234/api/restaurants
   ```
 * **Expected Responses:**
   * `200 OK`: Returns an array of restaurants matching search, or all restaurants if no query param is provided:
@@ -224,7 +219,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:id` (String, required): The UUID of the restaurant.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here
+  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here
   ```
 * **Expected Responses:**
   * `200 OK`: Returns the restaurant object:
@@ -250,7 +245,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `description` (String, optional): Updated restaurant description.
 * **Run Example (curl):**
   ```bash
-  curl -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here \
+  curl -i -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -272,7 +267,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:id` (String, required): The UUID of the restaurant.
 * **Run Example (curl):**
   ```bash
-  curl -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here \
+  curl -i -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here \
     -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
@@ -298,7 +293,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `price` (Number, required): Cost of the product (must be greater than 0).
 * **Run Example (curl):**
   ```bash
-  curl -X POST http://localhost:1234/api/restaurants/restaurant_uuid_here/products \
+  curl -i -X POST http://localhost:1234/api/restaurants/restaurant_uuid_here/products \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -320,7 +315,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:restaurantId` (String, required): The UUID of the restaurant.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products
+  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products
   ```
 * **Expected Responses:**
   * `200 OK`: Returns an array of products for the given restaurant:
@@ -346,7 +341,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:productId` (String, required): The UUID of the product.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
+  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
     -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
@@ -376,7 +371,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `price` (Number, optional): Updated product price.
 * **Run Example (curl):**
   ```bash
-  curl -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
+  curl -i -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -399,7 +394,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:productId` (String, required): The UUID of the product.
 * **Run Example (curl):**
   ```bash
-  curl -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
+  curl -i -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
     -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
@@ -424,7 +419,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
     * `quantity` (Integer, required): Must be a positive integer.
 * **Run Example (curl):**
   ```bash
-  curl -X POST http://localhost:1234/api/orders \
+  curl -i -X POST http://localhost:1234/api/orders \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -462,7 +457,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `x-user-id: <user_id>` (String, required: The UUID of the user)
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/orders \
+  curl -i -X GET http://localhost:1234/api/orders \
     -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
@@ -491,7 +486,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:id` (String, required): The UUID of the order.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/orders/order_uuid_here
+  curl -i -X GET http://localhost:1234/api/orders/order_uuid_here
   ```
 * **Expected Responses:**
   * `200 OK`: Returns the order details:
@@ -524,7 +519,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
     * `quantity` (Integer, required): Must be a positive integer.
 * **Run Example (curl):**
   ```bash
-  curl -X PATCH http://localhost:1234/api/orders/order_uuid_here \
+  curl -i -X PATCH http://localhost:1234/api/orders/order_uuid_here \
     -H "Content-Type: application/json" \
     -H "x-user-id: user_uuid_here" \
     -d '{
@@ -549,7 +544,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:id` (String, required): The UUID of the order.
 * **Run Example (curl):**
   ```bash
-  curl -X DELETE http://localhost:1234/api/orders/order_uuid_here \
+  curl -i -X DELETE http://localhost:1234/api/orders/order_uuid_here \
     -H "x-user-id: user_uuid_here"
   ```
 * **Expected Responses:**
@@ -566,7 +561,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `:query` (String, required): The search string.
 * **Run Example (curl):**
   ```bash
-  curl -X GET http://localhost:1234/api/search/sushi
+  curl -i -X GET http://localhost:1234/api/search/sushi
   ```
 * **Expected Responses:**
   * `200 OK`: Returns a structured JSON matching the query against restaurant names, descriptions, and product names:
