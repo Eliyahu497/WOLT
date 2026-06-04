@@ -67,6 +67,9 @@ class ProductController {
             if (!name || price === undefined) {
                 return res.status(400).json({ error: 'Name and price are required' });
             }
+            if (isNaN(Number(price)) || Number(price) <= 0) {
+                return res.status(400).json({ error: 'Price must be a positive number' });
+            }
 
             const newProduct = ProductService.addProduct(restaurantId, {
                 name,
@@ -99,6 +102,9 @@ class ProductController {
             }
             if (!restaurantId || !productId) {
                 return res.status(400).json({ error: 'Restaurant ID and Product ID are required' });
+            }
+            if (price !== undefined && (isNaN(Number(price)) || Number(price) <= 0)) {
+                return res.status(400).json({ error: 'Price must be a positive number' });
             }
 
             const updatedProduct = ProductService.updateProduct(restaurantId, productId, {
