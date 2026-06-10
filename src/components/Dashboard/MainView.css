@@ -1,0 +1,46 @@
+/* ==========================================================================
+   Main View Page Split-Layout Styles
+   ========================================================================== */
+.main-view-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Flex layout division to separate content from the right sidebar cart drawer */
+.main-content-split {
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+}
+
+/* The primary page view which hosts either the Dashboard or RestaurantMenu */
+.content-viewport {
+  flex-grow: 1;
+  padding: 0;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Responsive Viewport Splits
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* On tablets and mobile screens, stack the main content and cart vertically */
+  .main-content-split {
+    flex-direction: column;
+  }
+
+  /* Expand Cart to full-width and remove sticky sidebar positioning */
+  .cart-drawer {
+    max-width: 100%;
+    position: relative;
+    top: 0;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+}
