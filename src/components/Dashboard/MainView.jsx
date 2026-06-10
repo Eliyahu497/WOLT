@@ -5,16 +5,21 @@ import { RestaurantMenu } from './RestaurantMenu';
 import { ProductModal } from './ProductModal';
 import { Cart } from './Cart';
 
+// Import the custom hooks to consume global contexts
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
+
 // Import the mock data from the parent directory
-import { mockRestaurants, mockCategories, mockProducts, mockUser } from '../../mockData';
+import { mockRestaurants, mockCategories, mockProducts } from '../../mockData';
 import './MainView.css';
 
 // MainView is the top-level page orchestrator for Developer 3's flow.
-// It integrates all subcomponents and handles the global state for search, theme, selected restaurant,
-// product modals, and cart actions.
+// It integrates all subcomponents and handles the global state for search, selected restaurant,
+// product modals, and cart actions, consuming global theme and auth contexts.
 export const MainView = () => {
-  // Theme state: Toggle light/dark modes
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Consume global states from custom hooks (managed by Developer 2)
+  const { isDarkMode } = useTheme();
+  const { isLoggedIn } = useAuth();
 
   // Search input state: Filter matching results in Header and Dashboard
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,11 +32,6 @@ export const MainView = () => {
 
   // Cart state: List of added items in the shopping cart
   const [cartItems, setCartItems] = useState([]);
-
-  // Toggles the theme state between light and dark modes
-  const handleThemeToggle = () => {
-    setIsDarkMode((prev) => !prev);
-  };
 
   // Click handler to open a restaurant menu and clear search queries
   const handleRestaurantSelect = (restaurant) => {
@@ -96,10 +96,18 @@ export const MainView = () => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
   };
 
-  // Checkout submission action handler
+  // Checkout submission action handler with Authentication Check
   const handleSubmitOrder = () => {
+    // Check if the user is logged in before placing the order
+    if (!isLoggedIn) {
+      alert("You must be logged in to submit an order! Redirecting to the Login page...");
+      // Future routing implementation (e.g. using react-router-dom navigate to login screen)
+      // navigate("/login");
+      return;
+    }
+
     alert(`Order submitted successfully! Thank you for ordering.`);
-    setCartItems([]); // Reset/empty the shopping cart
+    setCartItems([]); // Reset/empty the shopping cart after successful checkout
   };
 
   // Filter products to only display those belonging to the currently selected restaurant
@@ -114,9 +122,6 @@ export const MainView = () => {
       <Header
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        onThemeToggle={handleThemeToggle}
-        isDarkMode={isDarkMode}
-        user={mockUser}
       />
 
       {/* Main content viewport split between page content and the cart sidebar */}
