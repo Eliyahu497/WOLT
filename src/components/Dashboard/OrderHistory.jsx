@@ -6,7 +6,7 @@ import './OrderHistory.css';
 // Props:
 // - onBack: Callback function to navigate back to the main dashboard
 export const OrderHistory = ({ onBack }) => {
-  const { isLoggedIn, token } = useAuth();
+  const { isLoggedIn, token, user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,7 +27,8 @@ export const OrderHistory = ({ onBack }) => {
       setLoading(true);
       const response = await fetch('/api/orders', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'x-user-id': user?.id
         }
       });
 
@@ -53,7 +54,8 @@ export const OrderHistory = ({ onBack }) => {
       const response = await fetch(`/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'x-user-id': user?.id
         }
       });
 
@@ -97,7 +99,8 @@ export const OrderHistory = ({ onBack }) => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'x-user-id': user?.id
         },
         body: JSON.stringify({ items: updatedItems })
       });
