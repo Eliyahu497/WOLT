@@ -7,7 +7,8 @@ import { useAuth } from '../../context/AuthContext';
 // Props:
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
-export const Header = ({ searchQuery, setSearchQuery }) => {
+// - onViewHistory: Callback function to open the Order History screen.
+export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
@@ -51,6 +52,17 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
           >
             {isDarkMode ? '☀️ Light' : '🌙 Dark'}
           </button>
+
+          {/* Past orders navigation button (visible only if user is logged in) */}
+          {user && (
+            <button 
+              onClick={onViewHistory} 
+              className="theme-toggle-btn"
+              title="View past orders"
+            >
+              📋 My Orders
+            </button>
+          )}
 
           {/* Conditional Profile Rendering */}
           {/* Renders the user's name, avatar, and logout action if logged in, otherwise renders a login button */}

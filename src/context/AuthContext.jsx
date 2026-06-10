@@ -9,21 +9,24 @@ export const AuthProvider = ({ children }) => {
   // Start with a mock user session active for development
   const [user, setUser] = useState(mockUser);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [token, setToken] = useState('mock-jwt-token-123'); // Expose mock token for API requests
 
   // Authenticate user session with credentials (mock implementation)
   const login = (username, password) => {
     setUser(mockUser);
     setIsLoggedIn(true);
+    setToken('mock-jwt-token-123');
   };
 
   // Terminate user session and clear active state
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
