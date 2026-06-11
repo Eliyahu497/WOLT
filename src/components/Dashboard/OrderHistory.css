@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Order History Page Styles
+   ========================================================================== */
+.order-history-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.loading-text, .error-text, .empty-orders {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+/* Individual order card container */
+.order-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--wolt-border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow-soft);
+  transition: border-color var(--transition-speed);
+}
+
+.order-card-header {
+  background-color: var(--surface-color);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 15px;
+  margin-right: 12px;
+}
+
+.order-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.cancel-order-btn {
+  background: none;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.cancel-order-btn:hover {
+  background-color: #ff4d4f;
+  color: #ffffff;
+}
+
+/* Order body displaying items */
+.order-card-body {
+  padding: 20px;
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.order-item-row:last-child {
+  border-bottom: none;
+}
+
+.order-item-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.order-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Compact style modifier for quantity buttons inside lists */
+.qty-controller.compact {
+  padding: 2px;
+  border-radius: 12px;
+}
+
+.qty-controller.compact .qty-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+}
+
+.qty-controller.compact .qty-display {
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.order-item-price {
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Order footer detailing final totals */
+.order-card-footer {
+  background-color: var(--surface-color);
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.order-total-price {
+  color: var(--wolt-blue);
+  font-size: 16px;
+  font-weight: 800;
+}
