@@ -17,7 +17,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
     // Dynamic styling application: Appends 'dark' or 'light' class modifier based on theme context state
     <header className={`wolt-header ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="header-container">
-        
+
         {/* 1. Brand Logo Container */}
         <div className="header-logo">
           <span className="logo-wolt">Wolt</span>
@@ -41,12 +41,12 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
 
         {/* 3. Utility Controls and Profile Slot */}
         <div className="header-actions">
-          
+
           {/* Light/Dark mode toggle button */}
           {/* Invokes toggleTheme to flip global theme context variables */}
-          <button 
-            onClick={toggleTheme} 
-            className="theme-toggle-btn" 
+          <button
+            onClick={toggleTheme}
+            className="theme-toggle-btn"
             title="Toggle theme"
             aria-label="Toggle Theme"
           >
@@ -55,8 +55,8 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
 
           {/* Past orders navigation button (visible only if user is logged in) */}
           {user && (
-            <button 
-              onClick={onViewHistory} 
+            <button
+              onClick={onViewHistory}
               className="theme-toggle-btn"
               title="View past orders"
             >
@@ -69,16 +69,17 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
           {user ? (
             <div className="user-profile-group">
               <div className="user-profile">
-                <img 
-                  src={user.avatar} 
-                  alt={user.name} 
-                  className="user-avatar" 
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="user-avatar"
                 />
-                <span className="user-name">{user.name}</span>
+                {/* show user name and if role is restaurant_owner */}
+                <span className="user-name">{user.name} ({user.role === 'restaurant_owner' ? 'Restaurant Owner' : ''})</span>
               </div>
-              <button 
-                onClick={logout} 
-                className="logout-btn" 
+              <button
+                onClick={logout}
+                className="logout-btn"
                 title="Log Out"
               >
                 Logout ➔
