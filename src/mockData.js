@@ -174,6 +174,7 @@ export const mockUser = {
   email: "shira@example.com",
   phone: "0541234567",
   address: "Dizengoff 100, Tel Aviv",
+  role: "customer",
   avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=60"
 };
 
