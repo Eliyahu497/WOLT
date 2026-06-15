@@ -21,11 +21,11 @@ app.use('/api/users', userRouter);
 app.use('/api/tokens', existUserRouter);
 
 // Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Catch-all route to serve the React index.html for any non-API routes (must be at the end)
 app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Start the server listening on the defined port

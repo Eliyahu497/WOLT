@@ -8,6 +8,8 @@ InMemoryDB.users.push({ id: "user_shira", name: "Shira" });
 InMemoryDB.restaurants.push({
     id: "rest_giraffe",
     name: "Giraffe",
+    description: "Asian Noodle Bar",
+    location: { lat: 32.0, lng: 34.0 },
     products: [{ id: "prod_sushi", name: "Sushi", price: 65 }]
 });
 

@@ -65,7 +65,11 @@ export const MainView = () => {
       try {
         setLoading(true);
         // Fetch restaurants from Express backend
-        const restRes = await fetch('/api/restaurants');
+        const headers = {};
+        if (isLoggedIn && token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        const restRes = await fetch('/api/restaurants', { headers });
         if (restRes.ok) {
           const restData = await restRes.ok ? await restRes.json() : [];
           setRestaurants(restData.length > 0 ? restData : mockRestaurants);
@@ -81,7 +85,7 @@ export const MainView = () => {
     };
 
     loadInitialData();
-  }, []);
+  }, [isLoggedIn, token]);
 
   // Fetch products and handle search queries dynamically from the backend
   useEffect(() => {

@@ -5,9 +5,11 @@ class UserController {
 
     // POST /api/users - Create a new user
     register(req, res) {
-        let { name, email, phone, address, userName, password, role, avatar } = req.body
-        if (!name || !email || !phone || !address || !userName || !password || !avatar)
+        let { name, email, phone, location, userName, password, role, avatar } = req.body
+        if (!name || !email || !phone || !location || !userName || !password || !avatar)
             return res.status(400).json({ error: "missing fields" })
+        if (typeof location.lat !== 'number' || typeof location.lng !== 'number')
+            return res.status(400).json({ error: "invalid location: lat and lng must be numbers" })
         if (!/^\d{10}$/.test(phone))
             return res.status(400).json({ error: "phone number has to be exactly 10 digits" })
         
@@ -26,7 +28,7 @@ class UserController {
         if (userService.invalidUN(userName)) {
             return res.status(409).json({ error: "Username is already taken" })
         }
-        const newUser = userService.createUser({ name, email, phone, address, userName, password, role, avatar })
+        const newUser = userService.createUser({ name, email, phone, location, userName, password, role, avatar })
         res.setHeader('Location', `/api/users/${newUser.id}`);
         return res.status(201).send()
     }
@@ -43,7 +45,7 @@ class UserController {
             name: user.name,
             email: user.email,
             phone: user.phone,
-            address: user.address,
+            location: user.location,
             userName: user.userName,
             role: user.role,
             avatar: user.avatar

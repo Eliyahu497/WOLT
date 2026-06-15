@@ -38,7 +38,7 @@ async function runTests() {
                 name: "Shira",
                 email: "shira@example.com",
                 phone: "0501234567",
-                address: "Dizengoff 100",
+                location: { lat: 32.0, lng: 34.0 },
                 userName: "shira_user",
                 password: "password123",
                 avatar: "http://example.com/avatar.jpg"
@@ -57,7 +57,7 @@ async function runTests() {
         const restRes = await fetch('http://localhost:1234/api/restaurants', {
             method: 'POST',
             headers: userIdHeader,
-            body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar", image: "http://example.com/giraffe.jpg" })
+            body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar", location: { lat: 32.0, lng: 34.0 }, image: "http://example.com/giraffe.jpg" })
         });
         if (restRes.status !== 201) {
             throw new Error(`Failed to seed restaurant, status: ${restRes.status}`);

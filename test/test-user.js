@@ -11,7 +11,7 @@ try {
         name: "Yossi Cohen",
         email: "yossi@example.com",
         phone: "0501234567",
-        address: "Dizengoff 50, Tel Aviv",
+        location: { lat: 32.0, lng: 34.0 },
         userName: "yossi_c",
         password: "secretPassword123",
         avatar: "http://example.com/avatar.jpg"

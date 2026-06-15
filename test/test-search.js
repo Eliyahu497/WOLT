@@ -32,7 +32,7 @@ async function runTests() {
                 name: "Search Tester",
                 email: "search@example.com",
                 phone: "0547777777",
-                address: "Search Ave 1",
+                location: { lat: 32.0, lng: 34.0 },
                 userName: "search_tester",
                 password: "password123",
                 avatar: "http://example.com/avatar.jpg"

@@ -17,7 +17,7 @@ export const OwnerDashboard = () => {
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   
   // Forms state
-  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', image: '' });
+  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '', image: '' });
   const [productForm, setProductForm] = useState({ name: '', description: '', price: '', image: '' });
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState('');
@@ -96,6 +96,10 @@ export const OwnerDashboard = () => {
       setError('Restaurant name and image are required');
       return;
     }
+    if (!restaurantForm.lat || !restaurantForm.lng || isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
+      setError('Valid latitude and longitude are required');
+      return;
+    }
 
     try {
       setError('');
@@ -108,6 +112,10 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
           description: restaurantForm.description.trim(),
+          location: {
+            lat: Number(restaurantForm.lat),
+            lng: Number(restaurantForm.lng)
+          },
           image: restaurantForm.image.trim()
         })
       });
@@ -117,7 +125,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to create restaurant');
       }
 
-      setRestaurantForm({ name: '', description: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
       setShowAddRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -131,6 +139,12 @@ export const OwnerDashboard = () => {
       setError('Restaurant name and image are required');
       return;
     }
+    if (restaurantForm.lat || restaurantForm.lng) {
+      if (isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
+        setError('Latitude and longitude must be valid numbers');
+        return;
+      }
+    }
 
     try {
       setError('');
@@ -143,6 +157,10 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
           description: restaurantForm.description.trim(),
+          location: restaurantForm.lat && restaurantForm.lng ? {
+            lat: Number(restaurantForm.lat),
+            lng: Number(restaurantForm.lng)
+          } : undefined,
           image: restaurantForm.image.trim()
         })
       });
@@ -160,7 +178,7 @@ export const OwnerDashboard = () => {
         image: restaurantForm.image.trim()
       }));
       
-      setRestaurantForm({ name: '', description: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
       setShowEditRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -306,6 +324,8 @@ export const OwnerDashboard = () => {
     setRestaurantForm({
       name: selectedRestaurant.name,
       description: selectedRestaurant.description || '',
+      lat: selectedRestaurant.location?.lat?.toString() || '',
+      lng: selectedRestaurant.location?.lng?.toString() || '',
       image: selectedRestaurant.image || ''
     });
     setError('');
@@ -337,7 +357,7 @@ export const OwnerDashboard = () => {
             <button 
               className="add-restaurant-btn"
               onClick={() => {
-                setRestaurantForm({ name: '', description: '', image: '' });
+                setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
                 setError('');
                 setShowAddRestaurantModal(true);
               }}
@@ -481,6 +501,28 @@ export const OwnerDashboard = () => {
                   placeholder="e.g. Italian stone-baked pizza and pasta dishes"
                 />
               </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Latitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lat}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lat: e.target.value }))}
+                    placeholder="e.g. 32.085"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Longitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lng}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lng: e.target.value }))}
+                    placeholder="e.g. 34.781"
+                  />
+                </div>
+              </div>
               <div className="form-group">
                 <label>Restaurant Image <span style={{ color: '#eb5757' }}>*</span></label>
                 <label className="custom-file-upload">
@@ -532,6 +574,26 @@ export const OwnerDashboard = () => {
                   value={restaurantForm.description}
                   onChange={(e) => setRestaurantForm(prev => ({ ...prev, description: e.target.value }))}
                 />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Latitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lat}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lat: e.target.value }))}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Longitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lng}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lng: e.target.value }))}
+                  />
+                </div>
               </div>
               <div className="form-group">
                 <label>Restaurant Image <span style={{ color: '#eb5757' }}>*</span></label>
