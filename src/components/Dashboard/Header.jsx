@@ -75,7 +75,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
                   className="user-avatar"
                 />
                 {/* show user name and if role is restaurant_owner */}
-                <span className="user-name">{user.name} ({user.role === 'restaurant_owner' ? 'Restaurant Owner' : ''})</span>
+                <span className="user-name">{user.name} ({user.role === 'manager' ? 'Restaurant Owner' : ''})</span>
               </div>
               <button
                 onClick={logout}
