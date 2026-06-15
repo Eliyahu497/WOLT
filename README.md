@@ -99,7 +99,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
   * `name` (String, required): Full name of the user.
   * `email` (String, required): Email address.
   * `phone` (String, required): 10-digit phone number (validation: must be exactly 10 digits, e.g., `0541234567`).
-  * `address` (String, required): Physical home/work address.
+  * `location` (Object, required): Physical location coordinates (e.g., `{ "lat": 32.085, "lng": 34.781 }`).
   * `userName` (String, required): Unique username used to log in.
   * `password` (String, required): User password.
 * **Run Example (curl):**
@@ -110,7 +110,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
       "name": "Shira",
       "email": "shira@example.com",
       "phone": "0541234567",
-      "address": "Dizengoff 100",
+      "location": { "lat": 32.0853, "lng": 34.7818 },
       "userName": "shira_123",
       "password": "password123"
     }'
@@ -159,7 +159,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
       "name": "Shira",
       "email": "shira@example.com",
       "phone": "0541234567",
-      "address": "Dizengoff 100",
+      "location": { "lat": 32.0853, "lng": 34.7818 },
       "userName": "shira_123"
     }
     ```
@@ -177,6 +177,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
 * **Request Body Fields:**
   * `name` (String, required): The name of the restaurant.
   * `description` (String, optional): Description of the culinary style/cuisine.
+  * `location` (Object, required): Geographic location coordinates (e.g., `{ "lat": 32.0, "lng": 34.0 }`).
 * **Run Example (curl):**
   ```bash
   curl -i -X POST http://localhost:1234/api/restaurants \
@@ -184,7 +185,8 @@ All API requests must use the base URL: `http://localhost:1234/api`
     -H "x-user-id: user_uuid_here" \
     -d '{
       "name": "Giraffe",
-      "description": "Asian Noodle Bar"
+      "description": "Asian Noodle Bar",
+      "location": { "lat": 32.0, "lng": 34.0 }
     }'
   ```
 * **Expected Responses:**
@@ -208,6 +210,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
         "id": "restaurant_uuid_here",
         "name": "Giraffe",
         "description": "Asian Noodle Bar",
+        "location": { "lat": 32.0, "lng": 34.0 },
         "ownerId": "user_uuid_here"
       }
     ]
@@ -228,6 +231,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
       "id": "restaurant_uuid_here",
       "name": "Giraffe",
       "description": "Asian Noodle Bar",
+      "location": { "lat": 32.0, "lng": 34.0 },
       "ownerId": "user_uuid_here"
     }
     ```
@@ -243,6 +247,7 @@ All API requests must use the base URL: `http://localhost:1234/api`
 * **Request Body Fields:**
   * `name` (String, optional): Updated restaurant name.
   * `description` (String, optional): Updated restaurant description.
+  * `location` (Object, optional): Updated geographic location coordinates.
 * **Run Example (curl):**
   ```bash
   curl -i -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here \
@@ -250,7 +255,8 @@ All API requests must use the base URL: `http://localhost:1234/api`
     -H "x-user-id: user_uuid_here" \
     -d '{
       "name": "Giraffe Noodle Bar",
-      "description": "Premium Asian noodle bar"
+      "description": "Premium Asian noodle bar",
+      "location": { "lat": 32.0, "lng": 34.0 }
     }'
   ```
 * **Expected Responses:**

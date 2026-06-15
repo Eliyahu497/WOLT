@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const RestaurantController = require('../controllers/RestaurantController');
 const ProductController = require('../controllers/ProductController');
-const { authenticateToken, isManager } = require('../middlewares/auth');
+const { authenticateToken, optionalAuthenticateToken, isManager } = require('../middlewares/auth');
 
 // --- Restaurant Routes ---
 // GET / - Retrieve all restaurants
-router.get('/', RestaurantController.getAllRestaurants);
+router.get('/', optionalAuthenticateToken, RestaurantController.getAllRestaurants);
 
 // POST / - Create a new restaurant
 router.post('/', RestaurantController.createRestaurant);

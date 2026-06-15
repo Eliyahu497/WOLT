@@ -8,7 +8,8 @@ export const Register = ({ onToggleView }) => {
     name: '',
     email: '',
     phone: '',
-    address: '',
+    lat: '',
+    lng: '',
     userName: '',
     password: '',
     role: 'customer' // 'customer' or 'manager'
@@ -28,10 +29,15 @@ export const Register = ({ onToggleView }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, phone, address, userName, password, role } = formData;
+    const { name, email, phone, lat, lng, userName, password, role } = formData;
 
-    if (!name.trim() || !email.trim() || !phone.trim() || !address.trim() || !userName.trim() || !password.trim()) {
+    if (!name.trim() || !email.trim() || !phone.trim() || !lat || !lng || !userName.trim() || !password.trim()) {
       setError('All fields are required');
+      return;
+    }
+    
+    if (isNaN(Number(lat)) || isNaN(Number(lng))) {
+      setError('Latitude and Longitude must be valid numbers');
       return;
     }
 
@@ -47,7 +53,7 @@ export const Register = ({ onToggleView }) => {
       name.trim(),
       email.trim(),
       phone.trim(),
-      address.trim(),
+      { lat: Number(lat), lng: Number(lng) },
       userName.trim(),
       password.trim(),
       role
@@ -157,17 +163,34 @@ export const Register = ({ onToggleView }) => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="address">Physical Address</label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="e.g. Dizengoff 100, Tel Aviv"
-              disabled={isSubmitting}
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="lat">Latitude</label>
+              <input
+                type="number"
+                step="any"
+                id="lat"
+                name="lat"
+                value={formData.lat}
+                onChange={handleChange}
+                placeholder="e.g. 32.0853"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="lng">Longitude</label>
+              <input
+                type="number"
+                step="any"
+                id="lng"
+                name="lng"
+                value={formData.lng}
+                onChange={handleChange}
+                placeholder="e.g. 34.7818"
+                disabled={isSubmitting}
+              />
+            </div>
           </div>
 
           <div className="form-group">

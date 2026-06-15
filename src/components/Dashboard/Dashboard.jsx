@@ -104,6 +104,12 @@ export const Dashboard = ({
                     <span className="card-time">{rest.deliveryTime}</span>
                     <span className="card-divider">•</span>
                     <span className="card-price">{rest.deliveryPrice} ILS delivery</span>
+                    {rest.distanceKm !== undefined && (
+                      <>
+                        <span className="card-divider">•</span>
+                        <span className="card-distance">{rest.distanceKm.toFixed(1)} km away</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
