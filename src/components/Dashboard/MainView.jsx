@@ -28,7 +28,6 @@ export const MainView = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
   const [authView, setAuthView] = useState('login');
-  const [showAuth, setShowAuth] = useState(false);
 
   // Search input state: Filter matching results
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,21 +42,6 @@ export const MainView = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Track login state transition to reset views on logout
-  const [prevIsLoggedIn, setPrevIsLoggedIn] = useState(isLoggedIn);
-
-  useEffect(() => {
-    if (prevIsLoggedIn && !isLoggedIn) {
-      setSelectedRestaurant(null);
-      setShowOrderHistory(false);
-      setSearchQuery('');
-      setActiveProduct(null);
-      setCartItems([]);
-      setShowAuth(false);
-    }
-    setPrevIsLoggedIn(isLoggedIn);
-  }, [isLoggedIn, prevIsLoggedIn]);
 
   // Fetch all restaurants and products from the Node.js API on mount
   useEffect(() => {
@@ -250,37 +234,23 @@ export const MainView = () => {
   return (
     <div className={`main-view-layout ${isDarkMode ? 'dark' : 'light'}`}>
 
-      {/* Universal header navigation - hidden on Auth views */}
-      {(isLoggedIn || !showAuth) && (
-        <Header
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          onViewHistory={() => setShowOrderHistory(true)}
-          onLoginClick={() => {
-            setAuthView('login');
-            setShowAuth(true);
-            setSelectedRestaurant(null);
-            setShowOrderHistory(false);
-          }}
-        />
-      )}
+      {/* Universal header navigation */}
+      <Header
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onViewHistory={() => setShowOrderHistory(true)}
+      />
 
       {/* Main content viewport split between page content and the cart sidebar */}
       <div className="main-content-split">
         <main className="content-viewport">
-          {!isLoggedIn && showAuth ? (
+          {!isLoggedIn ? (
             authView === 'login' ? (
-              <Login 
-                onToggleView={() => setAuthView('register')} 
-                onBackToGuest={() => setShowAuth(false)}
-              />
+              <Login onToggleView={() => setAuthView('register')} />
             ) : (
-              <Register 
-                onToggleView={() => setAuthView('login')} 
-                onBackToGuest={() => setShowAuth(false)}
-              />
+              <Register onToggleView={() => setAuthView('login')} />
             )
-          ) : isLoggedIn && isOwner ? (
+          ) : isOwner ? (
             <OwnerDashboard />
           ) : showOrderHistory ? (
             /* Render Order History Screen */

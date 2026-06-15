@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
 // - onViewHistory: Callback function to open the Order History screen.
-export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClick }) => {
+export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
@@ -94,7 +94,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
               </button>
             </div>
           ) : (
-            <button className="login-btn" onClick={onLoginClick}>Log In</button>
+            <button className="login-btn">Log In</button>
           )}
         </div>
       </div>

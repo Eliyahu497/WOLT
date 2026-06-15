@@ -54,8 +54,7 @@ mockCppServer.listen(TCP_PORT, () => {
                     phone: "0541234567",
                     location: { lat: 32.0, lng: 34.0 },
                     userName: "shira_123",
-                    password: "password123",
-                    avatar: "http://example.com/avatar.jpg"
+                    password: "password123"
                 })
             });
 
@@ -79,7 +78,7 @@ mockCppServer.listen(TCP_PORT, () => {
                     'Content-Type': 'application/json',
                     'x-user-id': userId
                 },
-                body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar", location: { lat: 32.0, lng: 34.0 }, image: "http://example.com/restaurant.jpg" })
+                body: JSON.stringify({ name: "Giraffe", description: "Asian noodle bar", location: { lat: 32.0, lng: 34.0 } })
             });
 
             if (restRes.status !== 201) {
@@ -102,7 +101,7 @@ mockCppServer.listen(TCP_PORT, () => {
                     'Content-Type': 'application/json',
                     'x-user-id': userId
                 },
-                body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65, image: "http://example.com/product.jpg" })
+                body: JSON.stringify({ name: "Sushi", description: "Maki rolls", price: 65 })
             });
 
             if (prodRes.status !== 201) {

@@ -22,12 +22,12 @@ class RestaurantService {
             throw new Error("User not found");
         }
 
-        const newRestaurant = new Restaurant(id, data.name, data.description, data.location, data.owner, data.products || [], data.image);
+        const newRestaurant = new Restaurant(id, data.name, data.description, data.location, data.owner, data.products || []);
         InMemoryDB.restaurants.push(newRestaurant);
         return newRestaurant;
     }
 
-    // Updates name/description/image. Returns updated object or null
+    // Updates name/description. Returns updated object or null
     static update(id, data, ownerId) {
         const restaurant = this.getById(id);
         if (!restaurant) return null;
@@ -41,9 +41,6 @@ class RestaurantService {
         }
         if (data.description !== undefined) {
             restaurant.description = data.description;
-        }
-        if (data.image !== undefined) {
-            restaurant.image = data.image;
         }
         if (data.location !== undefined) {
             restaurant.location = data.location;

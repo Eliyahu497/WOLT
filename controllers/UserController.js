@@ -5,8 +5,8 @@ class UserController {
 
     // POST /api/users - Create a new user
     register(req, res) {
-        let { name, email, phone, location, userName, password, role, avatar } = req.body
-        if (!name || !email || !phone || !location || !userName || !password || !avatar)
+        let { name, email, phone, location, userName, password, role } = req.body
+        if (!name || !email || !phone || !location || !userName || !password)
             return res.status(400).json({ error: "missing fields" })
         if (typeof location.lat !== 'number' || typeof location.lng !== 'number')
             return res.status(400).json({ error: "invalid location: lat and lng must be numbers" })
@@ -28,7 +28,7 @@ class UserController {
         if (userService.invalidUN(userName)) {
             return res.status(409).json({ error: "Username is already taken" })
         }
-        const newUser = userService.createUser({ name, email, phone, location, userName, password, role, avatar })
+        const newUser = userService.createUser({ name, email, phone, location, userName, password, role })
         res.setHeader('Location', `/api/users/${newUser.id}`);
         return res.status(201).send()
     }
@@ -47,8 +47,7 @@ class UserController {
             phone: user.phone,
             location: user.location,
             userName: user.userName,
-            role: user.role,
-            avatar: user.avatar
+            role: user.role
         })
     }
     // POST /api/tokens - check if there is a user with those user name and password

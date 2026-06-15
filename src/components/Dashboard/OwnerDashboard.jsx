@@ -17,25 +17,10 @@ export const OwnerDashboard = () => {
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   
   // Forms state
-  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '', image: '' });
-  const [productForm, setProductForm] = useState({ name: '', description: '', price: '', image: '' });
+  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '' });
+  const [productForm, setProductForm] = useState({ name: '', description: '', price: '' });
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState('');
-
-  const handleImageUpload = (e, formType) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (formType === 'restaurant') {
-          setRestaurantForm(prev => ({ ...prev, image: reader.result }));
-        } else if (formType === 'product') {
-          setProductForm(prev => ({ ...prev, image: reader.result }));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // Fallback defaults for missing UI details in backend restaurant object
   const getUiRestaurant = (rest) => {
@@ -92,8 +77,8 @@ export const OwnerDashboard = () => {
   // Restaurant Actions
   const handleAddRestaurant = async (e) => {
     e.preventDefault();
-    if (!restaurantForm.name.trim() || !restaurantForm.image.trim()) {
-      setError('Restaurant name and image are required');
+    if (!restaurantForm.name.trim()) {
+      setError('Restaurant name is required');
       return;
     }
     if (!restaurantForm.lat || !restaurantForm.lng || isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
@@ -115,8 +100,7 @@ export const OwnerDashboard = () => {
           location: {
             lat: Number(restaurantForm.lat),
             lng: Number(restaurantForm.lng)
-          },
-          image: restaurantForm.image.trim()
+          }
         })
       });
 
@@ -125,7 +109,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to create restaurant');
       }
 
-      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
       setShowAddRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -135,8 +119,8 @@ export const OwnerDashboard = () => {
 
   const handleEditRestaurant = async (e) => {
     e.preventDefault();
-    if (!restaurantForm.name.trim() || !restaurantForm.image.trim()) {
-      setError('Restaurant name and image are required');
+    if (!restaurantForm.name.trim()) {
+      setError('Restaurant name is required');
       return;
     }
     if (restaurantForm.lat || restaurantForm.lng) {
@@ -160,8 +144,7 @@ export const OwnerDashboard = () => {
           location: restaurantForm.lat && restaurantForm.lng ? {
             lat: Number(restaurantForm.lat),
             lng: Number(restaurantForm.lng)
-          } : undefined,
-          image: restaurantForm.image.trim()
+          } : undefined
         })
       });
 
@@ -174,11 +157,10 @@ export const OwnerDashboard = () => {
       setSelectedRestaurant(prev => getUiRestaurant({
         ...prev,
         name: restaurantForm.name.trim(),
-        description: restaurantForm.description.trim(),
-        image: restaurantForm.image.trim()
+        description: restaurantForm.description.trim()
       }));
       
-      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
       setShowEditRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -214,9 +196,9 @@ export const OwnerDashboard = () => {
   // Product Actions
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    const { name, description, price, image } = productForm;
-    if (!name.trim() || !price || !image.trim()) {
-      setError('Name, price and image are required');
+    const { name, description, price } = productForm;
+    if (!name.trim() || !price) {
+      setError('Name and price are required');
       return;
     }
     if (isNaN(Number(price)) || Number(price) <= 0) {
@@ -235,8 +217,7 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: name.trim(),
           description: description.trim(),
-          price: Number(price),
-          image: image.trim()
+          price: Number(price)
         })
       });
 
@@ -245,7 +226,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to add product');
       }
 
-      setProductForm({ name: '', description: '', price: '', image: '' });
+      setProductForm({ name: '', description: '', price: '' });
       setShowAddProductModal(false);
       await loadProducts(selectedRestaurant.id);
     } catch (err) {
@@ -255,9 +236,9 @@ export const OwnerDashboard = () => {
 
   const handleEditProduct = async (e) => {
     e.preventDefault();
-    const { name, description, price, image } = productForm;
-    if (!name.trim() || !price || !image.trim()) {
-      setError('Name, price and image are required');
+    const { name, description, price } = productForm;
+    if (!name.trim() || !price) {
+      setError('Name and price are required');
       return;
     }
     if (isNaN(Number(price)) || Number(price) <= 0) {
@@ -276,8 +257,7 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: name.trim(),
           description: description.trim(),
-          price: Number(price),
-          image: image.trim()
+          price: Number(price)
         })
       });
 
@@ -286,7 +266,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to update product');
       }
 
-      setProductForm({ name: '', description: '', price: '', image: '' });
+      setProductForm({ name: '', description: '', price: '' });
       setEditingProduct(null);
       setShowEditProductModal(false);
       await loadProducts(selectedRestaurant.id);
@@ -325,8 +305,7 @@ export const OwnerDashboard = () => {
       name: selectedRestaurant.name,
       description: selectedRestaurant.description || '',
       lat: selectedRestaurant.location?.lat?.toString() || '',
-      lng: selectedRestaurant.location?.lng?.toString() || '',
-      image: selectedRestaurant.image || ''
+      lng: selectedRestaurant.location?.lng?.toString() || ''
     });
     setError('');
     setShowEditRestaurantModal(true);
@@ -337,8 +316,7 @@ export const OwnerDashboard = () => {
     setProductForm({
       name: product.name,
       description: product.description || '',
-      price: product.price.toString(),
-      image: product.image || ''
+      price: product.price.toString()
     });
     setError('');
     setShowEditProductModal(true);
@@ -357,7 +335,7 @@ export const OwnerDashboard = () => {
             <button 
               className="add-restaurant-btn"
               onClick={() => {
-                setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+                setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
                 setError('');
                 setShowAddRestaurantModal(true);
               }}
@@ -428,7 +406,7 @@ export const OwnerDashboard = () => {
               <button 
                 className="manage-ctrl-btn add-product"
                 onClick={() => {
-                  setProductForm({ name: '', description: '', price: '', image: '' });
+                  setProductForm({ name: '', description: '', price: '' });
                   setError('');
                   setShowAddProductModal(true);
                 }}
@@ -484,7 +462,7 @@ export const OwnerDashboard = () => {
             <form onSubmit={handleAddRestaurant} className="modal-form">
               {error && <div className="auth-error-message">{error}</div>}
               <div className="form-group">
-                <label>Restaurant Name <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Restaurant Name</label>
                 <input
                   type="text"
                   value={restaurantForm.name}
@@ -503,7 +481,7 @@ export const OwnerDashboard = () => {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Latitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <label>Latitude</label>
                   <input
                     type="number"
                     step="any"
@@ -513,7 +491,7 @@ export const OwnerDashboard = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Longitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <label>Longitude</label>
                   <input
                     type="number"
                     step="any"
@@ -522,26 +500,6 @@ export const OwnerDashboard = () => {
                     placeholder="e.g. 34.781"
                   />
                 </div>
-              </div>
-              <div className="form-group">
-                <label>Restaurant Image <span style={{ color: '#eb5757' }}>*</span></label>
-                <label className="custom-file-upload">
-                  📁 Choose Restaurant Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'restaurant')}
-                  />
-                </label>
-                {restaurantForm.image && (
-                  <div className="form-image-preview" style={{ marginTop: '10px' }}>
-                    <img 
-                      src={restaurantForm.image} 
-                      alt="Restaurant Preview" 
-                      style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                    />
-                  </div>
-                )}
               </div>
               <button type="submit" className="modal-submit-btn">Create Store</button>
             </form>
@@ -560,7 +518,7 @@ export const OwnerDashboard = () => {
             <form onSubmit={handleEditRestaurant} className="modal-form">
               {error && <div className="auth-error-message">{error}</div>}
               <div className="form-group">
-                <label>Restaurant Name <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Restaurant Name</label>
                 <input
                   type="text"
                   value={restaurantForm.name}
@@ -577,7 +535,7 @@ export const OwnerDashboard = () => {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Latitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <label>Latitude</label>
                   <input
                     type="number"
                     step="any"
@@ -586,7 +544,7 @@ export const OwnerDashboard = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Longitude <span style={{ color: '#eb5757' }}>*</span></label>
+                  <label>Longitude</label>
                   <input
                     type="number"
                     step="any"
@@ -594,26 +552,6 @@ export const OwnerDashboard = () => {
                     onChange={(e) => setRestaurantForm(prev => ({ ...prev, lng: e.target.value }))}
                   />
                 </div>
-              </div>
-              <div className="form-group">
-                <label>Restaurant Image <span style={{ color: '#eb5757' }}>*</span></label>
-                <label className="custom-file-upload">
-                  📁 Choose Restaurant Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'restaurant')}
-                  />
-                </label>
-                {restaurantForm.image && (
-                  <div className="form-image-preview" style={{ marginTop: '10px' }}>
-                    <img 
-                      src={restaurantForm.image} 
-                      alt="Restaurant Preview" 
-                      style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                    />
-                  </div>
-                )}
               </div>
               <button type="submit" className="modal-submit-btn">Save Changes</button>
             </form>
@@ -632,7 +570,7 @@ export const OwnerDashboard = () => {
             <form onSubmit={handleAddProduct} className="modal-form">
               {error && <div className="auth-error-message">{error}</div>}
               <div className="form-group">
-                <label>Dish Name <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Dish Name</label>
                 <input
                   type="text"
                   value={productForm.name}
@@ -650,33 +588,13 @@ export const OwnerDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Price (ILS) <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Price (ILS)</label>
                 <input
                   type="number"
                   value={productForm.price}
                   onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
                   placeholder="e.g. 55"
                 />
-              </div>
-              <div className="form-group">
-                <label>Product Image <span style={{ color: '#eb5757' }}>*</span></label>
-                <label className="custom-file-upload">
-                  📁 Choose Dish Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'product')}
-                  />
-                </label>
-                {productForm.image && (
-                  <div className="form-image-preview" style={{ marginTop: '10px' }}>
-                    <img 
-                      src={productForm.image} 
-                      alt="Product Preview" 
-                      style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                    />
-                  </div>
-                )}
               </div>
               <button type="submit" className="modal-submit-btn">Add Product</button>
             </form>
@@ -695,7 +613,7 @@ export const OwnerDashboard = () => {
             <form onSubmit={handleEditProduct} className="modal-form">
               {error && <div className="auth-error-message">{error}</div>}
               <div className="form-group">
-                <label>Dish Name <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Dish Name</label>
                 <input
                   type="text"
                   value={productForm.name}
@@ -711,32 +629,12 @@ export const OwnerDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Price (ILS) <span style={{ color: '#eb5757' }}>*</span></label>
+                <label>Price (ILS)</label>
                 <input
                   type="number"
                   value={productForm.price}
                   onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
                 />
-              </div>
-              <div className="form-group">
-                <label>Product Image <span style={{ color: '#eb5757' }}>*</span></label>
-                <label className="custom-file-upload">
-                  📁 Choose Dish Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'product')}
-                  />
-                </label>
-                {productForm.image && (
-                  <div className="form-image-preview" style={{ marginTop: '10px' }}>
-                    <img 
-                      src={productForm.image} 
-                      alt="Product Preview" 
-                      style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }} 
-                    />
-                  </div>
-                )}
               </div>
               <button type="submit" className="modal-submit-btn">Save Dish Changes</button>
             </form>

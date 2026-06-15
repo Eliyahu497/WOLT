@@ -5,7 +5,7 @@ const User = require('../models/User');
 class UserService {
     createUser(data) {
         const id = uuidv4();
-        const newUser = new User(id, data.name, data.email, data.phone, data.location, data.userName, data.password, data.role, data.avatar);
+        const newUser = new User(id, data.name, data.email, data.phone, data.location, data.userName, data.password, data.role);
         InMemoryDB.users.push(newUser);
         return newUser;
     }

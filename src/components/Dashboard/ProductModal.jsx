@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import './ProductModal.css';
 
 // ProductModal component for single product detail display, quantity selector, and checkout trigger.
@@ -8,7 +7,6 @@ import './ProductModal.css';
 // - onClose: Callback function to dismiss the modal view.
 // - onAddToCart: Callback function to add the selected product and quantity to the cart.
 export const ProductModal = ({ product, onClose, onAddToCart }) => {
-  const { isLoggedIn } = useAuth();
   // Local state to track the user's desired quantity (default starts at 1)
   const [quantity, setQuantity] = useState(1);
 
@@ -59,27 +57,20 @@ export const ProductModal = ({ product, onClose, onAddToCart }) => {
         </div>
 
         {/* Bottom controls panel for quantity select and addition trigger */}
-        {isLoggedIn ? (
-          <div className="modal-action-section">
-            {/* Quantity controller buttons (+ and -) */}
-            <div className="quantity-controller">
-              <button className="qty-btn" onClick={handleDecrement}>−</button>
-              <span className="qty-display">{quantity}</span>
-              <button className="qty-btn" onClick={handleIncrement}>+</button>
-            </div>
+        <div className="modal-action-section">
+          
+          {/* Quantity controller buttons (+ and -) */}
+          <div className="quantity-controller">
+            <button className="qty-btn" onClick={handleDecrement}>−</button>
+            <span className="qty-display">{quantity}</span>
+            <button className="qty-btn" onClick={handleIncrement}>+</button>
+          </div>
 
-            {/* Submission button with live subtotal calculation */}
-            <button className="add-to-cart-btn" onClick={handleAddClick}>
-              Add to order • {totalPrice} ILS
-            </button>
-          </div>
-        ) : (
-          <div className="modal-action-section" style={{ justifyContent: 'center' }}>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', fontWeight: '600', textAlign: 'center', margin: '10px 0' }}>
-              Please log in to add items to your order.
-            </p>
-          </div>
-        )}
+          {/* Submission button with live subtotal calculation */}
+          <button className="add-to-cart-btn" onClick={handleAddClick}>
+            Add to order • {totalPrice} ILS
+          </button>
+        </div>
       </div>
     </div>
   );

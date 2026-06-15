@@ -1,5 +1,5 @@
 class User {
-    constructor(id, name, email, phone, location, userName, password, role = 'customer', avatar) {
+    constructor(id, name, email, phone, location, userName, password, role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -7,8 +7,7 @@ class User {
         this.location = location;
         this.userName = userName;
         this.password = password;
-        this.role = role || 'customer';
-        this.avatar = avatar;
+        this.role = role;
     }
 }
 

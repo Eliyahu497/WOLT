@@ -56,7 +56,7 @@ class ProductController {
     static addProduct(req, res) {
         try {
             const { restaurantId } = req.params;
-            const { name, description, price, image } = req.body;
+            const { name, description, price } = req.body;
             const owner = req.headers['x-user-id'];
             if (!owner) {
                 return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
@@ -64,8 +64,8 @@ class ProductController {
             if (!restaurantId) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
-            if (!name || price === undefined || !image) {
-                return res.status(400).json({ error: 'Name, price and image are required' });
+            if (!name || price === undefined) {
+                return res.status(400).json({ error: 'Name and price are required' });
             }
             if (isNaN(Number(price)) || Number(price) <= 0) {
                 return res.status(400).json({ error: 'Price must be a positive number' });
@@ -74,8 +74,7 @@ class ProductController {
             const newProduct = ProductService.addProduct(restaurantId, {
                 name,
                 description,
-                price: Number(price),
-                image
+                price: Number(price)
             },owner);
 
             if (!newProduct) {
@@ -96,7 +95,7 @@ class ProductController {
     static updateProduct(req, res) {
         try {
             const { restaurantId, productId } = req.params;
-            const { name, description, price, image } = req.body;
+            const { name, description, price } = req.body;
             const owner = req.headers['x-user-id'];
             if (!owner) {
                 return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
@@ -111,8 +110,7 @@ class ProductController {
             const updatedProduct = ProductService.updateProduct(restaurantId, productId, {
                 name,
                 description,
-                price: price !== undefined ? Number(price) : undefined,
-                image
+                price: price !== undefined ? Number(price) : undefined
             },owner);
 
             if (!updatedProduct) {

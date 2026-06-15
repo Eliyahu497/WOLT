@@ -51,7 +51,7 @@ class RestaurantController {
     // Create a new restaurant
     static createRestaurant(req, res) {
         try {
-            const { name, description, location, image } = req.body;
+            const { name, description, location } = req.body;
             const owner = req.headers['x-user-id'];
             if (!owner) {
                 return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
@@ -62,15 +62,15 @@ class RestaurantController {
                 return res.status(404).json({ error: 'User not found' });
             }
 
-            if (!name || !image) {
-                return res.status(400).json({ error: 'Name and image are required' });
+            if (!name) {
+                return res.status(400).json({ error: 'Name is required' });
             }
 
             if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
                 return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
             }
 
-            const restaurant = RestaurantService.create({ name, description, location, owner, image });
+            const restaurant = RestaurantService.create({ name, description, location, owner });
             res.setHeader('Location', `/api/restaurants/${restaurant.id}`);
             return res.status(201).send();
         } catch (error) {
@@ -82,7 +82,7 @@ class RestaurantController {
     static updateRestaurant(req, res) {
         try {
             const { id } = req.params;
-            const { name, description, location, image } = req.body;
+            const { name, description, location } = req.body;
             const owner = req.headers['x-user-id'];
 
             if (!owner) {
@@ -92,11 +92,12 @@ class RestaurantController {
             if (!id) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
+
             if (location && (typeof location.lat !== 'number' || typeof location.lng !== 'number')) {
                 return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
             }
 
-            const updatedRestaurant = RestaurantService.update(id, { name, description, location, image }, owner);
+            const updatedRestaurant = RestaurantService.update(id, { name, description, location }, owner);
             if (!updatedRestaurant) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
