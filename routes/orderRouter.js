@@ -8,6 +8,6 @@ router.post('/', orderController.createOrder);        // Maps to POST /api/order
 router.get('/', orderController.getUserOrders);       // Maps to GET /api/orders
 router.get('/:id', orderController.getOrderById);     // Maps to GET /api/orders/:id
 router.patch('/:id', orderController.updateOrder);   // Maps to PATCH /api/orders/:id
-router.delete('/:id', authenticateToken, isManager, orderController.deleteOrder);  // Maps to DELETE /api/orders/:id
+router.delete('/:id', authenticateToken, orderController.deleteOrder);  // Maps to DELETE /api/orders/:id
 
 module.exports = router;
