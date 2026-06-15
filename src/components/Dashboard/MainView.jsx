@@ -5,6 +5,9 @@ import { RestaurantMenu } from './RestaurantMenu';
 import { ProductModal } from './ProductModal';
 import { Cart } from './Cart';
 import { OrderHistory } from './OrderHistory';
+import { Login } from './Login';
+import { Register } from './Register';
+import { OwnerDashboard } from './OwnerDashboard';
 
 // Import the custom hooks to consume global contexts
 import { useTheme } from '../../context/ThemeContext';
@@ -24,6 +27,7 @@ export const MainView = () => {
   // Navigation states: Controls whether we show the dashboard, menu, or order history
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const [authView, setAuthView] = useState('login');
 
   // Search input state: Filter matching results
   const [searchQuery, setSearchQuery] = useState('');
@@ -221,6 +225,8 @@ export const MainView = () => {
     }
   };
 
+  const isOwner = isLoggedIn && user && user.role === 'manager';
+
   return (
     <div className={`main-view-layout ${isDarkMode ? 'dark' : 'light'}`}>
 
@@ -234,7 +240,15 @@ export const MainView = () => {
       {/* Main content viewport split between page content and the cart sidebar */}
       <div className="main-content-split">
         <main className="content-viewport">
-          {showOrderHistory ? (
+          {!isLoggedIn ? (
+            authView === 'login' ? (
+              <Login onToggleView={() => setAuthView('register')} />
+            ) : (
+              <Register onToggleView={() => setAuthView('login')} />
+            )
+          ) : isOwner ? (
+            <OwnerDashboard />
+          ) : showOrderHistory ? (
             /* Render Order History Screen */
             <OrderHistory onBack={() => setShowOrderHistory(false)} />
           ) : selectedRestaurant ? (
@@ -256,8 +270,8 @@ export const MainView = () => {
           )}
         </main>
 
-        {/* Sidebar Cart panel (hidden when viewing past orders history) */}
-        {!showOrderHistory && (
+        {/* Sidebar Cart panel (hidden when viewing past orders history, or for owners / logged-out users) */}
+        {isLoggedIn && !isOwner && !showOrderHistory && (
           <Cart
             cartItems={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
@@ -268,8 +282,8 @@ export const MainView = () => {
         )}
       </div>
 
-      {/* Modal popup details view, rendered on top when a product is clicked */}
-      {activeProduct && (
+      {/* Modal popup details view, rendered on top when a product is clicked (customers only) */}
+      {activeProduct && !isOwner && (
         <ProductModal
           product={activeProduct}
           onClose={handleCloseModal}
