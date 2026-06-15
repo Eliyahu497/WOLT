@@ -124,6 +124,11 @@ class OrderController {
             return res.status(404).json({ error: "Order not found to delete" });
         }
 
+        // Check authorization: only the owner of the order or a manager can cancel it
+        if (req.user && req.user.role !== 'manager' && order.userId !== req.user.id) {
+            return res.status(403).json({ error: "Forbidden: You can only cancel your own orders" });
+        }
+
         // 2. Extract the details we need for the TCP command while the order still exists
         const userId = order.userId;
         const productIds = order.items.map(item => item.productId);
