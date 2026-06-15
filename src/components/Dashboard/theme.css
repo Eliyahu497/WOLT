@@ -21,6 +21,7 @@
 }
 
 /* Dark Theme Specific overrides */
+.main-view-layout.dark,
 .wolt-header.dark,
 .dashboard-content.dark,
 .restaurant-menu-page.dark {
@@ -35,7 +36,10 @@
 }
 
 /* Shared Font Family Reset */
-.wolt-header, .dashboard-content, .restaurant-menu-page {
+.main-view-layout,
+.wolt-header,
+.dashboard-content,
+.restaurant-menu-page {
   font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text-primary);
   background-color: var(--bg-color);

@@ -14,9 +14,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const restoreSession = async () => {
       const storedToken = localStorage.getItem('wolt_token');
-      if (storedToken) {
+      const storedUserId = localStorage.getItem('wolt_user_id');
+      if (storedToken && storedUserId) {
         try {
-          const res = await fetch(`/api/users/${storedToken}`);
+          const res = await fetch(`/api/users/${storedUserId}`, {
+            headers: { 'Authorization': `Bearer ${storedToken}` }
+          });
           if (res.ok) {
             const userData = await res.json();
             setUser(userData);
@@ -25,6 +28,7 @@ export const AuthProvider = ({ children }) => {
           } else {
             // Token is invalid/expired
             localStorage.removeItem('wolt_token');
+            localStorage.removeItem('wolt_user_id');
           }
         } catch (err) {
           console.warn('Failed to restore session from API:', err);
@@ -32,7 +36,6 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     };
-
     restoreSession();
   }, []);
 
@@ -50,19 +53,23 @@ export const AuthProvider = ({ children }) => {
         throw new Error(errorData.error || 'Invalid credentials');
       }
 
-      const { id } = await res.json();
+      const { id, token: jwtToken } = await res.json();
 
       // Fetch user profile info
-      const profileRes = await fetch(`/api/users/${id}`);
+      const profileRes = await fetch(`/api/users/${id}`, {
+        headers: { 'Authorization': `Bearer ${jwtToken}` }
+      });
       if (!profileRes.ok) {
         throw new Error('Failed to retrieve user profile');
       }
 
+
       const userData = await profileRes.json();
       setUser(userData);
-      setToken(id);
+      setToken(jwtToken);
       setIsLoggedIn(true);
-      localStorage.setItem('wolt_token', id);
+      localStorage.setItem('wolt_token', jwtToken);
+      localStorage.setItem('wolt_user_id', id);
       return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
@@ -96,6 +103,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
     setToken(null);
     localStorage.removeItem('wolt_token');
+    localStorage.removeItem('wolt_user_id');
   };
 
   return (
