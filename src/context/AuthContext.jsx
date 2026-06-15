@@ -1,21 +1,93 @@
-import React, { createContext, useState, useContext } from 'react';
-import { mockUser } from '../mockData';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Initialize the context for user authentication details
 const AuthContext = createContext();
 
 // AuthProvider wraps the application and exposes authentication states
 export const AuthProvider = ({ children }) => {
-  // Start with a mock user session active for development
-  const [user, setUser] = useState(mockUser);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [token, setToken] = useState('mock-jwt-token-123'); // Expose mock token for API requests
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Authenticate user session with credentials (mock implementation)
-  const login = (username, password) => {
-    setUser(mockUser);
-    setIsLoggedIn(true);
-    setToken('mock-jwt-token-123');
+  // Attempt to restore user session on mount
+  useEffect(() => {
+    const restoreSession = async () => {
+      const storedToken = localStorage.getItem('wolt_token');
+      if (storedToken) {
+        try {
+          const res = await fetch(`/api/users/${storedToken}`);
+          if (res.ok) {
+            const userData = await res.json();
+            setUser(userData);
+            setToken(storedToken);
+            setIsLoggedIn(true);
+          } else {
+            // Token is invalid/expired
+            localStorage.removeItem('wolt_token');
+          }
+        } catch (err) {
+          console.warn('Failed to restore session from API:', err);
+        }
+      }
+      setLoading(false);
+    };
+
+    restoreSession();
+  }, []);
+
+  // Authenticate user session with credentials
+  const login = async (userName, password) => {
+    try {
+      const res = await fetch('/api/tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName, password })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Invalid credentials');
+      }
+
+      const { id } = await res.json();
+
+      // Fetch user profile info
+      const profileRes = await fetch(`/api/users/${id}`);
+      if (!profileRes.ok) {
+        throw new Error('Failed to retrieve user profile');
+      }
+
+      const userData = await profileRes.json();
+      setUser(userData);
+      setToken(id);
+      setIsLoggedIn(true);
+      localStorage.setItem('wolt_token', id);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Register a new user
+  const register = async (name, email, phone, address, userName, password, role) => {
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, address, userName, password, role })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Registration failed');
+      }
+
+      // Automatically log the user in after registration
+      return await login(userName, password);
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   };
 
   // Terminate user session and clear active state
@@ -23,11 +95,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsLoggedIn(false);
     setToken(null);
+    localStorage.removeItem('wolt_token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, token, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, isLoggedIn, token, login, register, logout, loading }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

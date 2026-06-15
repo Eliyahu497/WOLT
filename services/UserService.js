@@ -10,13 +10,13 @@ class UserService {
         return newUser;
     }
     getUserById(id) {
-        return InMemoryDB.users.find(u => u.id === id) || null; 
+        return InMemoryDB.users.find(u => u.id === id) || null;
     }
     validateCredentials(userName, password) {
-        return InMemoryDB.users.find(u => u.userName === userName && u.password === password) || null; 
+        return InMemoryDB.users.find(u => u.userName === userName && u.password === password) || null;
     }
     invalidUN(userName) {
-        return InMemoryDB.users.find(u => u.userName === userName) || null; 
+        return InMemoryDB.users.find(u => u.userName === userName) || null;
     }
 }
 

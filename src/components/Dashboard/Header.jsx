@@ -26,18 +26,20 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
 
         {/* 2. Global Search Bar */}
         {/* Captures text input and propagates changes upstream to the parent state */}
-        <div className="header-search">
-          <div className="search-input-wrapper">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search for restaurants or dishes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
+        {(!user || user.role !== 'manager') && (
+          <div className="header-search">
+            <div className="search-input-wrapper">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search for restaurants or dishes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 3. Utility Controls and Profile Slot */}
         <div className="header-actions">
@@ -53,8 +55,8 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
             {isDarkMode ? '☀️ Light' : '🌙 Dark'}
           </button>
 
-          {/* Past orders navigation button (visible only if user is logged in) */}
-          {user && (
+          {/* Past orders navigation button (visible only if user is logged in and not a manager) */}
+          {user && user.role !== 'manager' && (
             <button
               onClick={onViewHistory}
               className="theme-toggle-btn"
@@ -65,17 +67,23 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
           )}
 
           {/* Conditional Profile Rendering */}
-          {/* Renders the user's name, avatar, and logout action if logged in, otherwise renders a login button */}
+          {/* Renders the user's name, avatar, and logout action if logged in, otherwise renders a login indicator */}
           {user ? (
             <div className="user-profile-group">
               <div className="user-profile">
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="user-avatar"
-                />
-                {/* show user name and if role is restaurant_owner */}
-                <span className="user-name">{user.name} ({user.role === 'restaurant_owner' ? 'Restaurant Owner' : ''})</span>
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="user-avatar"
+                  />
+                ) : (
+                  <div className="user-avatar-placeholder">
+                    {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                  </div>
+                )}
+                {/* show user name and if role is manager */}
+                <span className="user-name">{user.name} {user.role === 'manager' ? '(Manager)' : ''}</span>
               </div>
               <button
                 onClick={logout}
