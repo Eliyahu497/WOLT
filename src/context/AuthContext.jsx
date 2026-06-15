@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Authenticate user session with credentials
-  const login = async (userName, password) => {
+  const login = async (userName, password, expectedRole = null) => {
     try {
       const res = await fetch('/api/tokens', {
         method: 'POST',
@@ -59,6 +59,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       const userData = await profileRes.json();
+
+      // Validate user role if expectedRole is specified
+      if (expectedRole && userData.role !== expectedRole) {
+        throw new Error('Selected role does not match this user account role');
+      }
+
       setUser(userData);
       setToken(id);
       setIsLoggedIn(true);
@@ -70,12 +76,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register a new user
-  const register = async (name, email, phone, address, userName, password, role) => {
+  const register = async (name, email, phone, address, userName, password, role, avatar) => {
     try {
       const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone, address, userName, password, role })
+        body: JSON.stringify({ name, email, phone, address, userName, password, role, avatar })
       });
 
       if (!res.ok) {
@@ -84,7 +90,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Automatically log the user in after registration
-      return await login(userName, password);
+      return await login(userName, password, role);
     } catch (err) {
       return { success: false, error: err.message };
     }

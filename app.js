@@ -10,7 +10,7 @@ const userRouter = require('./routes/userRouter');
 const existUserRouter = require('./routes/existUserRouter');
 
 // Middleware to parse JSON bodies in incoming requests (for POST/PATCH endpoints)
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // 2. Mount each router onto its strict, required HTTP URL prefix path
 app.use('/api/restaurants', restaurantRouter);

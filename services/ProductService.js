@@ -27,7 +27,7 @@ class ProductService {
             throw new Error("You are not the owner of this restaurant");
         }
         const id = uuidv4();
-        const newProduct = new Product(id, data.name, data.description, data.price);
+        const newProduct = new Product(id, data.name, data.description, data.price, data.image);
         restaurant.products.push(newProduct);
         return newProduct;
     }
@@ -46,6 +46,7 @@ class ProductService {
         if (data.name !== undefined) product.name = data.name;
         if (data.description !== undefined) product.description = data.description;
         if (data.price !== undefined) product.price = data.price;
+        if (data.image !== undefined) product.image = data.image;
 
         return product;
     }
@@ -82,6 +83,7 @@ class ProductService {
                             name: product.name,
                             description: product.description,
                             price: product.price,
+                            image: product.image,
                             restaurantId: restaurant.id
                         });
                     }

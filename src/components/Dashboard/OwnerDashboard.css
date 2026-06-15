@@ -354,3 +354,30 @@
     width: 100%;
   }
 }
+
+/* Sleek custom file upload styling */
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: var(--border-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--wolt-border-radius);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  margin-top: 5px;
+}
+
+.custom-file-upload:hover {
+  background-color: var(--surface-color);
+  border-color: var(--wolt-blue);
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
