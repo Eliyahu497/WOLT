@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const PORT = 1234; // Using the port from main (1234)
 
@@ -19,9 +20,12 @@ app.use('/api/search', searchRouter);
 app.use('/api/users', userRouter);
 app.use('/api/tokens', existUserRouter);
 
-// Basic test route to verify that the server is live and working on the network
-app.get('/', (req, res) => {
-    res.status(200).json({ message: "Wolt Web Server Backend is running perfectly!" });
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Catch-all route to serve the React index.html for any non-API routes (must be at the end)
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 // Start the server listening on the defined port
