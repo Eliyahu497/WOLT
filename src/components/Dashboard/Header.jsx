@@ -44,16 +44,17 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory }) => {
         {/* 3. Utility Controls and Profile Slot */}
         <div className="header-actions">
 
-          {/* Light/Dark mode toggle button */}
-          {/* Invokes toggleTheme to flip global theme context variables */}
-          <button
-            onClick={toggleTheme}
-            className="theme-toggle-btn"
-            title="Toggle theme"
-            aria-label="Toggle Theme"
-          >
-            {isDarkMode ? '☀️ Light' : '🌙 Dark'}
-          </button>
+          {/* Light/Dark mode toggle button - visible only after logging in */}
+          {user && (
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              title="Toggle theme"
+              aria-label="Toggle Theme"
+            >
+              {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+            </button>
+          )}
 
           {/* Past orders navigation button (visible only if user is logged in and not a manager) */}
           {user && user.role !== 'manager' && (
