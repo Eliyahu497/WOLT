@@ -10,14 +10,14 @@ class UserController {
             return res.status(400).json({ error: "missing fields" })
         if (!/^\d{10}$/.test(phone))
             return res.status(400).json({ error: "phone number has to be exactly 10 digits" })
-
+        
         if (password.length < 8) {
             return res.status(400).json({ error: "Password must be at least 8 characters long" });
         }
         if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
             return res.status(400).json({ error: "Password must contain a mix of both letters and numbers" });
         }
-
+        
         role = role || 'customer';
         if (role !== 'manager' && role !== 'customer') {
             return res.status(400).json({ error: "invalid role" })
