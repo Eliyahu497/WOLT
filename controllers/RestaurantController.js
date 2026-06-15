@@ -1,11 +1,28 @@
 const RestaurantService = require('../services/RestaurantService');
 const userService = require('../services/UserService');
+const { calculateDistance } = require('../utils/location');
 
 class RestaurantController {
     // Retrieve all restaurants
     static getAllRestaurants(req, res) {
         try {
-            const restaurants = RestaurantService.getAll();
+            let restaurants = RestaurantService.getAll();
+            
+            if (req.user) {
+                const user = userService.getUserById(req.user.id);
+                if (user && user.location) {
+                    restaurants = restaurants.map(rest => {
+                        if (rest.location) {
+                            const distance = calculateDistance(user.location, rest.location);
+                            if (distance !== null) {
+                                return { ...rest, distanceKm: distance };
+                            }
+                        }
+                        return rest;
+                    });
+                }
+            }
+            
             return res.status(200).json(restaurants);
         } catch (error) {
             return res.status(500).json({ error: error.message });
@@ -34,7 +51,7 @@ class RestaurantController {
     // Create a new restaurant
     static createRestaurant(req, res) {
         try {
-            const { name, description } = req.body;
+            const { name, description, location } = req.body;
             const owner = req.headers['x-user-id'];
             if (!owner) {
                 return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
@@ -49,7 +66,11 @@ class RestaurantController {
                 return res.status(400).json({ error: 'Name is required' });
             }
 
-            const restaurant = RestaurantService.create({ name, description, owner });
+            if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
+                return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
+            }
+
+            const restaurant = RestaurantService.create({ name, description, location, owner });
             res.setHeader('Location', `/api/restaurants/${restaurant.id}`);
             return res.status(201).send();
         } catch (error) {
@@ -61,7 +82,7 @@ class RestaurantController {
     static updateRestaurant(req, res) {
         try {
             const { id } = req.params;
-            const { name, description } = req.body;
+            const { name, description, location } = req.body;
             const owner = req.headers['x-user-id'];
 
             if (!owner) {
@@ -71,7 +92,12 @@ class RestaurantController {
             if (!id) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
-            const updatedRestaurant = RestaurantService.update(id, { name, description }, owner);
+
+            if (location && (typeof location.lat !== 'number' || typeof location.lng !== 'number')) {
+                return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
+            }
+
+            const updatedRestaurant = RestaurantService.update(id, { name, description, location }, owner);
             if (!updatedRestaurant) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }

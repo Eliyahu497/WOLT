@@ -28,7 +28,29 @@ function isManager(req, res, next) {
     }
 }
 
+function optionalAuthenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+    let token;
+    if (authHeader) {
+        if (authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        } else {
+            token = authHeader;
+        }
+    }
+
+    if (!token) return next();
+
+    jwt.verify(token, 'wolt-secret', (err, user) => {
+        if (!err) {
+            req.user = user;
+        }
+        next();
+    });
+}
+
 module.exports = {
     authenticateToken,
+    optionalAuthenticateToken,
     isManager
 };

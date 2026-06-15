@@ -14,6 +14,7 @@ export const mockRestaurants = [
     id: "rest-giraffe",
     name: "Giraffe",
     description: "Asian noodle bar, fresh sushi, and selected dishes from the Far East.",
+    location: { lat: 32.0853, lng: 34.7818 },
     ownerId: "owner-giraffe-123",
     category: "asian",
     image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&auto=format&fit=crop&q=60",
@@ -173,7 +174,7 @@ export const mockUser = {
   userName: "shira_c",
   email: "shira@example.com",
   phone: "0541234567",
-  address: "Dizengoff 100, Tel Aviv",
+  location: { lat: 32.0853, lng: 34.7818 },
   role: "customer",
   avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=60"
 };

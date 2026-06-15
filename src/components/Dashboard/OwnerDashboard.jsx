@@ -17,7 +17,7 @@ export const OwnerDashboard = () => {
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   
   // Forms state
-  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '' });
+  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '' });
   const [productForm, setProductForm] = useState({ name: '', description: '', price: '' });
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState('');
@@ -81,6 +81,10 @@ export const OwnerDashboard = () => {
       setError('Restaurant name is required');
       return;
     }
+    if (!restaurantForm.lat || !restaurantForm.lng || isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
+      setError('Valid latitude and longitude are required');
+      return;
+    }
 
     try {
       setError('');
@@ -92,7 +96,11 @@ export const OwnerDashboard = () => {
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
-          description: restaurantForm.description.trim()
+          description: restaurantForm.description.trim(),
+          location: {
+            lat: Number(restaurantForm.lat),
+            lng: Number(restaurantForm.lng)
+          }
         })
       });
 
@@ -101,7 +109,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to create restaurant');
       }
 
-      setRestaurantForm({ name: '', description: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
       setShowAddRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -115,6 +123,12 @@ export const OwnerDashboard = () => {
       setError('Restaurant name is required');
       return;
     }
+    if (restaurantForm.lat || restaurantForm.lng) {
+      if (isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
+        setError('Latitude and longitude must be valid numbers');
+        return;
+      }
+    }
 
     try {
       setError('');
@@ -126,7 +140,11 @@ export const OwnerDashboard = () => {
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
-          description: restaurantForm.description.trim()
+          description: restaurantForm.description.trim(),
+          location: restaurantForm.lat && restaurantForm.lng ? {
+            lat: Number(restaurantForm.lat),
+            lng: Number(restaurantForm.lng)
+          } : undefined
         })
       });
 
@@ -142,7 +160,7 @@ export const OwnerDashboard = () => {
         description: restaurantForm.description.trim()
       }));
       
-      setRestaurantForm({ name: '', description: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
       setShowEditRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -285,7 +303,9 @@ export const OwnerDashboard = () => {
   const openEditRestaurant = () => {
     setRestaurantForm({
       name: selectedRestaurant.name,
-      description: selectedRestaurant.description || ''
+      description: selectedRestaurant.description || '',
+      lat: selectedRestaurant.location?.lat?.toString() || '',
+      lng: selectedRestaurant.location?.lng?.toString() || ''
     });
     setError('');
     setShowEditRestaurantModal(true);
@@ -315,7 +335,7 @@ export const OwnerDashboard = () => {
             <button 
               className="add-restaurant-btn"
               onClick={() => {
-                setRestaurantForm({ name: '', description: '' });
+                setRestaurantForm({ name: '', description: '', lat: '', lng: '' });
                 setError('');
                 setShowAddRestaurantModal(true);
               }}
@@ -459,6 +479,28 @@ export const OwnerDashboard = () => {
                   placeholder="e.g. Italian stone-baked pizza and pasta dishes"
                 />
               </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Latitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lat}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lat: e.target.value }))}
+                    placeholder="e.g. 32.085"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Longitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lng}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lng: e.target.value }))}
+                    placeholder="e.g. 34.781"
+                  />
+                </div>
+              </div>
               <button type="submit" className="modal-submit-btn">Create Store</button>
             </form>
           </div>
@@ -490,6 +532,26 @@ export const OwnerDashboard = () => {
                   value={restaurantForm.description}
                   onChange={(e) => setRestaurantForm(prev => ({ ...prev, description: e.target.value }))}
                 />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Latitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lat}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lat: e.target.value }))}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Longitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={restaurantForm.lng}
+                    onChange={(e) => setRestaurantForm(prev => ({ ...prev, lng: e.target.value }))}
+                  />
+                </div>
               </div>
               <button type="submit" className="modal-submit-btn">Save Changes</button>
             </form>
