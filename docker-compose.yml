@@ -1,10 +1,10 @@
+version: '3.8'
 
 services:
 
   server:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./src
     ports:
       - "5555:5555"
     volumes:
@@ -13,22 +13,20 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile
     ports:
       - "1234:1234"
     environment:
+      - RECOMMENDER_HOST=server
       - TCP_HOST=server
       - TCP_PORT=5555
     depends_on:
       - server
 
-
-
   client:
     build:
       context: ./src/client
       dockerfile: Dockerfile
-
     command: ["python", "client.py", "server", "5555"]
     stdin_open: true
     tty: true
