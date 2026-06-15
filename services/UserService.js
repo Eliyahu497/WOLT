@@ -5,18 +5,18 @@ const User = require('../models/User');
 class UserService {
     createUser(data) {
         const id = uuidv4();
-        const newUser = new User(id, data.name, data.email, data.phone, data.address, data.userName, data.password);
+        const newUser = new User(id, data.name, data.email, data.phone, data.address, data.userName, data.password, data.role);
         InMemoryDB.users.push(newUser);
         return newUser;
     }
     getUserById(id) {
-        return InMemoryDB.users.find(u => u.id === id) || null; 
+        return InMemoryDB.users.find(u => u.id === id) || null;
     }
     validateCredentials(userName, password) {
-        return InMemoryDB.users.find(u => u.userName === userName && u.password === password) || null; 
+        return InMemoryDB.users.find(u => u.userName === userName && u.password === password) || null;
     }
     invalidUN(userName) {
-        return InMemoryDB.users.find(u => u.userName === userName) || null; 
+        return InMemoryDB.users.find(u => u.userName === userName) || null;
     }
 }
 
