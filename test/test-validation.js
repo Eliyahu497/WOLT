@@ -72,7 +72,8 @@ async function runTests() {
                 phone: "0541234567",
                 location: { lat: 32.0, lng: 34.0 },
                 userName: "shira_val",
-                password: "password123"
+                password: "password123",
+                avatar: "http://example.com/avatar.jpg"
             })
         });
         if (userRes.status !== 201) {
@@ -89,7 +90,7 @@ async function runTests() {
         const restRes = await fetch(`${baseUrl}/restaurants`, {
             method: 'POST',
             headers: userIdHeader,
-            body: JSON.stringify({ name: "Validation Diner", description: "Safe foods only" })
+            body: JSON.stringify({ name: "Validation Diner", description: "Safe foods only", image: "http://example.com/diner.jpg" })
         });
         if (restRes.status !== 201) {
             throw new Error(`Failed to seed restaurant, status: ${restRes.status}`);
@@ -103,7 +104,7 @@ async function runTests() {
         const prodRes = await fetch(`${baseUrl}/restaurants/${validRestId}/products`, {
             method: 'POST',
             headers: userIdHeader,
-            body: JSON.stringify({ name: "Salad", description: "Healthy greens", price: 40 })
+            body: JSON.stringify({ name: "Salad", description: "Healthy greens", price: 40, image: "http://example.com/salad.jpg" })
         });
         if (prodRes.status !== 201) {
             throw new Error(`Failed to seed product, status: ${prodRes.status}`);

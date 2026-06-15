@@ -34,7 +34,8 @@ async function runTests() {
                 phone: "0547777777",
                 location: { lat: 32.0, lng: 34.0 },
                 userName: "search_tester",
-                password: "password123"
+                password: "password123",
+                avatar: "http://example.com/avatar.jpg"
             })
         });
         if (userRes.status !== 201) {
@@ -57,7 +58,8 @@ async function runTests() {
             headers: authHeaders,
             body: JSON.stringify({
                 name: "Pizza Hut",
-                description: "Great Italian Pizza and Pasta"
+                description: "Great Italian Pizza and Pasta",
+                image: "http://example.com/pizza_hut.jpg"
             })
         });
         if (restRes1.status !== 201) {
@@ -75,7 +77,8 @@ async function runTests() {
             body: JSON.stringify({
                 name: "Pepperoni Pizza",
                 description: "Hot cheesy pizza with pepperoni slices",
-                price: 60
+                price: 60,
+                image: "http://example.com/pepperoni.jpg"
             })
         });
         if (prodRes1.status !== 201) {
@@ -94,7 +97,8 @@ async function runTests() {
             body: JSON.stringify({
                 name: "Garlic Bread",
                 description: "Toasted bread with garlic butter",
-                price: 20
+                price: 20,
+                image: "http://example.com/garlic_bread.jpg"
             })
         });
         if (prodRes2.status !== 201) {
@@ -113,7 +117,8 @@ async function runTests() {
             headers: authHeaders,
             body: JSON.stringify({
                 name: "Sushi Bar",
-                description: "Authentic Japanese sushi and rolls"
+                description: "Authentic Japanese sushi and rolls",
+                image: "http://example.com/sushi_bar.jpg"
             })
         });
         if (restRes2.status !== 201) {
@@ -131,7 +136,8 @@ async function runTests() {
             body: JSON.stringify({
                 name: "Veggie Roll",
                 description: "Fresh cucumber and avocado roll",
-                price: 35
+                price: 35,
+                image: "http://example.com/veggie_roll.jpg"
             })
         });
         if (prodRes3.status !== 201) {

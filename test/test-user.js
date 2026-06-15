@@ -13,7 +13,8 @@ try {
         phone: "0501234567",
         location: { lat: 32.0, lng: 34.0 },
         userName: "yossi_c",
-        password: "secretPassword123"
+        password: "secretPassword123",
+        avatar: "http://example.com/avatar.jpg"
     };
     
     console.log("\n⏳ Attempting to create user...");

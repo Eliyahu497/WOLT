@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Register.css';
 
-export const Register = ({ onToggleView }) => {
+export const Register = ({ onToggleView, onBackToGuest }) => {
   const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
@@ -12,9 +12,11 @@ export const Register = ({ onToggleView }) => {
     lng: '',
     userName: '',
     password: '',
-    role: 'customer' // 'customer' or 'manager'
+    confirmPassword: '',
+    role: 'customer', // 'customer' or 'manager'
+    avatar: ''
   });
-  
+
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,21 +25,37 @@ export const Register = ({ onToggleView }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, avatar: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleRoleSelect = (selectedRole) => {
     setFormData((prev) => ({ ...prev, role: selectedRole }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, phone, lat, lng, userName, password, role } = formData;
+    const { name, email, phone, lat, lng, userName, password, confirmPassword, role, avatar } = formData;
 
-    if (!name.trim() || !email.trim() || !phone.trim() || !lat || !lng || !userName.trim() || !password.trim()) {
+    if (!name.trim() || !email.trim() || !phone.trim() || !lat || !lng || !userName.trim() || !password.trim() || !confirmPassword.trim() || !avatar.trim()) {
       setError('All fields are required');
       return;
     }
     
     if (isNaN(Number(lat)) || isNaN(Number(lng))) {
       setError('Latitude and Longitude must be valid numbers');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
@@ -56,7 +74,8 @@ export const Register = ({ onToggleView }) => {
       { lat: Number(lat), lng: Number(lng) },
       userName.trim(),
       password.trim(),
-      role
+      role,
+      avatar.trim()
     );
 
     setIsSubmitting(false);
@@ -83,25 +102,25 @@ export const Register = ({ onToggleView }) => {
           <div className="role-selection-group">
             <span className="role-label">I want to:</span>
             <div className="role-cards-container">
-              <div 
+              <div
                 className={`role-card ${formData.role === 'customer' ? 'active' : ''}`}
                 onClick={() => handleRoleSelect('customer')}
               >
                 <div className="role-card-icon">🍔</div>
                 <div className="role-card-content">
-                  <span className="role-card-title">Order Food</span>
-                  <span className="role-card-desc">Browse & order from local kitchens</span>
+                  <span className="role-card-title">Customer</span>
+                  <span className="role-card-desc">regular account</span>
                 </div>
               </div>
 
-              <div 
+              <div
                 className={`role-card ${formData.role === 'manager' ? 'active' : ''}`}
                 onClick={() => handleRoleSelect('manager')}
               >
                 <div className="role-card-icon">🏪</div>
                 <div className="role-card-content">
-                  <span className="role-card-title">Manage Shop</span>
-                  <span className="role-card-desc">Run & edit restaurants & menus</span>
+                  <span className="role-card-title">Restaurant Manager</span>
+                  <span className="role-card-desc">Boss account</span>
                 </div>
               </div>
             </div>
@@ -109,7 +128,7 @@ export const Register = ({ onToggleView }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name">Full Name <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="text"
                 id="name"
@@ -122,7 +141,7 @@ export const Register = ({ onToggleView }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">Email Address <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="email"
                 id="email"
@@ -137,7 +156,7 @@ export const Register = ({ onToggleView }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="phone">Phone Number <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="tel"
                 id="phone"
@@ -150,7 +169,7 @@ export const Register = ({ onToggleView }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="userName">Username</label>
+              <label htmlFor="userName">Username <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="text"
                 id="userName"
@@ -165,7 +184,7 @@ export const Register = ({ onToggleView }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="lat">Latitude</label>
+              <label htmlFor="lat">Latitude <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="number"
                 step="any"
@@ -179,7 +198,7 @@ export const Register = ({ onToggleView }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="lng">Longitude</label>
+              <label htmlFor="lng">Longitude <span style={{ color: '#eb5757' }}>*</span></label>
               <input
                 type="number"
                 step="any"
@@ -193,8 +212,38 @@ export const Register = ({ onToggleView }) => {
             </div>
           </div>
 
+          <div className="form-group avatar-form-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Profile Image <span style={{ color: '#eb5757' }}>*</span></label>
+            <div className="avatar-uploader-container">
+              <label htmlFor="avatar" className="avatar-uploader-label" style={{ display: 'block', cursor: 'pointer' }}>
+                {formData.avatar ? (
+                  <div className="avatar-preview-wrapper">
+                    <img src={formData.avatar} alt="Avatar Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div className="avatar-hover-overlay">
+                      <span className="camera-icon">📷</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="avatar-placeholder">
+                    <span className="camera-icon">📷</span>
+                    <span className="avatar-placeholder-text">Add Photo</span>
+                  </div>
+                )}
+              </label>
+              <input
+                type="file"
+                id="avatar"
+                name="avatar"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={isSubmitting}
+                style={{ display: 'none' }}
+              />
+            </div>
+          </div>
+
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Password <span style={{ color: '#eb5757' }}>*</span></label>
             <input
               type="password"
               id="password"
@@ -206,16 +255,36 @@ export const Register = ({ onToggleView }) => {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password <span style={{ color: '#eb5757' }}>*</span></label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="••••••••"
+              disabled={isSubmitting}
+            />
+          </div>
+
           <button type="submit" className="auth-submit-btn" disabled={isSubmitting}>
             {isSubmitting ? 'Registering...' : 'Register'}
           </button>
         </form>
 
-        <div className="auth-footer">
-          <span>Already have an account? </span>
-          <button onClick={onToggleView} className="auth-toggle-btn">
-            Log In
-          </button>
+        <div className="auth-footer" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+          <div>
+            <span>Already have an account? </span>
+            <button onClick={onToggleView} className="auth-toggle-btn">
+              Log In
+            </button>
+          </div>
+          {onBackToGuest && (
+            <button onClick={onBackToGuest} className="auth-toggle-btn" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+              ← Back to Browsing
+            </button>
+          )}
         </div>
       </div>
     </div>
