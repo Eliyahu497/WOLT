@@ -21,7 +21,7 @@ import './MainView.css';
 // It integrates all subcomponents, manages API fetching calls, view reporting, and order submission.
 export const MainView = () => {
   // Consume global states from custom hooks (managed by Developer 2)
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, setIsDarkMode } = useTheme();
   const { isLoggedIn, token, user } = useAuth();
 
   // Navigation states: Controls whether we show the dashboard, menu, or order history
@@ -55,9 +55,10 @@ export const MainView = () => {
       setActiveProduct(null);
       setCartItems([]);
       setShowAuth(false);
+      setIsDarkMode(false); // Reset theme to light mode on logout
     }
     setPrevIsLoggedIn(isLoggedIn);
-  }, [isLoggedIn, prevIsLoggedIn]);
+  }, [isLoggedIn, prevIsLoggedIn, setIsDarkMode]);
 
   // Fetch all restaurants and products from the Node.js API on mount
   useEffect(() => {
@@ -270,13 +271,13 @@ export const MainView = () => {
         <main className="content-viewport">
           {!isLoggedIn && showAuth ? (
             authView === 'login' ? (
-              <Login 
-                onToggleView={() => setAuthView('register')} 
+              <Login
+                onToggleView={() => setAuthView('register')}
                 onBackToGuest={() => setShowAuth(false)}
               />
             ) : (
-              <Register 
-                onToggleView={() => setAuthView('login')} 
+              <Register
+                onToggleView={() => setAuthView('login')}
                 onBackToGuest={() => setShowAuth(false)}
               />
             )
