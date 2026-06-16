@@ -107,7 +107,8 @@ export const OwnerDashboard = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
@@ -152,7 +153,8 @@ export const OwnerDashboard = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
@@ -195,7 +197,8 @@ export const OwnerDashboard = () => {
       const res = await fetch(`/api/restaurants/${restaurantId}`, {
         method: 'DELETE',
         headers: {
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -230,7 +233,8 @@ export const OwnerDashboard = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: name.trim(),
@@ -271,7 +275,8 @@ export const OwnerDashboard = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: name.trim(),
@@ -304,7 +309,8 @@ export const OwnerDashboard = () => {
       const res = await fetch(`/api/restaurants/${selectedRestaurant.id}/products/${productId}`, {
         method: 'DELETE',
         headers: {
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         }
       });
 
