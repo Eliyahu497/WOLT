@@ -60,7 +60,7 @@ const InMemoryDB = {
     restaurants: [
         {
             id: "rest-giraffe",
-            name: "Giraffe",
+            name: "המסעדה של ערן ושירה",
             description: "Asian noodle bar, fresh sushi, and selected dishes from the Far East.",
             location: { lat: 32.0853, lng: 34.7818 },
             owner: "owner-giraffe-123",
@@ -70,6 +70,14 @@ const InMemoryDB = {
             deliveryTime: "25-35 min",
             deliveryPrice: 15,
             products: [
+                {
+                    id: "prod-wedding",
+                    restaurantId: "rest-giraffe",
+                    name: "מזל טוב על החתונה!",
+                    description: "מנה מיוחדת וחגיגית שמוקדשת לערן ושירה לכבוד החתונה!",
+                    price: 0,
+                    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&auto=format&fit=crop&q=60"
+                },
                 {
                     id: "prod-pad-thai",
                     restaurantId: "rest-giraffe",
