@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Register.css';
 
-export const Register = ({ onToggleView, onBackToGuest }) => {
+export const Register = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -321,15 +323,13 @@ export const Register = ({ onToggleView, onBackToGuest }) => {
         <div className="auth-footer" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
           <div>
             <span>Already have an account? </span>
-            <button onClick={onToggleView} className="auth-toggle-btn">
+            <button onClick={() => navigate('/login')} className="auth-toggle-btn">
               Log In
             </button>
           </div>
-          {onBackToGuest && (
-            <button onClick={onBackToGuest} className="auth-toggle-btn" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              ← Back to Browsing
-            </button>
-          )}
+          <button onClick={() => navigate('/')} className="auth-toggle-btn" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+            ← Back to Browsing
+          </button>
         </div>
       </div>
     </div>

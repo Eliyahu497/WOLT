@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -7,8 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 // Props:
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
-// - onViewHistory: Callback function to open the Order History screen.
-export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClick }) => {
+export const Header = ({ searchQuery, setSearchQuery }) => {
+  const navigate = useNavigate();
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
@@ -19,7 +20,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
       <div className="header-container">
 
         {/* 1. Brand Logo Container */}
-        <div className="header-logo">
+        <div className="header-logo" onClick={() => navigate(user?.role === 'manager' ? '/owner' : '/')} style={{ cursor: 'pointer' }}>
           <span className="logo-wolt">Wolt</span>
           <span className="logo-badge">Clone</span>
         </div>
@@ -59,7 +60,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
           {/* Past orders navigation button (visible only if user is logged in and not a manager) */}
           {user && user.role !== 'manager' && (
             <button
-              onClick={onViewHistory}
+              onClick={() => navigate('/orders')}
               className="theme-toggle-btn"
               title="View past orders"
             >
@@ -94,7 +95,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
               </button>
             </div>
           ) : (
-            <button className="login-btn" onClick={onLoginClick}>Log In</button>
+            <button className="login-btn" onClick={() => navigate('/login')}>Log In</button>
           )}
         </div>
       </div>

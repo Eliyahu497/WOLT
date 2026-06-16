@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 // Dashboard component displaying the main marketplace dashboard
 // Props:
 // - restaurants: Array of restaurant objects
 // - categories: Array of category structures (Sushi, Burgers, etc.)
-// - onRestaurantSelect: Callback trigger when clicking on a restaurant card
 // - searchQuery: Current text filter typed by the user in the search input
 export const Dashboard = ({
   restaurants,
   categories,
-  onRestaurantSelect,
   searchQuery
 }) => {
+  const navigate = useNavigate();
   // Local state hook to hold the active category ID filter (null represents no filter)
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -85,7 +85,7 @@ export const Dashboard = ({
                 key={rest.id}
                 className="restaurant-card"
                 // Trigger restaurant detail view callback on click
-                onClick={() => onRestaurantSelect(rest)}
+                onClick={() => navigate('/restaurant/' + rest.id)}
               >
                 {/* Visual cover thumbnail */}
                 <div className="card-image-wrapper">
