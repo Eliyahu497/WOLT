@@ -166,6 +166,29 @@ export const MainView = () => {
 
   // Cart Management - Add item to cart
   const handleAddToCart = (product, quantity) => {
+    const productRestId = product.restaurantId || selectedRestaurant?.id;
+
+    // Check if cart already has items from a different restaurant
+    if (cartItems.length > 0) {
+      const firstItem = cartItems[0];
+      if (firstItem.restaurantId && firstItem.restaurantId !== productRestId) {
+        // Show confirmation dialog to clear the cart and start a new order
+        const confirmClear = window.confirm(
+          `You already have items from another restaurant in your cart. Would you like to clear your cart and start a new order from ${selectedRestaurant?.name || 'this restaurant'}?`
+        );
+        if (confirmClear) {
+          setCartItems([{
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity,
+            restaurantId: productRestId
+          }]);
+        }
+        return;
+      }
+    }
+
     setCartItems((prevItems) => {
       // Check if product already exists in the cart
       const existingItem = prevItems.find((item) => item.id === product.id);
@@ -179,7 +202,13 @@ export const MainView = () => {
         );
       } else {
         // If it does not exist, append a new product item structure
-        return [...prevItems, { id: product.id, name: product.name, price: product.price, quantity }];
+        return [...prevItems, {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity,
+          restaurantId: productRestId
+        }];
       }
     });
   };
@@ -214,8 +243,20 @@ export const MainView = () => {
       return;
     }
 
+    if (cartItems.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+
+    // Retrieve the restaurantId directly from the cart items
+    const targetRestaurantId = cartItems[0].restaurantId || selectedRestaurant?.id;
+    if (!targetRestaurantId) {
+      alert("Could not determine the restaurant for this order.");
+      return;
+    }
+
     const orderPayload = {
-      restaurantId: selectedRestaurant.id,
+      restaurantId: targetRestaurantId,
       items: cartItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity
@@ -245,6 +286,13 @@ export const MainView = () => {
       setCartItems([]);
     }
   };
+
+  // Calculate delivery price based on items in the cart
+  const cartRestaurantId = cartItems[0]?.restaurantId;
+  const cartRestaurant = cartRestaurantId
+    ? (restaurants.find(r => r.id === cartRestaurantId) || mockRestaurants.find(r => r.id === cartRestaurantId))
+    : null;
+  const cartDeliveryPrice = cartRestaurant ? cartRestaurant.deliveryPrice : 0;
 
   const isOwner = isLoggedIn && user && user.role === 'manager';
 
@@ -312,7 +360,7 @@ export const MainView = () => {
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
             onSubmitOrder={handleSubmitOrder}
-            deliveryPrice={selectedRestaurant ? selectedRestaurant.deliveryPrice : 0}
+            deliveryPrice={cartDeliveryPrice}
           />
         )}
       </div>
