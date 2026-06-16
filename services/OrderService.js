@@ -53,7 +53,9 @@ class OrderService {
 
             return {
                 productId: item.productId,
-                quantity: qty
+                quantity: qty,
+                name: product.name,
+                price: product.price
             };
         });
 
