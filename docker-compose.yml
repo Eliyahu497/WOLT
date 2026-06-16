@@ -4,7 +4,8 @@ services:
 
   server:
     build:
-      context: ./src
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5555:5555"
     volumes:
@@ -13,7 +14,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.web
     ports:
       - "1234:1234"
     environment:
