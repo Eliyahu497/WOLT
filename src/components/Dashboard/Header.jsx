@@ -8,7 +8,10 @@ import { useAuth } from '../../context/AuthContext';
 // Props:
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
-export const Header = ({ searchQuery, setSearchQuery }) => {
+// - cartItemCount: Number of items currently in the cart.
+// - onToggleCart: Callback to open/close the cart drawer.
+// - showCartButton: Boolean indicating if the cart button should be visible.
+export const Header = ({ searchQuery, setSearchQuery, cartItemCount, onToggleCart, showCartButton }) => {
   const navigate = useNavigate();
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
@@ -69,6 +72,18 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
             </button>
           )}
 
+          {/* Shopping Cart Button */}
+          {showCartButton && (
+            <button
+              onClick={onToggleCart}
+              className="header-cart-btn"
+              title="Toggle Cart"
+            >
+              🛍️ Cart 
+              {cartItemCount > 0 && <span className="header-cart-badge">{cartItemCount}</span>}
+            </button>
+          )}
+
           {/* Conditional Profile Rendering */}
           {user ? (
             <div className="user-profile-group">
@@ -88,17 +103,52 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
                 <span className="user-name">{user.name} {user.role === 'manager' ? '(Restaurant Owner)' : ''}</span>
                 
                 {showProfile && (
-                  <div className="profile-popup">
+                  <div className="profile-popup premium-popup">
                     <div className="profile-popup-header">
-                      <h4>Personal Details</h4>
+                      <div className="profile-popup-title-row">
+                        <h4>Personal Details</h4>
+                        <span className={`role-badge ${user.role === 'manager' ? 'role-manager' : 'role-customer'}`}>
+                          {user.role === 'manager' ? '★ Owner' : '👤 Customer'}
+                        </span>
+                      </div>
                     </div>
                     <div className="profile-popup-body">
-                      <p><strong>Name:</strong> {user.name}</p>
-                      <p><strong>Email:</strong> {user.email}</p>
-                      <p><strong>Phone:</strong> {user.phone}</p>
-                      <p><strong>Username:</strong> {user.userName}</p>
+                      <div className="profile-detail-item">
+                        <span className="detail-icon">👤</span>
+                        <div className="detail-text">
+                          <span className="detail-label">Name</span>
+                          <span className="detail-value">{user.name}</span>
+                        </div>
+                      </div>
+                      <div className="profile-detail-item">
+                        <span className="detail-icon">📧</span>
+                        <div className="detail-text">
+                          <span className="detail-label">Email</span>
+                          <span className="detail-value">{user.email}</span>
+                        </div>
+                      </div>
+                      <div className="profile-detail-item">
+                        <span className="detail-icon">📱</span>
+                        <div className="detail-text">
+                          <span className="detail-label">Phone</span>
+                          <span className="detail-value">{user.phone}</span>
+                        </div>
+                      </div>
+                      <div className="profile-detail-item">
+                        <span className="detail-icon">🆔</span>
+                        <div className="detail-text">
+                          <span className="detail-label">Username</span>
+                          <span className="detail-value">@{user.userName}</span>
+                        </div>
+                      </div>
                       {user.location && (
-                        <p><strong>Location:</strong> {user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)}</p>
+                        <div className="profile-detail-item">
+                          <span className="detail-icon">📍</span>
+                          <div className="detail-text">
+                            <span className="detail-label">Location</span>
+                            <span className="detail-value">{user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)}</span>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>

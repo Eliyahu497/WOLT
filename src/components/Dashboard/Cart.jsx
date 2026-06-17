@@ -8,12 +8,16 @@ import './Cart.css';
 // - onRemoveItem: Callback function to remove an item from the cart
 // - onSubmitOrder: Callback function triggered when the user clicks 'Submit Order'
 // - deliveryPrice: Delivery fee for the selected restaurant (default is 0)
+// - isOpen: Boolean indicating if the drawer is visible
+// - onClose: Callback to close the drawer
 export const Cart = ({ 
   cartItems, 
   onUpdateQuantity, 
   onRemoveItem, 
   onSubmitOrder,
-  deliveryPrice = 0 
+  deliveryPrice = 0,
+  isOpen,
+  onClose
 }) => {
   
   // Calculate the sum of all product prices multiplied by their quantity
@@ -23,12 +27,25 @@ export const Cart = ({
   const total = subtotal > 0 ? subtotal + deliveryPrice : 0;
 
   return (
-    <div className="cart-drawer">
-      {/* Header section of the cart */}
-      <div className="cart-header">
-        <h2 className="cart-title">Your Order 🛍️</h2>
-        <span className="items-count-badge">{cartItems.length} items</span>
-      </div>
+    <>
+      {/* Dark overlay backdrop */}
+      <div 
+        className={`cart-backdrop ${isOpen ? 'open' : ''}`} 
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      <div className={`cart-drawer ${isOpen ? 'open' : ''}`}>
+        {/* Header section of the cart */}
+        <div className="cart-header">
+          <div className="cart-header-title-group">
+            <h2 className="cart-title">Your Order 🛍️</h2>
+            <span className="items-count-badge">{cartItems.length} items</span>
+          </div>
+          <button className="cart-close-btn" onClick={onClose} aria-label="Close Cart">
+            ✕
+          </button>
+        </div>
 
       {/* Main content area */}
       <div className="cart-body">
@@ -109,5 +126,6 @@ export const Cart = ({
         </div>
       )}
     </div>
+    </>
   );
 };

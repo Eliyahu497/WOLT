@@ -26,21 +26,10 @@
 }
 
 /* ==========================================================================
-   Responsive Viewport Splits
+   Responsive Layout (Kept for future use if needed)
    ========================================================================== */
 @media (max-width: 768px) {
-  /* On tablets and mobile screens, stack the main content and cart vertically */
   .main-content-split {
     flex-direction: column;
-  }
-
-  /* Expand Cart to full-width and remove sticky sidebar positioning */
-  .cart-drawer {
-    max-width: 100%;
-    position: relative;
-    top: 0;
-    height: auto;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
   }
 }
