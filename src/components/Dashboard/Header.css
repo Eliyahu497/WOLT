@@ -169,3 +169,53 @@
   border: 2px solid var(--wolt-blue);
 }
 
+.profile-popup {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 250px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+  cursor: default;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-popup-header {
+  background-color: var(--wolt-blue);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.profile-popup-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profile-popup-body {
+  padding: 16px;
+}
+
+.profile-popup-body p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.profile-popup-body p:last-child {
+  margin-bottom: 0;
+}
+
+.profile-popup-body strong {
+  color: var(--text-secondary);
+}

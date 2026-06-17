@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import { useTheme } from '../../context/ThemeContext';
@@ -13,6 +13,7 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
 
   return (
     // Dynamic styling application: Appends 'dark' or 'light' class modifier based on theme context state
@@ -71,7 +72,7 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
           {/* Conditional Profile Rendering */}
           {user ? (
             <div className="user-profile-group">
-              <div className="user-profile">
+              <div className="user-profile" onClick={() => setShowProfile(!showProfile)} style={{ cursor: 'pointer', position: 'relative' }}>
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -85,6 +86,23 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
                 )}
                 {/* show user name and if role is manager */}
                 <span className="user-name">{user.name} {user.role === 'manager' ? '(Restaurant Owner)' : ''}</span>
+                
+                {showProfile && (
+                  <div className="profile-popup">
+                    <div className="profile-popup-header">
+                      <h4>Personal Details</h4>
+                    </div>
+                    <div className="profile-popup-body">
+                      <p><strong>Name:</strong> {user.name}</p>
+                      <p><strong>Email:</strong> {user.email}</p>
+                      <p><strong>Phone:</strong> {user.phone}</p>
+                      <p><strong>Username:</strong> {user.userName}</p>
+                      {user.location && (
+                        <p><strong>Location:</strong> {user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 onClick={logout}
