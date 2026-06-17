@@ -56,21 +56,18 @@ export const Dashboard = ({
       {/* 1. Category Filtering Section */}
       <section className="categories-section">
         <h2 className="section-heading">What are you craving?</h2>
-        <div className="categories-carousel-container">
-          <button className="carousel-arrow left-arrow" onClick={() => scrollCategories('left')}>
-            &#8592;
-          </button>
-          
-          <div className="categories-list" ref={categoriesListRef}>
-            {categories.map((cat) => (
+        <div className="categories-marquee-wrapper">
+          <div className="categories-list marquee-active" ref={categoriesListRef}>
+            {/* Duplicate categories three times to ensure a seamless looping marquee effect across different screen sizes */}
+            {[...categories, ...categories, ...categories].map((cat, index) => (
               <div 
-                key={cat.id} 
+                key={`${cat.id}-${index}`} 
                 className="category-item-wrapper"
               >
                 <button
                   onClick={() => handleCategoryClick(cat.id)}
                   className={`category-item-box ${selectedCategory === cat.id ? 'active' : ''}`}
-                  style={{ backgroundColor: cat.bgColor || '#f0f0f0' }}
+                  style={{ backgroundColor: cat.bgColor || '#e0f2fe' }}
                 >
                   <span className="category-icon">{cat.icon}</span>
                 </button>
@@ -78,10 +75,6 @@ export const Dashboard = ({
               </div>
             ))}
           </div>
-
-          <button className="carousel-arrow right-arrow" onClick={() => scrollCategories('right')}>
-            &#8594;
-          </button>
         </div>
       </section>
 

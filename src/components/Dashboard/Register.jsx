@@ -93,8 +93,7 @@ export const Register = () => {
     <div className="auth-container">
       <div className="auth-card register-card">
         <div className="auth-header">
-          <span className="auth-logo">Wolt</span>
-          <span className="auth-badge">Clone</span>
+          <span className="auth-logo">Want</span>
           <h2 className="auth-title">Create an Account</h2>
           <p className="auth-subtitle">Join us to discover delicious meals or manage your store</p>
         </div>

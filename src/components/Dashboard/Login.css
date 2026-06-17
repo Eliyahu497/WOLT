@@ -5,23 +5,24 @@
   align-items: center;
   min-height: calc(100vh - 80px);
   padding: 40px 20px;
-  background: radial-gradient(circle at top right, rgba(0, 157, 224, 0.08), transparent 40%),
-              radial-gradient(circle at bottom left, rgba(0, 157, 224, 0.05), transparent 45%);
+  background: radial-gradient(circle at top right, rgba(0, 180, 255, 0.08), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(0, 180, 255, 0.05), transparent 45%);
 }
 
 .auth-card {
   width: 100%;
   max-width: 440px;
   background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 2px solid rgba(0, 180, 255, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0, 180, 255, 0.06);
   padding: 40px;
-  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
 .auth-card:hover {
-  box-shadow: 0 15px 35px rgba(0, 157, 224, 0.06);
+  box-shadow: 0 20px 45px rgba(0, 180, 255, 0.12);
+  transform: translateY(-2px);
 }
 
 .auth-header {
@@ -30,25 +31,33 @@
 }
 
 .auth-logo {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: var(--wolt-blue);
-  letter-spacing: -1.5px;
+  font-family: 'Caveat', cursive;
+  font-size: 42px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00b4ff 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  filter: drop-shadow(0 2px 4px rgba(0, 180, 255, 0.1));
 }
 
 .auth-badge {
-  background-color: var(--wolt-blue);
+  font-family: 'Kalam', cursive;
+  background: linear-gradient(135deg, var(--wolt-blue) 0%, var(--wolt-blue-hover) 100%);
   color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 6px;
-  margin-left: 5px;
-  vertical-align: super;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(0, 180, 255, 0.2);
 }
 
 .auth-title {
-  font-size: 1.5rem;
+  font-family: 'Kalam', cursive;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
   margin-top: 15px;
@@ -56,7 +65,8 @@
 }
 
 .auth-subtitle {
-  font-size: 0.9rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
   color: var(--text-secondary);
 }
 
@@ -68,13 +78,14 @@
 }
 
 .auth-error-message {
-  background-color: rgba(235, 87, 87, 0.1);
-  border-left: 4px solid #eb5757;
-  color: #eb5757;
+  font-family: 'Patrick Hand', cursive;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left: 4px solid #ef4444;
+  color: #ef4444;
   padding: 12px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .form-group {
@@ -84,47 +95,52 @@
 }
 
 .form-group label {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
 .form-group input,
 .form-group select {
-  font-family: inherit;
-  font-size: 0.95rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   background-color: var(--surface-color);
   color: var(--text-primary);
-  border-radius: var(--wolt-border-radius);
+  border-radius: 16px;
   outline: none;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  transition: all var(--transition-speed) ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   border-color: var(--wolt-blue);
-  box-shadow: 0 0 0 3px rgba(0, 157, 224, 0.15);
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.2);
+  background-color: var(--bg-color);
 }
 
 /* Submit Button */
 .auth-submit-btn {
-  font-family: inherit;
-  font-size: 1rem;
+  font-family: 'Kalam', cursive;
+  font-size: 17px;
   font-weight: 700;
   padding: 14px;
-  background-color: var(--wolt-blue);
+  background: linear-gradient(135deg, var(--wolt-blue) 0%, var(--wolt-blue-hover) 100%);
   color: white;
   border: none;
-  border-radius: var(--wolt-border-radius);
+  border-radius: 20px;
   cursor: pointer;
-  transition: background-color var(--transition-speed), transform 0.1s ease;
+  box-shadow: 0 6px 16px rgba(0, 180, 255, 0.25);
+  transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 10px;
 }
 
 .auth-submit-btn:hover {
-  background-color: var(--wolt-blue-hover);
+  background: linear-gradient(135deg, var(--wolt-blue-hover) 0%, #0096d6 100%);
+  box-shadow: 0 8px 22px rgba(0, 180, 255, 0.45);
+  transform: translateY(-2px);
 }
 
 .auth-submit-btn:active {
@@ -132,16 +148,19 @@
 }
 
 .auth-submit-btn:disabled {
-  background-color: var(--border-color);
+  background: var(--border-color) !important;
   color: var(--text-secondary);
+  box-shadow: none;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Footer Toggle */
 .auth-footer {
+  font-family: 'Patrick Hand', cursive;
   text-align: center;
   margin-top: 25px;
-  font-size: 0.9rem;
+  font-size: 15px;
   color: var(--text-secondary);
   border-top: 1px solid var(--border-color);
   padding-top: 20px;
@@ -151,25 +170,29 @@
   background: none;
   border: none;
   color: var(--wolt-blue);
+  font-family: 'Kalam', cursive;
   font-weight: 700;
   cursor: pointer;
   padding: 0;
   font-size: inherit;
-  transition: color var(--transition-speed);
+  transition: all var(--transition-speed) ease;
+  margin-left: 4px;
 }
 
 .auth-toggle-btn:hover {
   color: var(--wolt-blue-hover);
   text-decoration: underline;
+  transform: scale(1.02);
 }
 
 /* Dark mode specific compatibility overrides */
 .dark .auth-card {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  background-color: var(--card-bg);
 }
 
 .dark .auth-card:hover {
-  box-shadow: 0 15px 35px rgba(0, 157, 224, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 180, 255, 0.15);
 }
 
 /* Role Selection Segmented Cards */
@@ -181,8 +204,9 @@
 }
 
 .role-label {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-primary);
   text-align: left;
 }
@@ -202,19 +226,20 @@
   background-color: var(--surface-color);
   border-radius: var(--wolt-border-radius);
   cursor: pointer;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed), transform 0.1s ease;
+  transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 
 .role-card:hover {
-  border-color: rgba(0, 157, 224, 0.4);
-  transform: translateY(-2px);
+  border-color: rgba(0, 180, 255, 0.4);
+  transform: translateY(-3px);
+  box-shadow: var(--box-shadow-soft);
 }
 
 .role-card.active {
   border-color: var(--wolt-blue);
-  background-color: rgba(0, 157, 224, 0.05);
-  box-shadow: 0 4px 12px rgba(0, 157, 224, 0.08);
+  background: linear-gradient(135deg, rgba(0, 180, 255, 0.08) 0%, rgba(0, 180, 255, 0.03) 100%);
+  box-shadow: 0 6px 15px rgba(0, 180, 255, 0.15);
 }
 
 .role-card-icon {
@@ -229,15 +254,17 @@
 }
 
 .role-card-title {
-  font-size: 0.9rem;
+  font-family: 'Kalam', cursive;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .role-card-desc {
-  font-size: 0.75rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 @media (max-width: 480px) {

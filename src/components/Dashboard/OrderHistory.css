@@ -4,36 +4,49 @@
 .order-history-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 32px 24px;
+}
+
+.order-history-page h2 {
+  font-family: 'Kalam', cursive;
+  font-size: 2.2rem;
+  margin-bottom: 24px;
 }
 
 .loading-text, .error-text, .empty-orders {
+  font-family: 'Patrick Hand', cursive;
   text-align: center;
   padding: 40px;
   color: var(--text-secondary);
+  font-size: 1.25rem;
 }
 
 .orders-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
   margin-top: 20px;
 }
 
 /* Individual order card container */
 .order-card {
   background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: var(--wolt-border-radius);
   overflow: hidden;
   box-shadow: var(--box-shadow-soft);
-  transition: border-color var(--transition-speed);
+  transition: all var(--transition-speed) ease;
+}
+
+.order-card:hover {
+  border-color: rgba(0, 180, 255, 0.25);
+  box-shadow: var(--box-shadow-hover);
 }
 
 .order-card-header {
   background-color: var(--surface-color);
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1.5px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -42,44 +55,49 @@
 }
 
 .order-id {
+  font-family: 'Kalam', cursive;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 17px;
   margin-right: 12px;
 }
 
 .order-date {
-  font-size: 13px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .cancel-order-btn {
   background: none;
-  border: 1px solid #ff4d4f;
-  color: #ff4d4f;
+  font-family: 'Kalam', cursive;
+  border: 1.5px solid #ef4444;
+  color: #ef4444;
   padding: 6px 16px;
   border-radius: 16px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all var(--transition-speed);
+  transition: all var(--transition-speed) ease;
 }
 
 .cancel-order-btn:hover {
-  background-color: #ff4d4f;
+  background-color: #ef4444;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Order body displaying items */
 .order-card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
 .order-item-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px dashed var(--border-color);
+  padding: 14px 0;
+  border-bottom: 1.5px dashed var(--border-color);
 }
 
 .order-item-row:last-child {
@@ -87,8 +105,10 @@
 }
 
 .order-item-name {
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Kalam', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .order-item-controls {
@@ -99,41 +119,48 @@
 
 /* Compact style modifier for quantity buttons inside lists */
 .qty-controller.compact {
-  padding: 2px;
-  border-radius: 12px;
+  padding: 3px;
+  border-radius: 16px;
+  border: 1.5px solid rgba(0, 180, 255, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 180, 255, 0.04);
 }
 
 .qty-controller.compact .qty-btn {
   width: 24px;
   height: 24px;
   font-size: 14px;
+  font-family: 'Kalam', cursive;
 }
 
 .qty-controller.compact .qty-display {
   padding: 0 8px;
-  font-size: 13px;
+  font-size: 14px;
+  font-family: 'Patrick Hand', cursive;
 }
 
 .order-item-price {
-  font-size: 14px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
   font-weight: 700;
   min-width: 60px;
   text-align: right;
+  color: var(--text-primary);
 }
 
 /* Order footer detailing final totals */
 .order-card-footer {
   background-color: var(--surface-color);
   padding: 16px 20px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1.5px solid var(--border-color);
   display: flex;
   justify-content: space-between;
+  font-family: 'Kalam', cursive;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .order-total-price {
   color: var(--wolt-blue);
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
 }

@@ -11,37 +11,42 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 20px;
 }
 
 .owner-title {
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-family: 'Kalam', cursive;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 5px;
 }
 
 .owner-subtitle {
-  font-size: 1rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.15rem;
   color: var(--text-secondary);
 }
 
 .add-restaurant-btn {
-  font-family: inherit;
+  font-family: 'Kalam', cursive;
   font-size: 1rem;
   font-weight: 700;
   padding: 12px 24px;
-  background-color: var(--wolt-blue);
+  background: linear-gradient(135deg, var(--wolt-blue) 0%, var(--wolt-blue-hover) 100%);
   color: white;
   border: none;
   border-radius: var(--wolt-border-radius);
   cursor: pointer;
-  transition: background-color var(--transition-speed), transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0, 180, 255, 0.2);
+  transition: all var(--transition-speed) ease;
 }
 
 .add-restaurant-btn:hover {
-  background-color: var(--wolt-blue-hover);
+  background: linear-gradient(135deg, var(--wolt-blue-hover) 0%, #0096d6 100%);
+  box-shadow: 0 8px 18px rgba(0, 180, 255, 0.35);
+  transform: translateY(-2px);
 }
 
 .add-restaurant-btn:active {
@@ -49,8 +54,9 @@
 }
 
 .owner-loading {
+  font-family: 'Patrick Hand', cursive;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: var(--text-secondary);
   padding: 80px 0;
 }
@@ -59,9 +65,10 @@
   text-align: center;
   padding: 80px 40px;
   background-color: var(--surface-color);
-  border: 2px dashed var(--border-color);
-  border-radius: 20px;
+  border: 2px dashed rgba(0, 180, 255, 0.25);
+  border-radius: 24px;
   margin-top: 20px;
+  box-shadow: var(--box-shadow-soft);
 }
 
 .empty-emoji {
@@ -71,15 +78,17 @@
 }
 
 .owner-empty-state h3 {
-  font-size: 1.5rem;
+  font-family: 'Kalam', cursive;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 5px;
 }
 
 .owner-empty-state p {
+  font-family: 'Patrick Hand', cursive;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
 }
 
 /* Owner Restaurant Card Actions */
@@ -91,51 +100,59 @@
 
 .owner-action-btn {
   flex: 1;
-  font-family: inherit;
-  font-size: 0.85rem;
+  font-family: 'Kalam', cursive;
+  font-size: 0.9rem;
   font-weight: 700;
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
   cursor: pointer;
   background-color: var(--bg-color);
   color: var(--text-primary);
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  transition: all var(--transition-speed) ease;
 }
 
 .owner-action-btn.manage:hover {
   border-color: var(--wolt-blue);
-  background-color: rgba(0, 157, 224, 0.05);
+  background-color: rgba(0, 180, 255, 0.08);
+  color: var(--wolt-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 180, 255, 0.1);
 }
 
 .owner-action-btn.delete:hover {
-  border-color: #eb5757;
-  background-color: rgba(235, 87, 87, 0.05);
-  color: #eb5757;
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);
 }
 
 /* Management View Specifics */
 .management-header-banner {
   background-color: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border: 2px solid rgba(0, 180, 255, 0.15);
+  border-radius: 24px;
   padding: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
   margin-top: 20px;
+  box-shadow: var(--box-shadow-soft);
 }
 
 .managed-title {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-family: 'Kalam', cursive;
+  font-size: 2.8rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .managed-desc {
-  font-size: 1.05rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.2rem;
   color: var(--text-secondary);
   margin-bottom: 15px;
 }
@@ -144,8 +161,9 @@
   display: flex;
   gap: 15px;
   align-items: center;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
@@ -156,14 +174,14 @@
 }
 
 .manage-ctrl-btn {
-  font-family: inherit;
+  font-family: 'Kalam', cursive;
   font-size: 0.95rem;
   font-weight: 700;
   padding: 10px 20px;
-  border-radius: var(--wolt-border-radius);
+  border-radius: 16px;
   cursor: pointer;
-  border: 1px solid var(--border-color);
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  border: 1.5px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
 }
 
 .manage-ctrl-btn.edit {
@@ -172,18 +190,23 @@
 }
 
 .manage-ctrl-btn.edit:hover {
-  background-color: var(--surface-color);
-  border-color: var(--text-primary);
+  background-color: rgba(0, 180, 255, 0.05);
+  border-color: var(--wolt-blue);
+  color: var(--wolt-blue);
+  transform: translateY(-2px);
 }
 
 .manage-ctrl-btn.add-product {
-  background-color: var(--wolt-blue);
+  background: linear-gradient(135deg, var(--wolt-blue) 0%, var(--wolt-blue-hover) 100%);
   color: white;
   border: none;
+  box-shadow: 0 4px 10px rgba(0, 180, 255, 0.2);
 }
 
 .manage-ctrl-btn.add-product:hover {
-  background-color: var(--wolt-blue-hover);
+  background: linear-gradient(135deg, var(--wolt-blue-hover) 0%, #0096d6 100%);
+  box-shadow: 0 6px 16px rgba(0, 180, 255, 0.35);
+  transform: translateY(-2px);
 }
 
 /* Product Owner Action Buttons */
@@ -195,26 +218,30 @@
 
 .prod-edit-btn,
 .prod-delete-btn {
-  font-family: inherit;
-  font-size: 0.8rem;
+  font-family: 'Kalam', cursive;
+  font-size: 0.85rem;
   font-weight: 700;
-  padding: 6px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
   cursor: pointer;
   background-color: var(--bg-color);
   color: var(--text-primary);
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  transition: all var(--transition-speed) ease;
 }
 
 .prod-edit-btn:hover {
   border-color: var(--wolt-blue);
   color: var(--wolt-blue);
+  background-color: rgba(0, 180, 255, 0.08);
+  transform: translateY(-2px);
 }
 
 .prod-delete-btn:hover {
-  border-color: #eb5757;
-  color: #eb5757;
+  border-color: #ef4444;
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+  transform: translateY(-2px);
 }
 
 /* Modals layout */
@@ -224,12 +251,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: rgba(11, 19, 41, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
 
 .modal-content-container {
@@ -238,11 +265,11 @@
   max-height: 90vh;
   overflow-y: auto;
   background-color: var(--modal-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border: 2px solid rgba(0, 180, 255, 0.15);
+  border-radius: 24px;
   padding: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  animation: modalReveal 0.25s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
+  box-shadow: 0 25px 50px rgba(0, 180, 255, 0.15);
+  animation: modalReveal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) ease-out;
 }
 
 /* Custom premium scrollbar for modals */
@@ -263,7 +290,7 @@
 @keyframes modalReveal {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.92) translateY(15px);
   }
   to {
     opacity: 1;
@@ -276,13 +303,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1.5px solid var(--border-color);
   padding-bottom: 15px;
 }
 
 .modal-header h2 {
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-family: 'Kalam', cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
@@ -300,12 +328,13 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  transition: background-color var(--transition-speed);
+  transition: all var(--transition-speed) ease;
 }
 
 .modal-close-btn:hover {
-  background-color: var(--surface-color);
-  color: var(--text-primary);
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transform: rotate(90deg);
 }
 
 .modal-form {
@@ -315,30 +344,33 @@
 }
 
 .modal-submit-btn {
-  font-family: inherit;
+  font-family: 'Kalam', cursive;
   font-size: 1rem;
   font-weight: 700;
   padding: 12px;
-  background-color: var(--wolt-blue);
+  background: linear-gradient(135deg, var(--wolt-blue) 0%, var(--wolt-blue-hover) 100%);
   color: white;
   border: none;
   border-radius: var(--wolt-border-radius);
   cursor: pointer;
-  transition: background-color var(--transition-speed);
+  box-shadow: 0 6px 14px rgba(0, 180, 255, 0.2);
+  transition: all var(--transition-speed) ease;
   margin-top: 10px;
 }
 
 .modal-submit-btn:hover {
-  background-color: var(--wolt-blue-hover);
+  background: linear-gradient(135deg, var(--wolt-blue-hover) 0%, #0096d6 100%);
+  box-shadow: 0 8px 18px rgba(0, 180, 255, 0.35);
+  transform: translateY(-2px);
 }
 
 /* Dark mode specific style rules */
 .dark .modal-content-container {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 }
 
 .dark .management-header-banner {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 768px) {
@@ -381,18 +413,21 @@
   padding: 10px 16px;
   background-color: var(--border-color);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--wolt-border-radius);
   cursor: pointer;
+  font-family: 'Kalam', cursive;
   font-weight: 700;
-  font-size: 0.9rem;
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  font-size: 0.95rem;
+  transition: all var(--transition-speed) ease;
   margin-top: 5px;
 }
 
 .custom-file-upload:hover {
-  background-color: var(--surface-color);
+  background-color: rgba(0, 180, 255, 0.08);
   border-color: var(--wolt-blue);
+  color: var(--wolt-blue);
+  transform: translateY(-2px);
 }
 
 .custom-file-upload input[type="file"] {
@@ -401,22 +436,22 @@
 
 /* Custom Select styling for modals */
 .form-group select.modal-select {
-  font-family: inherit;
-  font-size: 0.95rem;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   background-color: var(--surface-color);
   color: var(--text-primary);
   border-radius: var(--wolt-border-radius);
   outline: none;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  transition: all var(--transition-speed) ease;
   cursor: pointer;
   width: 100%;
 }
 
 .form-group select.modal-select:focus {
   border-color: var(--wolt-blue);
-  box-shadow: 0 0 0 3px rgba(0, 157, 224, 0.15);
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.2);
 }
 
 .dark .form-group select.modal-select option {

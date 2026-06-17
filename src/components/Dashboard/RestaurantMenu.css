@@ -4,36 +4,54 @@
 .restaurant-menu-page {
   max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 32px 24px;
 }
 
 .back-btn {
   background: none;
-  border: none;
+  font-family: 'Kalam', cursive;
+  border: 1.5px solid rgba(0, 180, 255, 0.2);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--wolt-blue);
+  background-color: rgba(0, 180, 255, 0.08);
   cursor: pointer;
-  margin-bottom: 20px;
-  padding: 0;
+  margin-bottom: 24px;
+  padding: 6px 16px;
+  border-radius: 12px;
+  transition: all var(--transition-speed) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .back-btn:hover {
-  text-decoration: underline;
+  background-color: var(--wolt-blue);
+  color: white;
+  border-color: var(--wolt-blue);
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(0, 180, 255, 0.2);
 }
 
 .restaurant-banner {
   position: relative;
-  height: 250px;
-  border-radius: var(--wolt-border-radius);
+  height: 280px;
+  border-radius: 24px;
   overflow: hidden;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+  box-shadow: var(--box-shadow-soft);
+  border: 1px solid var(--border-color);
 }
 
 .banner-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.restaurant-banner:hover .banner-image {
+  transform: scale(1.03);
 }
 
 .banner-overlay {
@@ -42,10 +60,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.2));
+  background: linear-gradient(to top, rgba(11, 19, 41, 0.9) 15%, rgba(11, 19, 41, 0.2));
   display: flex;
   align-items: flex-end;
-  padding: 24px;
+  padding: 28px;
 }
 
 .banner-details {
@@ -53,32 +71,39 @@
 }
 
 .restaurant-title {
-  font-size: 32px;
-  font-weight: 800;
+  font-family: 'Kalam', cursive;
+  font-size: 38px;
+  font-weight: 700;
   margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .restaurant-description {
-  font-size: 15px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 17px;
   margin: 0 0 16px 0;
-  opacity: 0.9;
+  opacity: 0.95;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .restaurant-meta {
   display: flex;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.9;
 }
 
 .meta-divider {
   margin: 0 8px;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .products-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
 @media(min-width: 600px) {
@@ -91,17 +116,21 @@
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--wolt-border-radius);
-  padding: 16px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   cursor: pointer;
-  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  box-shadow: var(--box-shadow-soft);
+  transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+              border-color var(--transition-speed) ease;
 }
 
 .product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--box-shadow-soft);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--box-shadow-hover);
+  border-color: rgba(0, 180, 255, 0.35);
 }
 
 .product-details {
@@ -112,13 +141,16 @@
 }
 
 .product-name {
-  font-size: 16px;
+  font-family: 'Kalam', cursive;
+  font-size: 18px;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin: 0 0 6px 0;
+  color: var(--text-primary);
 }
 
 .product-desc {
-  font-size: 12px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.4;
   margin: 0 0 12px 0;
@@ -129,20 +161,28 @@
 }
 
 .product-price {
-  font-size: 14px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
   font-weight: 700;
+  color: var(--wolt-blue);
 }
 
 .product-image-wrapper {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .product-thumbnail {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-thumbnail {
+  transform: scale(1.1);
 }
