@@ -35,8 +35,7 @@ export const Login = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <span className="auth-logo">Wolt</span>
-          <span className="auth-badge">Clone</span>
+          <span className="auth-logo">Want</span>
           <h2 className="auth-title">Welcome back!</h2>
           <p className="auth-subtitle">Log in to order from your favorite restaurants</p>
         </div>
@@ -124,7 +123,7 @@ export const Login = () => {
 
         <div className="auth-footer" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
           <div>
-            <span>New to Wolt Clone? </span>
+            <span>New to Want? </span>
             <button onClick={() => navigate('/register')} className="auth-toggle-btn">
               Create an account
             </button>

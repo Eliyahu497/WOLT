@@ -25,8 +25,7 @@ export const Header = ({ searchQuery, setSearchQuery, cartItemCount, onToggleCar
 
         {/* 1. Brand Logo Container */}
         <div className="header-logo" onClick={() => navigate(user?.role === 'manager' ? '/owner' : '/')} style={{ cursor: 'pointer' }}>
-          <span className="logo-wolt">Wolt</span>
-          <span className="logo-badge">Clone</span>
+          <span className="logo-wolt">Want</span>
         </div>
 
         {/* 2. Global Search Bar */}
