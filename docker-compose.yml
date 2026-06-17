@@ -5,7 +5,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.server
     ports:
       - "5555:5555"
     volumes:
