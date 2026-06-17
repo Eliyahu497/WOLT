@@ -129,6 +129,29 @@ export const MainView = () => {
 
   // Cart Management - Add item to cart
   const handleAddToCart = (product, quantity) => {
+    const productRestId = product.restaurantId || activeRestaurant?.id;
+
+    // Check if cart already has items from a different restaurant
+    if (cartItems.length > 0) {
+      const firstItem = cartItems[0];
+      if (firstItem.restaurantId && productRestId && firstItem.restaurantId !== productRestId) {
+        // Show confirmation dialog to clear the cart and start a new order
+        const confirmClear = window.confirm(
+          `You already have items from another restaurant in your cart. Would you like to clear your cart and start a new order?`
+        );
+        if (confirmClear) {
+          setCartItems([{
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity,
+            restaurantId: productRestId
+          }]);
+        }
+        return;
+      }
+    }
+
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
 
@@ -139,7 +162,13 @@ export const MainView = () => {
             : item
         );
       } else {
-        return [...prevItems, { id: product.id, name: product.name, price: product.price, quantity }];
+        return [...prevItems, {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity,
+          restaurantId: productRestId
+        }];
       }
     });
   };
@@ -167,13 +196,19 @@ export const MainView = () => {
 
   // Checkout submission action handler
   const handleSubmitOrder = async () => {
-    if (!isLoggedIn || !token || !activeRestaurant) {
+    if (!isLoggedIn || !token) {
       alert("You must be logged in to submit an order!");
       return;
     }
 
+    const targetRestaurantId = cartItems[0]?.restaurantId || activeRestaurant?.id;
+    if (!targetRestaurantId) {
+      alert("Could not determine the restaurant for this order.");
+      return;
+    }
+
     const orderPayload = {
-      restaurantId: activeRestaurant.id,
+      restaurantId: targetRestaurantId,
       items: cartItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity
@@ -204,15 +239,22 @@ export const MainView = () => {
   };
 
   const isOwner = isLoggedIn && user && user.role === 'manager';
-  
+
+  // Calculate delivery price based on items in the cart
+  const cartRestaurantId = cartItems[0]?.restaurantId;
+  const cartRestaurant = cartRestaurantId
+    ? (restaurants.find(r => r.id === cartRestaurantId) || (activeRestaurant && activeRestaurant.id === cartRestaurantId ? activeRestaurant : null))
+    : null;
+  const cartDeliveryPrice = cartRestaurant ? cartRestaurant.deliveryPrice : 0;
+
   // Header is hidden on login and register pages
   const hideHeader = location.pathname === '/login' || location.pathname === '/register';
 
   // Cart is shown to logged-in customers on non-orders / non-auth pages
-  const showCart = isLoggedIn && !isOwner && 
-                    location.pathname !== '/orders' && 
-                    location.pathname !== '/login' && 
-                    location.pathname !== '/register';
+  const showCart = isLoggedIn && !isOwner &&
+    location.pathname !== '/orders' &&
+    location.pathname !== '/login' &&
+    location.pathname !== '/register';
 
   return (
     <div className={`main-view-layout ${isDarkMode ? 'dark' : 'light'}`}>
@@ -231,8 +273,8 @@ export const MainView = () => {
           ) : (
             <Routes>
               {/* Home Dashboard */}
-              <Route 
-                path="/" 
+              <Route
+                path="/"
                 element={
                   isOwner ? (
                     <Navigate to="/owner" replace />
@@ -243,76 +285,76 @@ export const MainView = () => {
                       searchQuery={searchQuery}
                     />
                   )
-                } 
+                }
               />
-              
+
               {/* Authentication */}
-              <Route 
-                path="/login" 
+              <Route
+                path="/login"
                 element={
                   isLoggedIn ? (
                     isOwner ? <Navigate to="/owner" replace /> : <Navigate to="/" replace />
                   ) : (
                     <Login />
                   )
-                } 
+                }
               />
-              
-              <Route 
-                path="/register" 
+
+              <Route
+                path="/register"
                 element={
                   isLoggedIn ? (
                     isOwner ? <Navigate to="/owner" replace /> : <Navigate to="/" replace />
                   ) : (
                     <Register />
                   )
-                } 
+                }
               />
-              
+
               {/* Restaurant Menu details page */}
-              <Route 
-                path="/restaurant/:restaurantId" 
+              <Route
+                path="/restaurant/:restaurantId"
                 element={
                   <RestaurantMenu
                     onProductSelect={handleProductSelect}
                     onLoadRestaurant={setActiveRestaurant}
                   />
-                } 
+                }
               />
-              
+
               {/* Order History */}
-              <Route 
-                path="/orders" 
+              <Route
+                path="/orders"
                 element={
                   isLoggedIn ? (
                     <OrderHistory onBack={() => navigate('/')} />
                   ) : (
                     <Navigate to="/login" replace />
                   )
-                } 
+                }
               />
-              
+
               {/* Manager Dashboard */}
-              <Route 
-                path="/owner" 
+              <Route
+                path="/owner"
                 element={
                   isOwner ? (
                     <OwnerDashboard />
                   ) : (
                     <Navigate to="/login" replace />
                   )
-                } 
+                }
               />
-              
-              <Route 
-                path="/owner/restaurant/:restaurantId" 
+
+              <Route
+                path="/owner/restaurant/:restaurantId"
                 element={
                   isOwner ? (
                     <OwnerDashboard />
                   ) : (
                     <Navigate to="/login" replace />
                   )
-                } 
+                }
               />
 
               {/* Fallback to Home */}
@@ -327,7 +369,7 @@ export const MainView = () => {
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
             onSubmitOrder={handleSubmitOrder}
-            deliveryPrice={activeRestaurant ? activeRestaurant.deliveryPrice : 0}
+            deliveryPrice={cartDeliveryPrice}
           />
         )}
       </div>
