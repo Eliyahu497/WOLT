@@ -8,7 +8,10 @@ import { useAuth } from '../../context/AuthContext';
 // Props:
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
-export const Header = ({ searchQuery, setSearchQuery }) => {
+// - cartItemCount: Number of items currently in the cart.
+// - onToggleCart: Callback to open/close the cart drawer.
+// - showCartButton: Boolean indicating if the cart button should be visible.
+export const Header = ({ searchQuery, setSearchQuery, cartItemCount, onToggleCart, showCartButton }) => {
   const navigate = useNavigate();
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
@@ -66,6 +69,18 @@ export const Header = ({ searchQuery, setSearchQuery }) => {
               title="View past orders"
             >
               📋 My Orders
+            </button>
+          )}
+
+          {/* Shopping Cart Button */}
+          {showCartButton && (
+            <button
+              onClick={onToggleCart}
+              className="header-cart-btn"
+              title="Toggle Cart"
+            >
+              🛍️ Cart 
+              {cartItemCount > 0 && <span className="header-cart-badge">{cartItemCount}</span>}
             </button>
           )}
 

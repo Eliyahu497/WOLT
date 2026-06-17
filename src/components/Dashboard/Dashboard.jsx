@@ -35,10 +35,19 @@ export const Dashboard = ({
     return matchesSearch && matchesCategory;
   });
 
-  // Toggles the category filter value. 
-  // If the same category is clicked again, we clear the filter (set to null).
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory((prev) => (prev === categoryId ? null : categoryId));
+  };
+
+  // Create a ref for the categories list to handle programmatic scrolling
+  const categoriesListRef = React.useRef(null);
+
+  // Scroll handler for the carousel arrows
+  const scrollCategories = (direction) => {
+    if (categoriesListRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      categoriesListRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -47,18 +56,32 @@ export const Dashboard = ({
       {/* 1. Category Filtering Section */}
       <section className="categories-section">
         <h2 className="section-heading">What are you craving?</h2>
-        <div className="categories-list">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat.id)}
-              // Apply active class if current category matches state selection
-              className={`category-item-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-            >
-              <span className="category-icon">{cat.icon}</span>
-              <span className="category-label">{cat.name}</span>
-            </button>
-          ))}
+        <div className="categories-carousel-container">
+          <button className="carousel-arrow left-arrow" onClick={() => scrollCategories('left')}>
+            &#8592;
+          </button>
+          
+          <div className="categories-list" ref={categoriesListRef}>
+            {categories.map((cat) => (
+              <div 
+                key={cat.id} 
+                className="category-item-wrapper"
+              >
+                <button
+                  onClick={() => handleCategoryClick(cat.id)}
+                  className={`category-item-box ${selectedCategory === cat.id ? 'active' : ''}`}
+                  style={{ backgroundColor: cat.bgColor || '#f0f0f0' }}
+                >
+                  <span className="category-icon">{cat.icon}</span>
+                </button>
+                <span className="category-label">{cat.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <button className="carousel-arrow right-arrow" onClick={() => scrollCategories('right')}>
+            &#8594;
+          </button>
         </div>
       </section>
 

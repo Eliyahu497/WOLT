@@ -32,6 +32,7 @@ export const MainView = () => {
 
   // Cart state
   const [cartItems, setCartItems] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // API states: Store dynamic fetched data
   const [restaurants, setRestaurants] = useState([]);
@@ -171,6 +172,9 @@ export const MainView = () => {
         }];
       }
     });
+
+    // Automatically open the cart drawer when an item is added
+    setIsCartOpen(true);
   };
 
   // Cart Management - Update item quantity
@@ -263,6 +267,9 @@ export const MainView = () => {
         <Header
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          cartItemCount={cartItems.length}
+          onToggleCart={() => setIsCartOpen(!isCartOpen)}
+          showCartButton={showCart}
         />
       )}
 
@@ -370,6 +377,8 @@ export const MainView = () => {
             onRemoveItem={handleRemoveItem}
             onSubmitOrder={handleSubmitOrder}
             deliveryPrice={cartDeliveryPrice}
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
           />
         )}
       </div>

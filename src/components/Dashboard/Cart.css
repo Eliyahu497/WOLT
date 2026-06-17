@@ -1,19 +1,43 @@
 /* ==========================================================================
    Cart Sidebar Drawer Component Styles
    ========================================================================== */
+.cart-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.cart-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
 .cart-drawer {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 73px); /* Subtract Header height */
+  height: 100vh;
   background-color: var(--card-bg);
   border-left: 1px solid var(--border-color);
   width: 100%;
-  max-width: 360px;
-  position: sticky;
-  top: 73px; /* Stick under Header */
-  box-shadow: var(--box-shadow-soft);
-  z-index: 10;
-  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+  max-width: 400px;
+  position: fixed;
+  top: 0;
+  right: -420px; /* Hide off-screen by default */
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-speed);
+}
+
+.cart-drawer.open {
+  right: 0;
 }
 
 /* Header section styling */
@@ -23,6 +47,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.cart-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 4px;
+}
+
+.cart-close-btn:hover {
+  color: var(--wolt-blue);
+  transform: scale(1.1);
 }
 
 .cart-title {
