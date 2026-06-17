@@ -29,6 +29,10 @@ app.get(/(.*)/, (req, res) => {
 });
 
 // Start the server listening on the defined port
-app.listen(PORT, () => {
+app.listen(PORT, (err) => {
+    if (err) {
+        console.error(`Failed to start server on port ${PORT}:`, err.message);
+        return;
+    }
     console.log(`Server is running live on http://localhost:${PORT}`);
 });
