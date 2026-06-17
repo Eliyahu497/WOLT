@@ -1,5 +1,16 @@
 // InMemoryDB.js - Temporary application database stored in server memory
 const InMemoryDB = {
+    categories: [
+        { id: "sushi", name: "Sushi", icon: "🍣" },
+        { id: "burgers", name: "Burgers", icon: "🍔" },
+        { id: "pizza", name: "Pizza", icon: "🍕" },
+        { id: "asian", name: "Asian", icon: "🥢" },
+        { id: "desserts", name: "Desserts", icon: "🍰" },
+        { id: "indian", name: "Indian", icon: "🍛" },
+        { id: "mexican", name: "Mexican", icon: "🌮" },
+        { id: "italian", name: "Italian", icon: "🍝" },
+        { id: "other", name: "Other", icon: "🍽️" }
+    ],
     users: [
         {
             id: "owner-giraffe-123",

@@ -2,11 +2,15 @@
 // This data mirrors the structures returned by the Express backend API.
 
 export const mockCategories = [
-  { id: "sushi", name: "Sushi", icon: "🍣", bgColor: "#ffebee" },
-  { id: "burgers", name: "Burgers", icon: "🍔", bgColor: "#e8f5e9" },
-  { id: "pizza", name: "Pizza", icon: "🍕", bgColor: "#fff3e0" },
-  { id: "asian", name: "Asian", icon: "🥢", bgColor: "#e3f2fd" },
-  { id: "desserts", name: "Desserts", icon: "🍰", bgColor: "#f3e5f5" }
+  { id: "sushi", name: "Sushi", icon: "🍣" },
+  { id: "burgers", name: "Burgers", icon: "🍔" },
+  { id: "pizza", name: "Pizza", icon: "🍕" },
+  { id: "asian", name: "Asian", icon: "🥢" },
+  { id: "desserts", name: "Desserts", icon: "🍰" },
+  { id: "indian", name: "Indian", icon: "🍛" },
+  { id: "mexican", name: "Mexican", icon: "🌮" },
+  { id: "italian", name: "Italian", icon: "🍝" },
+  { id: "other", name: "Other", icon: "🍽️" }
 ];
 
 export const mockRestaurants = [

@@ -14,6 +14,10 @@ const existUserRouter = require('./routes/existUserRouter');
 app.use(express.json({ limit: '10mb' }));
 
 // 2. Mount each router onto its strict, required HTTP URL prefix path
+app.get('/api/categories', (req, res) => {
+    const InMemoryDB = require('./InMemoryDB');
+    return res.status(200).json(InMemoryDB.categories || []);
+});
 app.use('/api/restaurants', restaurantRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/search', searchRouter);
