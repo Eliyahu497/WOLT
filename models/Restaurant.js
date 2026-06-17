@@ -1,6 +1,6 @@
 // models/Restaurant.js
 class Restaurant {
-    constructor(id, name, description, location, owner, products = [], image) {
+    constructor(id, name, description, location, owner, products = [], image, category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -8,6 +8,7 @@ class Restaurant {
         this.owner = owner;
         this.products = products;
         this.image = image;
+        this.category = category;
     }
 }
 

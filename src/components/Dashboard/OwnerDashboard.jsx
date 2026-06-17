@@ -9,6 +9,7 @@ export const OwnerDashboard = () => {
   const navigate = useNavigate();
   
   const [restaurants, setRestaurants] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +22,7 @@ export const OwnerDashboard = () => {
   const [showEditProductModal, setShowEditProductModal] = useState(false);
   
   // Forms state
-  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '', image: '' });
+  const [restaurantForm, setRestaurantForm] = useState({ name: '', description: '', lat: '', lng: '', image: '', category: '' });
   const [productForm, setProductForm] = useState({ name: '', description: '', price: '', image: '' });
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState('');
@@ -83,8 +84,21 @@ export const OwnerDashboard = () => {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error("Failed to load categories:", err);
+    }
+  };
+
   useEffect(() => {
     loadRestaurants();
+    loadCategories();
   }, [user.id]);
 
   useEffect(() => {
@@ -96,8 +110,8 @@ export const OwnerDashboard = () => {
   // Restaurant Actions
   const handleAddRestaurant = async (e) => {
     e.preventDefault();
-    if (!restaurantForm.name.trim() || !restaurantForm.image.trim()) {
-      setError('Restaurant name and image are required');
+    if (!restaurantForm.name.trim() || !restaurantForm.image.trim() || !restaurantForm.category) {
+      setError('Restaurant name, category, and image are required');
       return;
     }
     if (!restaurantForm.lat || !restaurantForm.lng || isNaN(Number(restaurantForm.lat)) || isNaN(Number(restaurantForm.lng))) {
@@ -117,6 +131,7 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
           description: restaurantForm.description.trim(),
+          category: restaurantForm.category,
           location: {
             lat: Number(restaurantForm.lat),
             lng: Number(restaurantForm.lng)
@@ -130,7 +145,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to create restaurant');
       }
 
-      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '', category: '' });
       setShowAddRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -140,8 +155,8 @@ export const OwnerDashboard = () => {
 
   const handleEditRestaurant = async (e) => {
     e.preventDefault();
-    if (!restaurantForm.name.trim() || !restaurantForm.image.trim()) {
-      setError('Restaurant name and image are required');
+    if (!restaurantForm.name.trim() || !restaurantForm.image.trim() || !restaurantForm.category) {
+      setError('Restaurant name, category, and image are required');
       return;
     }
     if (restaurantForm.lat || restaurantForm.lng) {
@@ -163,6 +178,7 @@ export const OwnerDashboard = () => {
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
           description: restaurantForm.description.trim(),
+          category: restaurantForm.category,
           location: restaurantForm.lat && restaurantForm.lng ? {
             lat: Number(restaurantForm.lat),
             lng: Number(restaurantForm.lng)
@@ -176,7 +192,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to update restaurant');
       }
 
-      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+      setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '', category: '' });
       setShowEditRestaurantModal(false);
       await loadRestaurants();
     } catch (err) {
@@ -328,7 +344,8 @@ export const OwnerDashboard = () => {
       description: selectedRestaurant.description || '',
       lat: selectedRestaurant.location?.lat?.toString() || '',
       lng: selectedRestaurant.location?.lng?.toString() || '',
-      image: selectedRestaurant.image || ''
+      image: selectedRestaurant.image || '',
+      category: selectedRestaurant.category || ''
     });
     setError('');
     setShowEditRestaurantModal(true);
@@ -359,7 +376,7 @@ export const OwnerDashboard = () => {
             <button 
               className="add-restaurant-btn"
               onClick={() => {
-                setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
+                setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '', category: '' });
                 setError('');
                 setShowAddRestaurantModal(true);
               }}
@@ -503,6 +520,21 @@ export const OwnerDashboard = () => {
                   placeholder="e.g. Italian stone-baked pizza and pasta dishes"
                 />
               </div>
+              <div className="form-group">
+                <label>Category <span style={{ color: '#eb5757' }}>*</span></label>
+                <select
+                  value={restaurantForm.category}
+                  onChange={(e) => setRestaurantForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="modal-select"
+                >
+                  <option value="">Select a Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.icon} {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>Latitude <span style={{ color: '#eb5757' }}>*</span></label>
@@ -576,6 +608,21 @@ export const OwnerDashboard = () => {
                   value={restaurantForm.description}
                   onChange={(e) => setRestaurantForm(prev => ({ ...prev, description: e.target.value }))}
                 />
+              </div>
+              <div className="form-group">
+                <label>Category <span style={{ color: '#eb5757' }}>*</span></label>
+                <select
+                  value={restaurantForm.category}
+                  onChange={(e) => setRestaurantForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="modal-select"
+                >
+                  <option value="">Select a Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.icon} {cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-row">
                 <div className="form-group">

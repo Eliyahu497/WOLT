@@ -22,7 +22,7 @@ class RestaurantService {
             throw new Error("User not found");
         }
 
-        const newRestaurant = new Restaurant(id, data.name, data.description, data.location, data.owner, data.products || [], data.image);
+        const newRestaurant = new Restaurant(id, data.name, data.description, data.location, data.owner, data.products || [], data.image, data.category);
         InMemoryDB.restaurants.push(newRestaurant);
         return newRestaurant;
     }
@@ -47,6 +47,9 @@ class RestaurantService {
         }
         if (data.location !== undefined) {
             restaurant.location = data.location;
+        }
+        if (data.category !== undefined) {
+            restaurant.category = data.category;
         }
         return restaurant;
     }

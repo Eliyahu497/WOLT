@@ -14,8 +14,7 @@ import { OwnerDashboard } from './OwnerDashboard';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
-// Import mock categories (only categories, as they are not served by backend API)
-import { mockCategories } from '../../mockData';
+// Categories state is fetched dynamically from the API
 import './MainView.css';
 
 export const MainView = () => {
@@ -35,6 +34,7 @@ export const MainView = () => {
 
   // API states: Store dynamic fetched data
   const [restaurants, setRestaurants] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeRestaurant, setActiveRestaurant] = useState(null);
 
@@ -60,6 +60,17 @@ export const MainView = () => {
       if (isLoggedIn && token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
+
+      try {
+        const catRes = await fetch('/api/categories');
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          setCategories(catData);
+        }
+      } catch (err) {
+        console.warn('Failed to fetch categories from API, using mock fallback:', err);
+      }
+
       const restRes = await fetch('/api/restaurants', { headers });
       if (restRes.ok) {
         const restData = await restRes.json();
@@ -281,7 +292,7 @@ export const MainView = () => {
                   ) : (
                     <Dashboard
                       restaurants={restaurants}
-                      categories={mockCategories}
+                      categories={categories}
                       searchQuery={searchQuery}
                     />
                   )

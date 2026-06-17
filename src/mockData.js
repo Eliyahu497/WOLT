@@ -6,7 +6,11 @@ export const mockCategories = [
   { id: "burgers", name: "Burgers", icon: "🍔" },
   { id: "pizza", name: "Pizza", icon: "🍕" },
   { id: "asian", name: "Asian", icon: "🥢" },
-  { id: "desserts", name: "Desserts", icon: "🍰" }
+  { id: "desserts", name: "Desserts", icon: "🍰" },
+  { id: "indian", name: "Indian", icon: "🍛" },
+  { id: "mexican", name: "Mexican", icon: "🌮" },
+  { id: "italian", name: "Italian", icon: "🍝" },
+  { id: "other", name: "Other", icon: "🍽️" }
 ];
 
 export const mockRestaurants = [

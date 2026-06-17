@@ -235,12 +235,29 @@
 .modal-content-container {
   width: 100%;
   max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
   background-color: var(--modal-bg);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   animation: modalReveal 0.25s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
+}
+
+/* Custom premium scrollbar for modals */
+.modal-content-container::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-content-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-content-container::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+.modal-content-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--wolt-blue);
 }
 
 @keyframes modalReveal {
@@ -380,4 +397,29 @@
 
 .custom-file-upload input[type="file"] {
   display: none;
+}
+
+/* Custom Select styling for modals */
+.form-group select.modal-select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border-radius: var(--wolt-border-radius);
+  outline: none;
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-group select.modal-select:focus {
+  border-color: var(--wolt-blue);
+  box-shadow: 0 0 0 3px rgba(0, 157, 224, 0.15);
+}
+
+.dark .form-group select.modal-select option {
+  background-color: var(--modal-bg);
+  color: var(--text-primary);
 }
