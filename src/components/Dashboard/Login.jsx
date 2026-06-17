@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
-export const Login = ({ onToggleView, onBackToGuest }) => {
+export const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('customer');
@@ -101,15 +103,13 @@ export const Login = ({ onToggleView, onBackToGuest }) => {
         <div className="auth-footer" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
           <div>
             <span>New to Wolt Clone? </span>
-            <button onClick={onToggleView} className="auth-toggle-btn">
+            <button onClick={() => navigate('/register')} className="auth-toggle-btn">
               Create an account
             </button>
           </div>
-          {onBackToGuest && (
-            <button onClick={onBackToGuest} className="auth-toggle-btn" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              ← Back to Browsing
-            </button>
-          )}
+          <button onClick={() => navigate('/')} className="auth-toggle-btn" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+            ← Back to Browsing
+          </button>
         </div>
       </div>
     </div>

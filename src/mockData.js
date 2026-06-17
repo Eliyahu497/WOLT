@@ -12,7 +12,7 @@ export const mockCategories = [
 export const mockRestaurants = [
   {
     id: "rest-giraffe",
-    name: "Giraffe",
+    name: "המסעדה של ערן ושירה",
     description: "Asian noodle bar, fresh sushi, and selected dishes from the Far East.",
     location: { lat: 32.0853, lng: 34.7818 },
     ownerId: "owner-giraffe-123",
@@ -70,6 +70,14 @@ export const mockRestaurants = [
 
 export const mockProducts = [
   // Giraffe products (Asian)
+  {
+    id: "prod-wedding",
+    restaurantId: "rest-giraffe",
+    name: "מזל טוב על החתונה!",
+    description: "מנה מיוחדת וחגיגית שמוקדשת לערן ושירה לכבוד החתונה!",
+    price: 0,
+    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&auto=format&fit=crop&q=60"
+  },
   {
     id: "prod-pad-thai",
     restaurantId: "rest-giraffe",
@@ -184,7 +192,7 @@ export const mockOrders = [
     id: "order-1001",
     userId: "user-shira-123",
     restaurantId: "rest-giraffe",
-    restaurantName: "Giraffe",
+    restaurantName: "המסעדה של ערן ושירה",
     items: [
       {
         productId: "prod-pad-thai",

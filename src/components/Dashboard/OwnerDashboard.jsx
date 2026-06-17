@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './OwnerDashboard.css';
 
 export const OwnerDashboard = () => {
   const { user, token } = useAuth();
+  const { restaurantId } = useParams();
+  const navigate = useNavigate();
   
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const selectedRestaurant = restaurants.find(r => r.id === restaurantId) || null;
 
   // Modals state
   const [showAddRestaurantModal, setShowAddRestaurantModal] = useState(false);
@@ -84,10 +88,10 @@ export const OwnerDashboard = () => {
   }, [user.id]);
 
   useEffect(() => {
-    if (selectedRestaurant) {
-      loadProducts(selectedRestaurant.id);
+    if (restaurantId) {
+      loadProducts(restaurantId);
     }
-  }, [selectedRestaurant]);
+  }, [restaurantId]);
 
   // Restaurant Actions
   const handleAddRestaurant = async (e) => {
@@ -107,7 +111,8 @@ export const OwnerDashboard = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
@@ -152,7 +157,8 @@ export const OwnerDashboard = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: restaurantForm.name.trim(),
@@ -170,14 +176,6 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to update restaurant');
       }
 
-      // Update local selected restaurant state
-      setSelectedRestaurant(prev => getUiRestaurant({
-        ...prev,
-        name: restaurantForm.name.trim(),
-        description: restaurantForm.description.trim(),
-        image: restaurantForm.image.trim()
-      }));
-      
       setRestaurantForm({ name: '', description: '', lat: '', lng: '', image: '' });
       setShowEditRestaurantModal(false);
       await loadRestaurants();
@@ -195,7 +193,8 @@ export const OwnerDashboard = () => {
       const res = await fetch(`/api/restaurants/${restaurantId}`, {
         method: 'DELETE',
         headers: {
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -204,7 +203,7 @@ export const OwnerDashboard = () => {
         throw new Error(data.error || 'Failed to delete restaurant');
       }
 
-      setSelectedRestaurant(null);
+      navigate('/owner');
       await loadRestaurants();
     } catch (err) {
       alert(err.message);
@@ -230,7 +229,8 @@ export const OwnerDashboard = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: name.trim(),
@@ -271,7 +271,8 @@ export const OwnerDashboard = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: name.trim(),
@@ -304,7 +305,8 @@ export const OwnerDashboard = () => {
       const res = await fetch(`/api/restaurants/${selectedRestaurant.id}/products/${productId}`, {
         method: 'DELETE',
         headers: {
-          'x-user-id': user.id
+          'x-user-id': user.id,
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -378,16 +380,16 @@ export const OwnerDashboard = () => {
             <div className="restaurants-grid">
               {restaurants.map((rest) => (
                 <div key={rest.id} className="restaurant-card owner-card">
-                  <div className="card-image-wrapper" onClick={() => setSelectedRestaurant(rest)}>
+                  <div className="card-image-wrapper" onClick={() => navigate(`/owner/restaurant/${rest.id}`)}>
                     <img src={rest.image} alt={rest.name} className="card-image" />
                   </div>
                   <div className="card-content">
-                    <h3 className="card-name" onClick={() => setSelectedRestaurant(rest)}>{rest.name}</h3>
+                    <h3 className="card-name" onClick={() => navigate(`/owner/restaurant/${rest.id}`)}>{rest.name}</h3>
                     <p className="card-description">{rest.description}</p>
                     <div className="owner-card-actions">
                       <button 
                         className="owner-action-btn manage"
-                        onClick={() => setSelectedRestaurant(rest)}
+                        onClick={() => navigate(`/owner/restaurant/${rest.id}`)}
                       >
                         ⚙️ Manage Menu
                       </button>
@@ -407,7 +409,7 @@ export const OwnerDashboard = () => {
       ) : (
         // Specific Restaurant Menu Management
         <div className="restaurant-management-page">
-          <button className="back-btn" onClick={() => setSelectedRestaurant(null)}>
+          <button className="back-btn" onClick={() => navigate('/owner')}>
             ← Back to Stores
           </button>
 

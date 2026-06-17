@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -7,11 +8,12 @@ import { useAuth } from '../../context/AuthContext';
 // Props:
 // - searchQuery: The current text query entered in the search bar.
 // - setSearchQuery: State setter function to update the search query text.
-// - onViewHistory: Callback function to open the Order History screen.
-export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClick }) => {
+export const Header = ({ searchQuery, setSearchQuery }) => {
+  const navigate = useNavigate();
   // Consume global states from custom hooks
   const { isDarkMode, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
 
   return (
     // Dynamic styling application: Appends 'dark' or 'light' class modifier based on theme context state
@@ -19,7 +21,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
       <div className="header-container">
 
         {/* 1. Brand Logo Container */}
-        <div className="header-logo">
+        <div className="header-logo" onClick={() => navigate(user?.role === 'manager' ? '/owner' : '/')} style={{ cursor: 'pointer' }}>
           <span className="logo-wolt">Wolt</span>
           <span className="logo-badge">Clone</span>
         </div>
@@ -59,7 +61,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
           {/* Past orders navigation button (visible only if user is logged in and not a manager) */}
           {user && user.role !== 'manager' && (
             <button
-              onClick={onViewHistory}
+              onClick={() => navigate('/orders')}
               className="theme-toggle-btn"
               title="View past orders"
             >
@@ -70,7 +72,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
           {/* Conditional Profile Rendering */}
           {user ? (
             <div className="user-profile-group">
-              <div className="user-profile">
+              <div className="user-profile" onClick={() => setShowProfile(!showProfile)} style={{ cursor: 'pointer', position: 'relative' }}>
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -84,6 +86,23 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
                 )}
                 {/* show user name and if role is manager */}
                 <span className="user-name">{user.name} {user.role === 'manager' ? '(Restaurant Owner)' : ''}</span>
+                
+                {showProfile && (
+                  <div className="profile-popup">
+                    <div className="profile-popup-header">
+                      <h4>Personal Details</h4>
+                    </div>
+                    <div className="profile-popup-body">
+                      <p><strong>Name:</strong> {user.name}</p>
+                      <p><strong>Email:</strong> {user.email}</p>
+                      <p><strong>Phone:</strong> {user.phone}</p>
+                      <p><strong>Username:</strong> {user.userName}</p>
+                      {user.location && (
+                        <p><strong>Location:</strong> {user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 onClick={logout}
@@ -94,7 +113,7 @@ export const Header = ({ searchQuery, setSearchQuery, onViewHistory, onLoginClic
               </button>
             </div>
           ) : (
-            <button className="login-btn" onClick={onLoginClick}>Log In</button>
+            <button className="login-btn" onClick={() => navigate('/login')}>Log In</button>
           )}
         </div>
       </div>
