@@ -69,6 +69,39 @@ export const mockRestaurants = [
     rating: 4.9,
     deliveryTime: "15-30 min",
     deliveryPrice: 14
+  },
+  {
+    id: "rest-taj-mahal",
+    name: "Taj Mahal",
+    description: "Authentic Indian cuisine, rich curries, tandoori specialties, and freshly baked naan.",
+    ownerId: "owner-indian-111",
+    category: "indian",
+    image: "https://images.unsplash.com/photo-1585938338392-50a59970d2ee?w=600&auto=format&fit=crop&q=60",
+    rating: 4.7,
+    deliveryTime: "30-45 min",
+    deliveryPrice: 15
+  },
+  {
+    id: "rest-la-taqueria",
+    name: "La Taqueria",
+    description: "Traditional Mexican street food: fresh tacos, burritos, quesadillas, and homemade guacamole.",
+    ownerId: "owner-mexican-222",
+    category: "mexican",
+    image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&auto=format&fit=crop&q=60",
+    rating: 4.6,
+    deliveryTime: "20-35 min",
+    deliveryPrice: 10
+  },
+  {
+    id: "rest-trattoria-bella",
+    name: "Trattoria Bella",
+    description: "Classic Italian home cooking, handmade pasta, rich sauces, and fresh herbs.",
+    ownerId: "owner-italian-333",
+    category: "italian",
+    image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&auto=format&fit=crop&q=60",
+    rating: 4.8,
+    deliveryTime: "25-35 min",
+    deliveryPrice: 12
   }
 ];
 
@@ -177,6 +210,60 @@ export const mockProducts = [
     description: "Rich chocolate cake with a molten liquid center, served warm with vanilla ice cream.",
     price: 38,
     image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // Taj Mahal (Indian)
+  {
+    id: "prod-butter-chicken",
+    restaurantId: "rest-taj-mahal",
+    name: "Butter Chicken",
+    description: "Tender chicken cooked in a rich, creamy, spiced tomato sauce.",
+    price: 62,
+    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&auto=format&fit=crop&q=60"
+  },
+  {
+    id: "prod-garlic-naan",
+    restaurantId: "rest-taj-mahal",
+    name: "Garlic Naan",
+    description: "Freshly baked tandoori flatbread with minced garlic and butter.",
+    price: 14,
+    image: "https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // La Taqueria (Mexican)
+  {
+    id: "prod-barbacoa-burrito",
+    restaurantId: "rest-la-taqueria",
+    name: "Beef Barbacoa Burrito",
+    description: "Slow-cooked beef wrapped with rice, black beans, salsa, and cheese.",
+    price: 48,
+    image: "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?w=500&auto=format&fit=crop&q=60"
+  },
+  {
+    id: "prod-chips-guac",
+    restaurantId: "rest-la-taqueria",
+    name: "Chips & Guacamole",
+    description: "Crispy corn tortilla chips with freshly made avocado guacamole.",
+    price: 22,
+    image: "https://images.unsplash.com/photo-1579631542720-3a87824ffd8e?w=500&auto=format&fit=crop&q=60"
+  },
+
+  // Trattoria Bella (Italian)
+  {
+    id: "prod-fettuccine-alfredo",
+    restaurantId: "rest-trattoria-bella",
+    name: "Fettuccine Alfredo",
+    description: "Ribbon pasta tossed in creamy parmesan butter sauce with chicken.",
+    price: 58,
+    image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=500&auto=format&fit=crop&q=60"
+  },
+  {
+    id: "prod-lasagna-classica",
+    restaurantId: "rest-trattoria-bella",
+    name: "Lasagna Classica",
+    description: "Layers of pasta, seasoned meat ragu, bechamel sauce, and mozzarella.",
+    price: 64,
+    image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=500&auto=format&fit=crop&q=60"
   }
 ];
 

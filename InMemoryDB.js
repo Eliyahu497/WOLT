@@ -66,6 +66,39 @@ const InMemoryDB = {
             password: "Password123",
             role: "manager",
             avatar: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150"
+        },
+        {
+            id: "owner-indian-111",
+            name: "Indian Palace Owner",
+            email: "indian@owner.com",
+            phone: "0541234567",
+            location: { lat: 32.0853, lng: 34.7818 },
+            userName: "indian_owner",
+            password: "Password123",
+            role: "manager",
+            avatar: "https://images.unsplash.com/photo-1585938338392-50a59970d2ee?w=150"
+        },
+        {
+            id: "owner-mexican-222",
+            name: "Mexican Street Owner",
+            email: "mexican@owner.com",
+            phone: "0541234567",
+            location: { lat: 32.0853, lng: 34.7818 },
+            userName: "mexican_owner",
+            password: "Password123",
+            role: "manager",
+            avatar: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=150"
+        },
+        {
+            id: "owner-italian-333",
+            name: "Trattoria Bella Owner",
+            email: "italian@owner.com",
+            phone: "0541234567",
+            location: { lat: 32.0853, lng: 34.7818 },
+            userName: "italian_owner",
+            password: "Password123",
+            role: "manager",
+            avatar: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=150"
         }
     ],
     restaurants: [
@@ -232,6 +265,96 @@ const InMemoryDB = {
                     description: "Rich chocolate cake with a molten liquid center, served warm with vanilla ice cream.",
                     price: 38,
                     image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop&q=60"
+                }
+            ]
+        },
+        {
+            id: "rest-taj-mahal",
+            name: "Taj Mahal",
+            description: "Authentic Indian cuisine, rich curries, tandoori specialties, and freshly baked naan.",
+            location: { lat: 32.0853, lng: 34.7818 },
+            owner: "owner-indian-111",
+            category: "indian",
+            image: "https://images.unsplash.com/photo-1589302168068-964664d93dc9?w=800&auto=format&fit=crop&q=80",
+            rating: 4.7,
+            deliveryTime: "30-45 min",
+            deliveryPrice: 15,
+            products: [
+                {
+                    id: "prod-butter-chicken",
+                    restaurantId: "rest-taj-mahal",
+                    name: "Butter Chicken",
+                    description: "Tender chicken cooked in a rich, creamy, spiced tomato sauce.",
+                    price: 62,
+                    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&auto=format&fit=crop&q=80"
+                },
+                {
+                    id: "prod-garlic-naan",
+                    restaurantId: "rest-taj-mahal",
+                    name: "Garlic Naan",
+                    description: "Freshly baked tandoori flatbread with minced garlic and butter.",
+                    price: 14,
+                    image: "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=500&auto=format&fit=crop&q=80"
+                }
+            ]
+        },
+        {
+            id: "rest-la-taqueria",
+            name: "La Taqueria",
+            description: "Traditional Mexican street food: fresh tacos, burritos, quesadillas, and homemade guacamole.",
+            location: { lat: 32.0853, lng: 34.7818 },
+            owner: "owner-mexican-222",
+            category: "mexican",
+            image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=80",
+            rating: 4.6,
+            deliveryTime: "20-35 min",
+            deliveryPrice: 10,
+            products: [
+                {
+                    id: "prod-barbacoa-burrito",
+                    restaurantId: "rest-la-taqueria",
+                    name: "Beef Barbacoa Burrito",
+                    description: "Slow-cooked beef wrapped with rice, black beans, salsa, and cheese.",
+                    price: 48,
+                    image: "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?w=500&auto=format&fit=crop&q=80"
+                },
+                {
+                    id: "prod-chips-guac",
+                    restaurantId: "rest-la-taqueria",
+                    name: "Chips & Guacamole",
+                    description: "Crispy corn tortilla chips with freshly made avocado guacamole.",
+                    price: 22,
+                    image: "https://images.unsplash.com/photo-1579631542720-3a87824ffd8e?w=500&auto=format&fit=crop&q=80"
+                }
+            ]
+        },
+        {
+            id: "rest-trattoria-bella",
+            name: "Trattoria Bella",
+            description: "Classic Italian home cooking, handmade pasta, rich sauces, and fresh herbs.",
+            location: { lat: 32.0853, lng: 34.7818 },
+            owner: "owner-italian-333",
+            category: "italian",
+            image: "https://images.unsplash.com/photo-1498579150354-972162619367?w=800&auto=format&fit=crop&q=80",
+            rating: 4.8,
+            deliveryTime: "25-35 min",
+            deliveryPrice: 12,
+            products: [
+                {
+                    id: "prod-fettuccine-alfredo",
+                    restaurantId: "rest-trattoria-bella",
+                    name: "Fettuccine Alfredo",
+                    description: "Ribbon pasta tossed in creamy parmesan butter sauce with chicken.",
+                    price: 58,
+                    image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=500&auto=format&fit=crop&q=80"
+                },
+                {
+                    id: "prod-lasagna-classica",
+                    restaurantId: "rest-trattoria-bella",
+                    name: "Lasagna Classica",
+                    description: "Layers of pasta, seasoned meat ragu, bechamel sauce, and mozzarella.",
+                    price: 64,
+                    image: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=500&auto=format&fit=crop&q=80"
                 }
             ]
         }
