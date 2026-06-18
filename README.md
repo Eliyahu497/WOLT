@@ -138,9 +138,7 @@ The React frontend communicates with the Express REST API. Certain operations tr
 ### Run Locally (Without Docker)
 
 #### A. Compile and Start the C++ Recommender Server
-Using your compiler (e.g. g++ under WSL or Linux):
 ```bash
-g++ -std=c++17 src/main.cpp src/core/RecommenderServer.cpp src/network/SocketInput.cpp src/network/SocketOutput.cpp src/io/TerminalInput.cpp src/io/TerminalOutput.cpp src/repository/FileStorage.cpp src/recommendation/RecommendationEngine.cpp src/commands/*.cpp -o wolt_recommender_app -lpthread
 ./wolt_recommender_app 5555
 ```
 
