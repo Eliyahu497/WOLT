@@ -16,7 +16,7 @@ export const mockCategories = [
 export const mockRestaurants = [
   {
     id: "rest-giraffe",
-    name: "המסעדה של ערן ושירה",
+    name: " Eran & Shira's Restaurant of LOVE ",
     description: "Asian noodle bar, fresh sushi, and selected dishes from the Far East.",
     location: { lat: 32.0853, lng: 34.7818 },
     ownerId: "owner-giraffe-123",
@@ -76,7 +76,7 @@ export const mockRestaurants = [
     description: "Authentic Indian cuisine, rich curries, tandoori specialties, and freshly baked naan.",
     ownerId: "owner-indian-111",
     category: "indian",
-    image: "https://images.unsplash.com/photo-1585938338392-50a59970d2ee?w=600&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=60",
     rating: 4.7,
     deliveryTime: "30-45 min",
     deliveryPrice: 15
@@ -98,7 +98,7 @@ export const mockRestaurants = [
     description: "Classic Italian home cooking, handmade pasta, rich sauces, and fresh herbs.",
     ownerId: "owner-italian-333",
     category: "italian",
-    image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=600&auto=format&fit=crop&q=60",
     rating: 4.8,
     deliveryTime: "25-35 min",
     deliveryPrice: 12
@@ -110,9 +110,9 @@ export const mockProducts = [
   {
     id: "prod-wedding",
     restaurantId: "rest-giraffe",
-    name: "מזל טוב על החתונה!",
-    description: "מנה מיוחדת וחגיגית שמוקדשת לערן ושירה לכבוד החתונה!",
-    price: 0,
+    name: "MAZAL TOV ERAN & SHIRA!",
+    description: "A special dish dedicated to Eran and Shira for their wedding!",
+    price: 1000000000000,
     image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&auto=format&fit=crop&q=60"
   },
   {
@@ -283,7 +283,7 @@ export const mockOrders = [
     id: "order-1001",
     userId: "user-shira-123",
     restaurantId: "rest-giraffe",
-    restaurantName: "המסעדה של ערן ושירה",
+    restaurantName: " Eran & Shira's Restaurant of LOVE ",
     items: [
       {
         productId: "prod-pad-thai",

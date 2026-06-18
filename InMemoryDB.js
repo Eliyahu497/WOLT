@@ -104,7 +104,7 @@ const InMemoryDB = {
     restaurants: [
         {
             id: "rest-giraffe",
-            name: "המסעדה של ערן ושירה",
+            name: " Eran & Shira's Restaurant of LOVE ",
             description: "Asian noodle bar, fresh sushi, and selected dishes from the Far East.",
             location: { lat: 32.0853, lng: 34.7818 },
             owner: "owner-giraffe-123",
@@ -117,9 +117,9 @@ const InMemoryDB = {
                 {
                     id: "prod-wedding",
                     restaurantId: "rest-giraffe",
-                    name: "מזל טוב על החתונה!",
-                    description: "מנה מיוחדת וחגיגית שמוקדשת לערן ושירה לכבוד החתונה!",
-                    price: 0,
+                    name: "MAZAL TOV ERAN & SHIRA!",
+                    description: "A special dish dedicated to Eran and Shira for their wedding!",
+                    price: 1000000000000,
                     image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&auto=format&fit=crop&q=60"
                 },
                 {
@@ -275,7 +275,7 @@ const InMemoryDB = {
             location: { lat: 32.0853, lng: 34.7818 },
             owner: "owner-indian-111",
             category: "indian",
-            image: "https://images.unsplash.com/photo-1589302168068-964664d93dc9?w=800&auto=format&fit=crop&q=80",
+            image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&auto=format&fit=crop&q=80",
             rating: 4.7,
             deliveryTime: "30-45 min",
             deliveryPrice: 15,
@@ -335,7 +335,7 @@ const InMemoryDB = {
             location: { lat: 32.0853, lng: 34.7818 },
             owner: "owner-italian-333",
             category: "italian",
-            image: "https://images.unsplash.com/photo-1498579150354-972162619367?w=800&auto=format&fit=crop&q=80",
+            image: "https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=800&auto=format&fit=crop&q=80",
             rating: 4.8,
             deliveryTime: "25-35 min",
             deliveryPrice: 12,
