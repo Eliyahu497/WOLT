@@ -186,3 +186,42 @@
 .product-card:hover .product-thumbnail {
   transform: scale(1.1);
 }
+
+/* --- Rating Widget --- */
+.rate-restaurant-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.rate-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rate-stars {
+  display: flex;
+  gap: 4px;
+}
+
+.rate-star {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 20px;
+  transition: transform 0.1s ease, color 0.1s ease;
+}
+
+.rate-star:hover {
+  transform: scale(1.2);
+}
+
+.rate-star.active {
+  color: #ffc107;
+}
+

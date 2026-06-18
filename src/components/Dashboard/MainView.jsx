@@ -253,6 +253,15 @@ export const MainView = () => {
     }
   };
 
+  const handleRestaurantRate = (updatedRestaurant) => {
+    setRestaurants((prev) =>
+      prev.map((r) => (r.id === updatedRestaurant.id ? updatedRestaurant : r))
+    );
+    if (activeRestaurant && activeRestaurant.id === updatedRestaurant.id) {
+      setActiveRestaurant(updatedRestaurant);
+    }
+  };
+
   const isOwner = isLoggedIn && user && user.role === 'manager';
 
   // Calculate delivery price based on items in the cart
@@ -301,6 +310,7 @@ export const MainView = () => {
                       restaurants={restaurants}
                       categories={categories}
                       searchQuery={searchQuery}
+                      onRestaurantRate={handleRestaurantRate}
                     />
                   )
                 }
@@ -336,6 +346,7 @@ export const MainView = () => {
                   <RestaurantMenu
                     onProductSelect={handleProductSelect}
                     onLoadRestaurant={setActiveRestaurant}
+                    onRestaurantRate={handleRestaurantRate}
                   />
                 }
               />

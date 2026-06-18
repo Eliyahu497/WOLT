@@ -47,7 +47,7 @@ export const OwnerDashboard = () => {
     return {
       ...rest,
       image: rest.image || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=60",
-      rating: rest.rating || 5.0,
+      rating: rest.rating !== undefined && rest.rating !== null ? rest.rating : null,
       deliveryTime: rest.deliveryTime || "25-35 min",
       deliveryPrice: rest.deliveryPrice || 15
     };
@@ -435,7 +435,7 @@ export const OwnerDashboard = () => {
               <h1 className="managed-title">{selectedRestaurant.name}</h1>
               <p className="managed-desc">{selectedRestaurant.description}</p>
               <div className="managed-meta">
-                <span>⭐ {selectedRestaurant.rating}</span>
+                <span>⭐ {selectedRestaurant.rating !== null ? selectedRestaurant.rating : "Not rated"}</span>
                 <span>•</span>
                 <span>🛵 Delivery: {selectedRestaurant.deliveryPrice} ILS</span>
               </div>
