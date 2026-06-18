@@ -1,624 +1,270 @@
-# Wolt REST API & Recommendation Server (Exercise 3)
+# WANT: Web Server & Recommendation System (Wolt Clone)
 
-This project integrates a RESTful API Web Server (built with Node.js & Express) with a high-performance C++ Recommendation Engine. The Express web server manages online ordering features (users, restaurants, products, search, and orders) and uses an asynchronous TCP network client to update user views and purchase history in the C++ backend for personalized recommendations.
+This project is an online food ordering system (named **Want**) that integrates a NodeJS/Express RESTful API web server with a high-performance C++ TCP Recommendation Engine backend and an interactive React frontend client. The Express web server manages online ordering features (users, restaurants, products, search, and orders) and utilizes an asynchronous TCP network socket client to update user views and purchase history in the C++ database to compile personalized recommendations.
 
 ---
 
-## System Architecture
+## Architecture & Design Principles
+
+The system is designed around clean separation of concerns, loose coupling, and SOLID principles. It splits responsibilities between the Node.js MVC/REST API web layer, the React user interface, and the legacy C++ recommender backend.
 
 ```mermaid
 graph TD
-    Client[Web Browser / Postman / curl] -->|HTTP REST Requests| Express[Node.js Express API Server]
+    Client[Web Browser / React Client] -->|HTTP REST Requests| Express[Node.js Express API Server]
     Express -->|In-Memory CRUD| MemDB[(In-Memory Database)]
     Express -->|Asynchronous TCP socket| CppServer[C++ RecommenderServer]
     CppServer -->|Read/Write views| Disk[(data/database.txt)]
 ```
 
-* **Node.js Web Server:** Exposes RESTful endpoints, handles parameter validation, performs security checks (restaurant ownership), and dispatches network interactions in the background to the C++ server.
-* **C++ Recommender Server:** Listens on port `5555` over TCP. It parses user interaction histories, stores them in `data/database.txt`, and computes recommendations.
-* **Asynchronous TCP client:** Embedded in Node.js to communicate with the C++ server. If the C++ server is offline, connection errors are logged gracefully without blocking or crashing HTTP requests.
+### Design Patterns & Architectural Layout:
+
+*   **MVC Structure:** The Node.js web server implements an MVC-like pattern. Routers handle requests, Controllers contain business logic, and Models define entity schemas. The React frontend follows a component-driven architecture.
+*   **Repository and Service Abstraction:** Temporary marketplace database collections (users, restaurants, products, and orders) are managed in-memory in [InMemoryDB.js](file:///c:/year2/advanced/WOLT/InMemoryDB.js), while the C++ TCP recommender remains responsible for storing and parsing product history.
+*   **Dependency Isolation:** TCP integration is fully isolated inside [services/TCPClient.js](file:///c:/year2/advanced/WOLT/services/TCPClient.js). This ensures the Express controllers remain clean of raw socket handles or network retry logic.
 
 ---
 
-## Docker & Execution Instructions
+## Assignment Integration & TCP Communications
 
-You can run the application either using Docker Compose (recommended) or locally from your terminal.
+The React frontend communicates with the Express REST API. Certain operations trigger asynchronous network requests to the C++ recommender server over TCP:
 
-### 1. Run the Entire Stack via Docker Compose (Recommended)
-Open a terminal (Command Prompt, PowerShell, or WSL) in the project root directory and run:
+> [!NOTE]
+> All previous assignment branches have been kept completely intact (`TARGIL-1`, `TARGIL-2`, `TARGIL-3`) and were not modified after submission.
 
-```bash
-docker compose up --build
-```
-
-This command automatically builds and launches three containers:
-* **server:** C++ Recommender Server listening on port `5555` inside the container (mapped to host port `5555`).
-* **web:** Node.js Web App listening on port `1234` inside the container (mapped to host port `1234`).
-* **client:** An interactive Python client container.
-
-> [!IMPORTANT]
-> The C++ Recommender Server is single-threaded and accepts only one connection at a time. The Python `client` container holds the connection open on startup while waiting for input. **To test the Node.js API server's TCP calls, stop the client container to free up the C++ server socket:**
-> ```bash
-> docker compose stop client
-> ```
-
-To shut down all containers and clean up volumes:
-```bash
-docker compose down
-```
+*   **Operations that access the Express Web Server:**
+    *   **User Management:** Signing up and Logging in.
+    *   **Restaurants:** Creating, updating, viewing, and deleting restaurants (restricted to authenticated managers).
+    *   **Products:** Creating, updating, viewing, and deleting products (restricted to authenticated managers).
+    *   **Orders:** Placing, viewing, modifying items, and canceling orders.
+    *   **Search:** Querying keywords globally.
+    *   **Rating:** Submitting a restaurant rating (`POST /api/restaurants/:id/rate`, restricted to authenticated customers).
+*   **Operations that access the C++ Recommender Server:**
+    *   **View Product (`GET /api/restaurants/:restaurantId/products/:productId`):** Reports a product view to the user's history via `PATCH` (or fallback `POST` if the profile doesn't exist).
+    *   **Create Order (`POST /api/orders`):** Reports a purchase of products to the C++ server.
+    *   **Update Order (`PATCH /api/orders/:id`):** Synchronizes changed items to the C++ recommender (removing deleted items and reporting new ones).
+    *   **Cancel Order (`DELETE /api/orders/:id`):** Removes purchase history of the canceled items from the C++ database.
+*   **TCP Overlap Sync Logic:**
+    When modifying or canceling an order, the system removes products from the C++ server history **only if** they are not present in any other active order placed by that specific user.
 
 ---
 
-### 2. Run Locally (Without Docker)
+## Project Structure
 
-#### A. Start the C++ Recommender Server
-Open your WSL (Windows Subsystem for Linux) or Linux terminal, build the binary if needed:
+*   [app.js](file:///c:/year2/advanced/WOLT/app.js) - Node.js Express server entry point (listens on port `1234`).
+*   `routes/` - RESTful route maps:
+    *   [orderRouter.js](file:///c:/year2/advanced/WOLT/routes/orderRouter.js)
+    *   [restaurantRouter.js](file:///c:/year2/advanced/WOLT/routes/restaurantRouter.js)
+    *   [searchRouter.js](file:///c:/year2/advanced/WOLT/routes/searchRouter.js)
+    *   [userRouter.js](file:///c:/year2/advanced/WOLT/routes/userRouter.js)
+    *   [existUserRouter.js](file:///c:/year2/advanced/WOLT/routes/existUserRouter.js)
+*   `controllers/` - HTTP request controllers containing validation and authorization checks:
+    *   [OrderController.js](file:///c:/year2/advanced/WOLT/controllers/OrderController.js)
+    *   [ProductController.js](file:///c:/year2/advanced/WOLT/controllers/ProductController.js)
+    *   [RestaurantController.js](file:///c:/year2/advanced/WOLT/controllers/RestaurantController.js)
+    *   [SearchController.js](file:///c:/year2/advanced/WOLT/controllers/SearchController.js)
+    *   [UserController.js](file:///c:/year2/advanced/WOLT/controllers/UserController.js)
+*   `models/` - In-memory models and class definitions:
+    *   [Order.js](file:///c:/year2/advanced/WOLT/models/Order.js)
+    *   [Product.js](file:///c:/year2/advanced/WOLT/models/Product.js)
+    *   [Restaurant.js](file:///c:/year2/advanced/WOLT/models/Restaurant.js)
+    *   [User.js](file:///c:/year2/advanced/WOLT/models/User.js)
+*   `services/` - Internal business services and TCP socket adapters:
+    *   [TCPClient.js](file:///c:/year2/advanced/WOLT/services/TCPClient.js) (TCP network socket interface)
+    *   [OrderService.js](file:///c:/year2/advanced/WOLT/services/OrderService.js)
+    *   [ProductService.js](file:///c:/year2/advanced/WOLT/services/ProductService.js)
+    *   [RestaurantService.js](file:///c:/year2/advanced/WOLT/services/RestaurantService.js)
+    *   [SearchService.js](file:///c:/year2/advanced/WOLT/services/SearchService.js)
+    *   [UserService.js](file:///c:/year2/advanced/WOLT/services/UserService.js)
+*   `middlewares/` - Auth JWT tokens verification middleware.
+*   `utils/` - Shared utility scripts:
+    *   [location.js](file:///c:/year2/advanced/WOLT/utils/location.js) (Haversine formula coordinate distance calculator).
+*   `src/` - Unified folder containing C++ Recommender logic and React component views:
+    *   `src/components/Dashboard/` - React views (Dashboard, Header, Cart, OrderHistory, OwnerDashboard, theme styles).
+    *   `src/context/` - Global authentication and styling state contexts.
+    *   `src/core/` / `src/commands/` / `src/recommendation/` / `src/repository/` - C++ Server implementations.
+*   `test/` - Node.js integration API tests and C++ unit tests.
+*   `data/` - Mount path for recommendation log database (`database.txt`).
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+*   **Docker Desktop:** Configured to run Linux containers.
+*   **Node.js / npm:** For local compilation and dev commands.
+
+---
+
+### Run via Docker Compose (Recommended)
+
+> [!CAUTION]
+> **Ensure Docker Desktop is Running:** If you receive a connection error like `failed to connect to the docker API`, it means your Docker Desktop application is turned off. Open **Docker Desktop** on Windows and wait for the status bar at the bottom left to turn green before running the commands below.
+
+1.  **Build all containers:**
+    ```bash
+    docker compose build
+    ```
+    This builds the C++ Recommender server, compiles dependencies, installs NodeJS modules, and prepares the bundle.
+
+2.  **Start all containers together:**
+    ```bash
+    docker compose up
+    ```
+    This launches:
+    *   `server` - C++ Recommender server listening internally on port `5555`.
+    *   `web` - NodeJS web server running on host port `1234`.
+    *   `client` - Interactive Python terminal.
+
+3.  **Important socket note:**
+    The C++ Recommender server accepts only one connection at a time. The `client` container holds the socket open. **To allow the web application to submit TCP recommendation views and purchases, shut down the client container:**
+    ```bash
+    docker compose stop client
+    ```
+
+4.  **Open the application:**
+    Open your browser and navigate to:
+    ```
+    http://localhost:1234
+    ```
+
+5.  **Stop containers and clear volumes:**
+    ```bash
+    docker compose down
+    ```
+
+---
+
+### Run Locally (Without Docker)
+
+#### A. Compile and Start the C++ Recommender Server
+Using your compiler (e.g. g++ under WSL or Linux):
 ```bash
-g++ -std=c++17 src/main.cpp src/server/RecommenderServer.cpp src/recommendation/RecommendationEngine.cpp src/utils/ValidationUtils.cpp -o wolt_recommender_app -lpthread
-```
-Run the recommender server executable on port `5555`:
-```bash
+g++ -std=c++17 src/main.cpp src/core/RecommenderServer.cpp src/network/SocketInput.cpp src/network/SocketOutput.cpp src/io/TerminalInput.cpp src/io/TerminalOutput.cpp src/repository/FileStorage.cpp src/recommendation/RecommendationEngine.cpp src/commands/*.cpp -o wolt_recommender_app -lpthread
 ./wolt_recommender_app 5555
 ```
 
-#### B. Start the Node.js API Server
-Open a terminal in the project root directory (WSL, Command Prompt, or PowerShell) and run:
+#### B. Build React Assets and Start the NodeJS Web Server
+In a separate terminal root:
 ```bash
-# Install NPM dependencies
 npm install
-
-# Start the Express server
+npm run build
 node app.js
 ```
-The server runs live at `http://localhost:1234/api`.
+The application will run live at `http://localhost:1234`.
 
-#### C. Run Tests
-To verify all integrations, schemas, and models (without Docker):
-```bash
-# Make sure your execution policy allows scripts (e.g. in WSL or PowerShell run tests directly)
-npm test
-```
 
----
+## Environment Variables & Configuration
 
-## REST API Specifications & Run Examples
-
-All API requests must use the base URL: `http://localhost:1234/api`
-
-> 
+The application parses specific environment variables to link services (configured in [docker-compose.yml](file:///c:/year2/advanced/WOLT/docker-compose.yml)):
+*   `TCP_HOST`: Host location of the C++ recommender server (defaults to `'localhost'`, or `'server'` inside Docker).
+*   `TCP_PORT`: Port number of the C++ recommendation engine (defaults to `5555`).
 
 ---
 
-### 1. User Authentication API (`/api/users` & `/api/tokens`)
+## Program Usage & Operations
 
-#### A. User Registration (Create User)
-* **Method & Path:** `POST /api/users`
-* **Headers:** 
-  * `Content-Type: application/json`
-* **Request Body Fields:**
-  * `name` (String, required): Full name of the user.
-  * `email` (String, required): Email address.
-  * `phone` (String, required): 10-digit phone number (validation: must be exactly 10 digits, e.g., `0541234567`).
-  * `location` (Object, required): Physical location coordinates (e.g., `{ "lat": 32.085, "lng": 34.781 }`).
-  * `userName` (String, required): Unique username used to log in.
-  * `password` (String, required): User password.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X POST http://localhost:1234/api/users \
-    -H "Content-Type: application/json" \
-    -d '{
-      "name": "Shira",
-      "email": "shira@example.com",
-      "phone": "0541234567",
-      "location": { "lat": 32.0853, "lng": 34.7818 },
-      "userName": "shira_123",
-      "password": "password123"
-    }'
-  ```
-* **Expected Responses:**
-  * `201 Created`: User created successfully. Returns an empty body and a `Location` header pointing to the new user resource (e.g., `Location: /api/users/user_uuid_here`).
-  * `400 Bad Request`: Missing mandatory fields, or phone number length is not exactly 10 digits.
-  * `409 Conflict`: The username (`userName`) is already taken.
-
-#### B. User Login (Generate Token)
-* **Method & Path:** `POST /api/tokens`
-* **Headers:** 
-  * `Content-Type: application/json`
-* **Request Body Fields:**
-  * `userName` (String, required): The registered username.
-  * `password` (String, required): The registered password.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X POST http://localhost:1234/api/tokens \
-    -H "Content-Type: application/json" \
-    -d '{
-      "userName": "shira_123",
-      "password": "password123"
-    }'
-  ```
-* **Expected Responses:**
-  * `200 OK`: Valid credentials. Returns the user's ID as a token:
-    ```json
-    { "id": "user_uuid_here" }
-    ```
-  * `401 Unauthorized`: Invalid username or password.
-
-#### C. Get User Profile
-* **Method & Path:** `GET /api/users/:id`
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the user to fetch.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/users/user_uuid_here
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns the profile info (excluding password for security):
-    ```json
-    {
-      "id": "user_uuid_here",
-      "name": "Shira",
-      "email": "shira@example.com",
-      "phone": "0541234567",
-      "location": { "lat": 32.0853, "lng": 34.7818 },
-      "userName": "shira_123"
-    }
-    ```
-  * `404 Not Found`: User does not exist.
+1.  **SIGN UP:** Register a customer or manager profile. Registration checks email patterns, passwords match, a 10-digit phone number validation, coordinates, and avatar images.
+2.  **LOGIN:** Provides token authorization keys.
+3.  **CREATE RESTAURANT:** Managers can build store listings with locations, photos, and categories.
+4.  **UPDATE RESTAURANT:** Managers can modify their own store details.
+5.  **DELETE RESTAURANT:** Managers can remove restaurants they own.
+6.  **ADD/UPDATE/DELETE PRODUCTS:** Managers can update menu items.
+7.  **VIEW RESTAURANT MENU:** Customers can browse menus, adding items to the cart.
+8.  **VIEW PRODUCT DETAILS:** Triggers a product view interaction report to the C++ server.
+9.  **CREATE ORDER:** Customers submit checkout orders containing item arrays.
+10. **UPDATE ORDER:** Customers can add/delete items and adjust quantities inside past orders.
+11. **CANCEL ORDER:** Customers can delete placed orders.
+12. **SEARCH:** Global query searching matching restaurant titles, tags, and product names.
+13. **RATE RESTAURANT:** Customers can submit or update a 1 to 5 star rating for any restaurant, which dynamically updates its average rating score.
 
 ---
 
-### 2. Restaurants API (`/api/restaurants`)
+## Additional Features & Premium Aesthetics
 
-#### A. Create Restaurant
-* **Method & Path:** `POST /api/restaurants`
-* **Headers:** 
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: The owner user UUID)
-* **Request Body Fields:**
-  * `name` (String, required): The name of the restaurant.
-  * `description` (String, optional): Description of the culinary style/cuisine.
-  * `location` (Object, required): Geographic location coordinates (e.g., `{ "lat": 32.0, "lng": 34.0 }`).
-* **Run Example (curl):**
-  ```bash
-  curl -i -X POST http://localhost:1234/api/restaurants \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "name": "Giraffe",
-      "description": "Asian Noodle Bar",
-      "location": { "lat": 32.0, "lng": 34.0 }
-    }'
-  ```
-* **Expected Responses:**
-  * `201 Created`: Restaurant created. Returns empty body and `Location: /api/restaurants/restaurant_uuid_here`.
-  * `400 Bad Request`: Missing restaurant name.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `404 Not Found`: Owner user ID in `x-user-id` header does not exist in database.
-
-#### B. Retrieve All Restaurants 
-* **Method & Path:** `GET /api/restaurants`
-* **Run Example (curl):**
-  ```bash
-  # Retrieve all restaurants
-  curl -i -X GET http://localhost:1234/api/restaurants
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns an array of restaurants matching search, or all restaurants if no query param is provided:
-    ```json
-    [
-      {
-        "id": "restaurant_uuid_here",
-        "name": "Giraffe",
-        "description": "Asian Noodle Bar",
-        "location": { "lat": 32.0, "lng": 34.0 },
-        "ownerId": "user_uuid_here"
-      }
-    ]
-    ```
-
-#### C. Retrieve Restaurant by ID
-* **Method & Path:** `GET /api/restaurants/:id`
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the restaurant.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns the restaurant object:
-    ```json
-    {
-      "id": "restaurant_uuid_here",
-      "name": "Giraffe",
-      "description": "Asian Noodle Bar",
-      "location": { "lat": 32.0, "lng": 34.0 },
-      "ownerId": "user_uuid_here"
-    }
-    ```
-  * `404 Not Found`: Restaurant not found.
-
-#### D. Update Restaurant
-* **Method & Path:** `PATCH /api/restaurants/:id`
-* **Headers:**
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the restaurant.
-* **Request Body Fields:**
-  * `name` (String, optional): Updated restaurant name.
-  * `description` (String, optional): Updated restaurant description.
-  * `location` (Object, optional): Updated geographic location coordinates.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "name": "Giraffe Noodle Bar",
-      "description": "Premium Asian noodle bar",
-      "location": { "lat": 32.0, "lng": 34.0 }
-    }'
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Updated successfully.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `403 Forbidden`: User is not the owner of this restaurant.
-  * `404 Not Found`: Restaurant or owner user not found.
-
-#### E. Delete Restaurant
-* **Method & Path:** `DELETE /api/restaurants/:id`
-* **Headers:**
-  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the restaurant.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here \
-    -H "x-user-id: user_uuid_here"
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Restaurant deleted successfully.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `403 Forbidden`: User is not the owner of this restaurant.
-  * `404 Not Found`: Restaurant not found.
+*   **Interactive Rating System:** Customers can hover and click on stars (1 to 5 scale) on either the restaurant card on the dashboard or inside the restaurant's menu page to rate/update reviews.
+*   **Dynamic Sorting Panel:** The dashboard features a dropdown menu to sort restaurants by **Popularity** (based on dynamic order counts), **Rating ⭐** (average score), **Distance 📍** (using coordinates), or **Alphabetical (A-Z) 🔤** (supporting English and Hebrew).
+*   **Dark Mode Toggle:** Logged-in users can switch between a beautiful light and dark layout globally via a top bar button.
+*   **Geolocation Distance Calculation:** Displays real-time distances in kilometers between the user's registered location and each restaurant using the **Haversine formula**.
+*   **Infinite Categories Marquee:** A looping horizontal crave-list categories marquee that dynamically pauses on hover.
+*   **X-User-ID Security & Role-Based Middleware:** Auth rules prevent normal customers from accessing owner dashboard operations, and enforce strict ownership checks before altering restaurants or products.
 
 ---
 
-### 3. Products API (`/api/restaurants/:restaurantId/products`)
+## Quick step-by-step Tutorial
 
-#### A. Add Product
-* **Method & Path:** `POST /api/restaurants/:restaurantId/products`
-* **Headers:** 
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
-* **Path Parameters:**
-  * `:restaurantId` (String, required): The UUID of the restaurant to add this product to.
-* **Request Body Fields:**
-  * `name` (String, required): Product name.
-  * `description` (String, optional): Product description.
-  * `price` (Number, required): Cost of the product (must be greater than 0).
-* **Run Example (curl):**
-  ```bash
-  curl -i -X POST http://localhost:1234/api/restaurants/restaurant_uuid_here/products \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "name": "Salmon Sushi",
-      "description": "Sushi roll",
-      "price": 60
-    }'
-  ```
-* **Expected Responses:**
-  * `201 Created`: Product created. Returns empty body and `Location: /api/restaurants/restaurant_uuid/products/product_uuid_here`.
-  * `400 Bad Request`: Missing name or price, or invalid price value.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `403 Forbidden`: User is not the owner of this restaurant.
-  * `404 Not Found`: Restaurant not found.
+### 1. As a Restaurant Owner/Manager
 
-#### B. Retrieve Menu (All Products of Restaurant)
-* **Method & Path:** `GET /api/restaurants/:restaurantId/products`
-* **Path Parameters:**
-  * `:restaurantId` (String, required): The UUID of the restaurant.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns an array of products for the given restaurant:
-    ```json
-    [
-      {
-        "id": "product_uuid_here",
-        "name": "Salmon Sushi",
-        "description": "Sushi roll",
-        "price": 60,
-        "restaurantId": "restaurant_uuid_here"
-      }
-    ]
-    ```
-  * `404 Not Found`: Restaurant not found.
+1. **Register:** Create a manager profile. Fill out all fields, including the required profile avatar image.
+   
+   ![Registration Screen](images_for_README/0.png)
 
-#### C. Retrieve Product Details (Reports View to C++)
-* **Method & Path:** `GET /api/restaurants/:restaurantId/products/:productId`
-* **Headers (Optional):**
-  * `x-user-id: <user_id>` (String: The user viewing the product. If passed, it triggers a view report to the C++ server via TCP)
-* **Path Parameters:**
-  * `:restaurantId` (String, required): The UUID of the restaurant.
-  * `:productId` (String, required): The UUID of the product.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
-    -H "x-user-id: user_uuid_here"
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns product details:
-    ```json
-    {
-      "id": "product_uuid_here",
-      "name": "Salmon Sushi",
-      "description": "Sushi roll",
-      "price": 60,
-      "restaurantId": "restaurant_uuid_here"
-    }
-    ```
-  * `404 Not Found`: Product or Restaurant not found.
+2. **Login:** Log in with manager credentials to access the **Partner Dashboard**.
+   
+   ![Login Screen](images_for_README/1.png)
+   ![Partner Dashboard](images_for_README/3.png)
 
-#### D. Update Product
-* **Method & Path:** `PATCH /api/restaurants/:restaurantId/products/:productId`
-* **Headers:** 
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
-* **Path Parameters:**
-  * `:restaurantId` (String, required): The UUID of the restaurant.
-  * `:productId` (String, required): The UUID of the product.
-* **Request Body Fields:**
-  * `name` (String, optional): Updated product name.
-  * `description` (String, optional): Updated product description.
-  * `price` (Number, optional): Updated product price.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X PATCH http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "name": "Salmon Sushi Deluxe",
-      "price": 65
-    }'
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Product updated successfully.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `403 Forbidden`: User is not the owner of this restaurant.
-  * `404 Not Found`: Product or Restaurant not found.
+3. **Create Restaurant:** Click "+ Create Restaurant" to open the registration form.
+   
+   ![Create Restaurant Modal](images_for_README/2.png)
 
-#### E. Delete Product
-* **Method & Path:** `DELETE /api/restaurants/:restaurantId/products/:productId`
-* **Headers:**
-  * `x-user-id: <user_id>` (String, required: The owner's user ID for verification)
-* **Path Parameters:**
-  * `:restaurantId` (String, required): The UUID of the restaurant.
-  * `:productId` (String, required): The UUID of the product.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X DELETE http://localhost:1234/api/restaurants/restaurant_uuid_here/products/product_uuid_here \
-    -H "x-user-id: user_uuid_here"
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Product deleted successfully.
-  * `401 Unauthorized`: Missing `x-user-id` header.
-  * `403 Forbidden`: User is not the owner of this restaurant.
-  * `404 Not Found`: Product or Restaurant not found.
+4. **Manage Menu:** Click "Manage Menu" to open your store's private menu manager where you can add new dishes, adjust prices, edit items, or delete products.
+   
+   ![Menu Manager](images_for_README/3_1.png)
+   ![Add Product Modal](images_for_README/4.png)
 
 ---
 
-### 4. Orders API (`/api/orders`)
+### 2. As a Customer
 
-#### A. Create Order (Reports Purchase to C++)
-* **Method & Path:** `POST /api/orders`
-* **Headers:**
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: UUID of the ordering user)
-* **Request Body Fields:**
-  * `restaurantId` (String, required): Restaurant UUID.
-  * `items` (Array, required): Array of products to buy. Each item requires:
-    * `productId` (String, required): Product UUID.
-    * `quantity` (Integer, required): Must be a positive integer.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X POST http://localhost:1234/api/orders \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "restaurantId": "restaurant_uuid_here",
-      "items": [
-        {
-          "productId": "product_uuid_here",
-          "quantity": 2
-        }
-      ]
-    }'
-  ```
-* **Expected Responses:**
-  * `201 Created`: Order created successfully. Returns the order object and triggers an asynchronous `reportInteraction` to the C++ server.
-    ```json
-    {
-      "id": "order_uuid_here",
-      "userId": "user_uuid_here",
-      "restaurantId": "restaurant_uuid_here",
-      "items": [
-        {
-          "productId": "product_uuid_here",
-          "quantity": 2
-        }
-      ],
-      "total": 120
-    }
-    ```
-  * `400 Bad Request`: Missing headers, invalid quantity, or product does not exist in the restaurant.
-  * `404 Not Found`: User or Restaurant not found.
+1. **Marketplace & Filters:** Search for keywords, filter by category tags, or sort restaurants using the popularity, rating, or distance sorting dropdowns.
+   
+   ![Marketplace Dashboard](images_for_README/u1.png)
 
-#### B. Get Order History of Current User
-* **Method & Path:** `GET /api/orders`
-* **Headers:**
-  * `x-user-id: <user_id>` (String, required: The UUID of the user)
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/orders \
-    -H "x-user-id: user_uuid_here"
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns an array of the user's orders:
-    ```json
-    [
-      {
-        "id": "order_uuid_here",
-        "userId": "user_uuid_here",
-        "restaurantId": "restaurant_uuid_here",
-        "items": [
-          {
-            "productId": "product_uuid_here",
-            "quantity": 2
-          }
-        ],
-        "total": 120
-      }
-    ]
-    ```
-  * `400 Bad Request`: Missing `x-user-id` header.
+2. **Global Search:** Find specific restaurants or dishes matching your search query instantly.
+   
+   ![Search Results](images_for_README/u2.png)
 
-#### C. Get Order Details by ID
-* **Method & Path:** `GET /api/orders/:id`
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the order.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/orders/order_uuid_here
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns the order details:
-    ```json
-    {
-      "id": "order_uuid_here",
-      "userId": "user_uuid_here",
-      "restaurantId": "restaurant_uuid_here",
-      "items": [
-        {
-          "productId": "product_uuid_here",
-          "quantity": 2
-        }
-      ],
-      "total": 120
-    }
-    ```
-  * `404 Not Found`: Order not found.
+3. **Restaurant Menu:** Browse menu items at any restaurant.
+   
+   ![Customer Menu Page](images_for_README/u3.png)
 
-#### D. Update Order Items (TCP Overlap Sync)
-* **Method & Path:** `PATCH /api/orders/:id`
-* **Headers:**
-  * `Content-Type: application/json`
-  * `x-user-id: <user_id>` (String, required: The user's UUID)
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the order.
-* **Request Body Fields:**
-  * `items` (Array, required): The updated full list of items:
-    * `productId` (String, required): Product UUID.
-    * `quantity` (Integer, required): Must be a positive integer.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X PATCH http://localhost:1234/api/orders/order_uuid_here \
-    -H "Content-Type: application/json" \
-    -H "x-user-id: user_uuid_here" \
-    -d '{
-      "items": [
-        {
-          "productId": "product_uuid_here",
-          "quantity": 3
-        }
-      ]
-    }'
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Order items updated successfully.
-  * `404 Not Found`: Order not found or validation failed.
-  * **C++ TCP Synchronization:** Re-calculates total. Removes old items from the C++ database **only if** they do not overlap (exist in) any of the user's other active orders, and reports the new items.
+4. **Dish Details Modal:** Click on a product card to open details and configure order quantities.
+   
+   ![Dish Details Modal](images_for_README/u7.png)
 
-#### E. Cancel/Delete Order (TCP Overlap Sync)
-* **Method & Path:** `DELETE /api/orders/:id`
-* **Headers:**
-  * `x-user-id: <user_id>` (String, required: The user's UUID)
-* **Path Parameters:**
-  * `:id` (String, required): The UUID of the order.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X DELETE http://localhost:1234/api/orders/order_uuid_here \
-    -H "x-user-id: user_uuid_here"
-  ```
-* **Expected Responses:**
-  * `204 No Content`: Order deleted successfully.
-  * `404 Not Found`: Order not found.
-  * **C++ TCP Synchronization:** Deletes items from C++ database **only if** they are not present in any other active order of this user.
+5. **Shopping Cart Drawer:** Review selected items in your slide-out cart drawer, view delivery fees, and check out.
+   
+   ![Cart Drawer](images_for_README/u8.png)
+
+6. **Order History:** Navigate to the "My Orders" tab to review past orders, adjust quantities, or cancel/delete orders.
+   
+   ![Order History](images_for_README/u4.png)
+
+7. **Theme Switch:** Switch between Light and Dark modes.
+   
+   ![Dark Mode Marketplace](images_for_README/u5.png)
+
+8. **User Profile Panel:** Click on your profile card to view personal details.
+   
+   ![User Profile Details](images_for_README/u6.png)
+
+9. **404 Not Found Page:** Navigating to an invalid URL triggers the redirect screen.
+   
+   ![404 Error Screen](images_for_README/not_found.png)
 
 ---
 
-### 5. Global Search API (`/api/search/:query`)
+## Implementation Notes
 
-* **Method & Path:** `GET /api/search/:query`
-* **Path Parameters:**
-  * `:query` (String, required): The search string.
-* **Run Example (curl):**
-  ```bash
-  curl -i -X GET http://localhost:1234/api/search/sushi
-  ```
-* **Expected Responses:**
-  * `200 OK`: Returns a structured JSON matching the query against restaurant names, descriptions, and product names:
-    ```json
-    {
-      "restaurants": [
-        {
-          "id": "restaurant_uuid_here",
-          "name": "Giraffe",
-          "description": "Asian Noodle Bar",
-          "ownerId": "user_uuid_here"
-        }
-      ],
-      "products": [
-        {
-          "id": "product_uuid_here",
-          "name": "Salmon Sushi",
-          "description": "Sushi roll",
-          "price": 60,
-          "restaurantId": "restaurant_uuid_here"
-        }
-      ]
-    }
-    ```
-
----
-
-## C++ TCP Server Protocol Specification
-
-When Node.js communicates with the C++ server on port `5555`, it sends space-separated commands terminated by `\n`. Product IDs are treated as valid non-empty string IDs (excluding whitespace):
-
-1. **POST (Register/Initialize profile):**
-   ```
-   POST [userid] [productid1] [productid2] ...
-   ```
-   *Response:* `201 Created` on success, or `404 Not Found` (meaning user already exists).
-
-2. **PATCH (Append interaction views):**
-   ```
-   PATCH [userid] [productid1] [productid2] ...
-   ```
-   *Response:* `204 No Content` on success, or `404 Not Found` if user does not exist.
-
-3. **DELETE (Remove product views):**
-   ```
-   DELETE [userid] [productid1] [productid2] ...
-   ```
-   *Response:* `204 No Content` on success, or `404 Not Found` if user or any product doesn't exist.
-
-4. **GET (Get Recommendation):**
-   ```
-   GET [userid] [productid]
-   ```
-   *Response:* `200 Ok\n\n[space-separated recommended product IDs]`.
+*   **In-Memory Storage:** All web application data (excluding user recommendation view and purchase log database in `data/database.txt`) is stored in-memory inside the NodeJS server. Restarting the web container or terminal command cleans database arrays.
+*   **Max payload limit:** Request JSON bodies and avatars are limited to 10MB to maintain responsive operations.
+*   **Default Seed Accounts:** Default manager profiles exist for testing. You can log in using `Password123` to manage pre-seeded restaurants:
+    *   `giraffe_owner` (Manages *"Eran & Shira's Restaurant of LOVE*)
+    *   `burger_owner` (Manages *"Burger Room"*)
+    *   `pizza_owner` (Manages *"Tony Vespa"*)
+    *   `sushi_owner` (Manages *"Sushi Bar"*)
+    *   `desserts_owner` (Manages *"Sweet Creations"*)
+    *   `indian_owner` (Manages *"Taj Mahal"*)
+    *   `mexican_owner` (Manages *"La Taqueria"*)
+    *   `italian_owner` (Manages *"Trattoria Bella"*)
