@@ -14,6 +14,9 @@ router.post('/', RestaurantController.createRestaurant);
 // GET /:id - Retrieve a specific restaurant by ID
 router.get('/:id', RestaurantController.getRestaurantById);
 
+// POST /:id/rate - Rate a specific restaurant
+router.post('/:id/rate', authenticateToken, RestaurantController.rateRestaurant);
+
 // PATCH /:id - Update details of a specific restaurant
 router.patch('/:id', RestaurantController.updateRestaurant);
 

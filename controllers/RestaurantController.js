@@ -135,6 +135,32 @@ class RestaurantController {
             return res.status(500).json({ error: error.message });
         }
     }
+
+    // Rate a specific restaurant
+    static rateRestaurant(req, res) {
+        try {
+            const { id } = req.params;
+            const { rating } = req.body;
+            const userId = req.user.id;
+
+            if (!id) {
+                return res.status(400).json({ error: 'Restaurant ID is required' });
+            }
+
+            if (rating === undefined || typeof rating !== 'number' || rating < 1 || rating > 5) {
+                return res.status(400).json({ error: 'Rating must be a number between 1 and 5' });
+            }
+
+            const updatedRestaurant = RestaurantService.rate(id, rating, userId);
+            if (!updatedRestaurant) {
+                return res.status(404).json({ error: 'Restaurant not found' });
+            }
+
+            return res.status(200).json(updatedRestaurant);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = RestaurantController;

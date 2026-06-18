@@ -5,12 +5,18 @@ const Restaurant = require('../models/Restaurant');
 class RestaurantService {
     // Returns all restaurants
     static getAll() {
-        return InMemoryDB.restaurants;
+        return InMemoryDB.restaurants.map(rest => {
+            rest.orderCount = InMemoryDB.orders ? InMemoryDB.orders.filter(o => o.restaurantId === rest.id).length : 0;
+            return rest;
+        });
     }
 
     // Returns a restaurant or null
     static getById(id) {
-        return InMemoryDB.restaurants.find(r => r.id === id) || null;
+        const rest = InMemoryDB.restaurants.find(r => r.id === id);
+        if (!rest) return null;
+        rest.orderCount = InMemoryDB.orders ? InMemoryDB.orders.filter(o => o.restaurantId === rest.id).length : 0;
+        return rest;
     }
 
     // Generates an ID, creates a Restaurant, pushes to InMemoryDB.restaurants, returns it
@@ -71,11 +77,37 @@ class RestaurantService {
     static search(query) {
         if (!query) return [];
         const lowerQuery = String(query).toLowerCase();
-        return InMemoryDB.restaurants.filter(r => {
-            const nameMatch = r.name && String(r.name).toLowerCase().includes(lowerQuery);
-            const descMatch = r.description && String(r.description).toLowerCase().includes(lowerQuery);
-            return nameMatch || descMatch;
-        });
+        return InMemoryDB.restaurants
+            .filter(r => {
+                const nameMatch = r.name && String(r.name).toLowerCase().includes(lowerQuery);
+                const descMatch = r.description && String(r.description).toLowerCase().includes(lowerQuery);
+                return nameMatch || descMatch;
+            })
+            .map(rest => {
+                rest.orderCount = InMemoryDB.orders ? InMemoryDB.orders.filter(o => o.restaurantId === rest.id).length : 0;
+                return rest;
+            });
+    }
+
+    // Rates a restaurant and updates its average rating
+    static rate(id, ratingValue, userId) {
+        const restaurant = this.getById(id);
+        if (!restaurant) return null;
+
+        if (!restaurant.ratings) {
+            restaurant.ratings = {};
+            if (restaurant.rating !== undefined && restaurant.rating !== null) {
+                restaurant.ratings['seed'] = restaurant.rating;
+            }
+        }
+
+        restaurant.ratings[userId] = ratingValue;
+
+        const values = Object.values(restaurant.ratings);
+        const sum = values.reduce((a, b) => a + b, 0);
+        restaurant.rating = parseFloat((sum / values.length).toFixed(1));
+
+        return restaurant;
     }
 }
 

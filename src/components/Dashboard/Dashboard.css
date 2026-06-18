@@ -223,3 +223,110 @@
   color: var(--text-secondary);
   margin-top: 12px;
 }
+
+/* --- Inline Card Rating Widget --- */
+.card-rate-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  background-color: var(--surface-color);
+  padding: 6px 12px;
+  border-radius: 12px;
+  width: fit-content;
+  border: 1.5px solid var(--border-color);
+  transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+}
+
+.restaurant-card:hover .card-rate-section {
+  border-color: rgba(0, 180, 255, 0.25);
+}
+
+.card-rate-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-rate-stars {
+  display: flex;
+  gap: 3px;
+}
+
+.card-rate-star {
+  color: rgba(0, 0, 0, 0.15);
+  font-size: 17px;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s ease;
+}
+
+.dark .card-rate-star {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.card-rate-star:hover {
+  transform: scale(1.3);
+}
+
+.card-rate-star.active {
+  color: #ffa800;
+  text-shadow: 0 0 6px rgba(255, 168, 0, 0.35);
+}
+
+/* --- Section Header Row and Sorting Widget --- */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.section-header-row .section-heading {
+  margin-bottom: 0 !important;
+}
+
+.sorting-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--card-bg);
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow-soft);
+  transition: all var(--transition-speed) ease;
+}
+
+.sorting-container:hover {
+  border-color: rgba(0, 180, 255, 0.3);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.sorting-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.sorting-select {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  padding: 2px 4px;
+  font-family: inherit;
+}
+
+.sorting-select option {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
+
+
