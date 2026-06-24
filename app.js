@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const app = express();
+app.use(cors());
 const PORT = 1234; // Using the port from main (1234)
 
 // 1. Import the routers 
@@ -11,7 +13,7 @@ const userRouter = require('./routes/userRouter');
 const existUserRouter = require('./routes/existUserRouter');
 
 // Middleware to parse JSON bodies in incoming requests (for POST/PATCH endpoints)
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 
 // 2. Mount each router onto its strict, required HTTP URL prefix path
 app.get('/api/categories', (req, res) => {

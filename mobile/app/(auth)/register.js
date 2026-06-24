@@ -111,7 +111,7 @@ export default function RegisterScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.7,
+        quality: 0.2,
         base64: true,
       });
     } else {
@@ -124,7 +124,7 @@ export default function RegisterScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.7,
+        quality: 0.2,
         base64: true,
       });
     }
@@ -139,6 +139,10 @@ export default function RegisterScreen() {
   }
 
   function showImageOptions() {
+    if (Platform.OS === 'web') {
+      pickImage('gallery');
+      return;
+    }
     Alert.alert('Profile Photo', 'Choose a source', [
       { text: 'Camera', onPress: () => pickImage('camera') },
       { text: 'Gallery', onPress: () => pickImage('gallery') },
