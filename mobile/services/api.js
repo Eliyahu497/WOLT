@@ -1,9 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Base URL of the Express backend server.
-// For Android emulator use '10.0.2.2' instead of 'localhost'.
-// For physical devices on the same network, use your machine's local IP.
-const BASE_URL = 'http://10.0.2.2:1234';
+import { Platform } from 'react-native';
+
+let BASE_URL = 'http://localhost:1234'; // Default for web
+if (Platform.OS === 'android') {
+  BASE_URL = 'http://10.0.2.2:1234';
+} else if (Platform.OS === 'ios') {
+  BASE_URL = 'http://172.18.66.193:1234'; // For physical iPhone on local Wi-Fi
+}
 
 /**
  * Retrieves the stored JWT token from AsyncStorage.
