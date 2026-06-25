@@ -17,7 +17,7 @@ export default function FloatingCartButton() {
   if (itemCount === 0) return null;
 
   return (
-    <View style={[styles.container, { bottom: insets.bottom || 20 }]}>
+    <View style={[styles.container, { bottom: (insets.bottom || 0) + 80 }]}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => setCartSheetVisible(true)}
