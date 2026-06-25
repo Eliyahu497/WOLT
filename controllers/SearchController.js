@@ -5,7 +5,7 @@ class SearchController {
      * Handle GET /api/search/:query requests.
      * Searches both restaurants and products.
      */
-    static search(req, res) {
+    static async search(req, res) {
         try {
             const { query } = req.params;
 
@@ -14,7 +14,7 @@ class SearchController {
                 return res.status(400).json({ error: 'Search query is required and cannot be empty' });
             }
 
-            const results = SearchService.search(query.trim());
+            const results = await SearchService.search(query.trim());
             return res.status(200).json(results);
         } catch (error) {
             return res.status(500).json({ error: error.message });

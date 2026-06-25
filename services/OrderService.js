@@ -1,13 +1,14 @@
-const InMemoryDB = require('../InMemoryDB');
 const Order = require('../models/Order');
-const crypto = require('crypto'); // Built-in Node.js module to generate unique UUIDs
+const User = require('../models/User');
+const Restaurant = require('../models/Restaurant');
+const crypto = require('crypto');
 
 class OrderService {
 
-    // Create a new order in memory (supports custom ID for updates)
-    create(userId, restaurantId, items, orderId = null) {
+    // Create a new order
+    async create(userId, restaurantId, items, orderId = null) {
         // 1. Validate that the user exists in the system
-        const userExists = InMemoryDB.users.find(u => u.id === userId);
+        const userExists = await User.findById(userId);
         if (!userExists) {
             throw new Error("User not found");
         }
@@ -18,7 +19,7 @@ class OrderService {
         }
 
         // 3. Verify that the restaurant exists in the database
-        const restaurant = InMemoryDB.restaurants.find(r => r.id === restaurantId);
+        const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant) {
             throw new Error("Restaurant not found");
         }
@@ -32,18 +33,15 @@ class OrderService {
 
         // 5. Map incoming items, validate them, and calculate the total price
         const orderItems = items.map(item => {
-            // Verify that the product ID is provided
             if (!item || !item.productId || typeof item.productId !== 'string' || !item.productId.trim()) {
                 throw new Error("Product ID is required for all items");
             }
 
-            // Verify that the product exists in the restaurant's menu
-            const product = restaurant.products ? restaurant.products.find(p => p.id === item.productId) : null;
+            const product = restaurant.products ? restaurant.products.id(item.productId) : null;
             if (!product) {
                 throw new Error(`Product ${item.productId} not found in restaurant`);
             }
 
-            // Verify that the quantity is a positive integer greater than zero
             const qty = Number(item.quantity);
             if (!item.quantity || isNaN(qty) || !Number.isInteger(qty) || qty <= 0) {
                 throw new Error(`Quantity for product ${item.productId} must be a positive integer`);
@@ -59,58 +57,65 @@ class OrderService {
             };
         });
 
-        // 6. Generate a secure unique ID for the order if not provided
         const finalId = orderId || crypto.randomUUID();
 
-        // 7. Instantiate the Order and save it to the global In-Memory DB
-        const newOrder = new Order(finalId, userId, restaurantId, orderItems, totalPrice);
-        InMemoryDB.orders.push(newOrder);
+        // 7. Instantiate the Order and save it to MongoDB
+        const newOrder = new Order({
+            _id: finalId,
+            userId,
+            restaurantId,
+            items: orderItems,
+            total: totalPrice
+        });
+        
+        await newOrder.save();
 
         return newOrder;
     }
 
     // Retrieve all orders belonging to a specific user
-    getByUserId(userId) {
-        return InMemoryDB.orders.filter(order => order.userId === userId);
+    async getByUserId(userId) {
+        return await Order.find({ userId });
     }
 
     // Retrieve a single order by its unique ID
-    getById(id) {
-        return InMemoryDB.orders.find(order => order.id === id);
+    async getById(id) {
+        return await Order.findById(id);
     }
 
-    // Update order details by deleting the old order and creating a new updated Order instance using create()
-    update(id, data) {
-        const oldOrder = this.getById(id);
+    // Update order details by deleting the old order and creating a new updated Order instance
+    async update(id, data) {
+        const oldOrder = await this.getById(id);
         if (!oldOrder) return null;
 
-        // Extract values, defaulting to old values if not provided in update request
         const userId = oldOrder.userId;
         const restaurantId = oldOrder.restaurantId;
         const items = data.items || oldOrder.items;
 
-        // Delete the old order first
-        this.delete(id);
+        await this.delete(id);
 
         try {
-            // Re-create the order with the updated details, reusing the same ID
-            return this.create(userId, restaurantId, items, id);
+            return await this.create(userId, restaurantId, items, id);
         } catch (error) {
-            // If validation in create fails, restore the original order in DB and rethrow error
-            InMemoryDB.orders.push(oldOrder);
+            // Restore original order
+            const restoredOrder = new Order({
+                _id: oldOrder._id,
+                userId: oldOrder.userId,
+                restaurantId: oldOrder.restaurantId,
+                items: oldOrder.items,
+                total: oldOrder.total,
+                createdAt: oldOrder.createdAt
+            });
+            await restoredOrder.save();
             throw error;
         }
     }
 
-    // Delete/Cancel an order from the memory array
-    delete(id) {
-        const index = InMemoryDB.orders.findIndex(order => order.id === id);
-        if (index === -1) return false;
-
-        InMemoryDB.orders.splice(index, 1);
-        return true;
+    // Delete/Cancel an order
+    async delete(id) {
+        const result = await Order.findByIdAndDelete(id);
+        return result !== null;
     }
 }
 
-// Export an instance of the service (Singleton pattern)
 module.exports = new OrderService();

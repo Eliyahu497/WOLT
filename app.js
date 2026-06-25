@@ -1,6 +1,10 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const { connectDB } = require('./db/connection');
+const seedData = require('./db/seed');
+const Category = require('./models/Category');
+
 const app = express();
 app.use(cors());
 const PORT = 1234; // Using the port from main (1234)
@@ -16,9 +20,13 @@ const existUserRouter = require('./routes/existUserRouter');
 app.use(express.json({ limit: '50mb' }));
 
 // 2. Mount each router onto its strict, required HTTP URL prefix path
-app.get('/api/categories', (req, res) => {
-    const InMemoryDB = require('./InMemoryDB');
-    return res.status(200).json(InMemoryDB.categories || []);
+app.get('/api/categories', async (req, res) => {
+    try {
+        const categories = await Category.find();
+        return res.status(200).json(categories);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
 });
 app.use('/api/restaurants', restaurantRouter);
 app.use('/api/orders', orderRouter);
@@ -34,11 +42,16 @@ app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// Start the server listening on the defined port
-app.listen(PORT, (err) => {
-    if (err) {
-        console.error(`Failed to start server on port ${PORT}:`, err.message);
-        return;
-    }
-    console.log(`Server is running live on http://localhost:${PORT}`);
+// Connect to MongoDB and seed if necessary before starting the server
+connectDB().then(async () => {
+    await seedData();
+    
+    // Start the server listening on the defined port
+    app.listen(PORT, (err) => {
+        if (err) {
+            console.error(`Failed to start server on port ${PORT}:`, err.message);
+            return;
+        }
+        console.log(`Server is running live on http://localhost:${PORT}`);
+    });
 });

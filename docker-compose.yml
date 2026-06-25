@@ -21,8 +21,17 @@ services:
       - RECOMMENDER_HOST=server
       - TCP_HOST=server
       - TCP_PORT=5555
+      - MONGODB_URI=mongodb://mongo:27017/wolt
     depends_on:
       - server
+      - mongo
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
 
   client:
     build:
@@ -33,3 +42,6 @@ services:
     tty: true
     depends_on:
       - server
+
+volumes:
+  mongo-data:
