@@ -1,22 +1,19 @@
-const { v4: uuidv4 } = require('uuid');
-const InMemoryDB = require('../InMemoryDB');
 const User = require('../models/User');
 
 class UserService {
-    createUser(data) {
-        const id = uuidv4();
-        const newUser = new User(id, data.name, data.email, data.phone, data.location, data.userName, data.password, data.role, data.avatar);
-        InMemoryDB.users.push(newUser);
+    async createUser(data) {
+        const newUser = new User(data);
+        await newUser.save();
         return newUser;
     }
-    getUserById(id) {
-        return InMemoryDB.users.find(u => u.id === id) || null;
+    async getUserById(id) {
+        return await User.findById(id);
     }
-    validateCredentials(userName, password) {
-        return InMemoryDB.users.find(u => u.userName === userName && u.password === password) || null;
+    async validateCredentials(userName, password) {
+        return await User.findOne({ userName, password });
     }
-    invalidUN(userName) {
-        return InMemoryDB.users.find(u => u.userName === userName) || null;
+    async invalidUN(userName) {
+        return await User.findOne({ userName });
     }
 }
 

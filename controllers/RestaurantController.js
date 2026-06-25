@@ -4,12 +4,12 @@ const { calculateDistance } = require('../utils/location');
 
 class RestaurantController {
     // Retrieve all restaurants
-    static getAllRestaurants(req, res) {
+    static async getAllRestaurants(req, res) {
         try {
-            let restaurants = RestaurantService.getAll();
+            let restaurants = await RestaurantService.getAll();
             
             if (req.user) {
-                const user = userService.getUserById(req.user.id);
+                const user = await userService.getUserById(req.user.id);
                 if (user && user.location) {
                     restaurants = restaurants.map(rest => {
                         if (rest.location) {
@@ -30,14 +30,14 @@ class RestaurantController {
     }
 
     // Retrieve a single restaurant by ID
-    static getRestaurantById(req, res) {
+    static async getRestaurantById(req, res) {
         try {
             const { id } = req.params;
             if (!id) {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
 
-            const restaurant = RestaurantService.getById(id);
+            const restaurant = await RestaurantService.getById(id);
             if (!restaurant) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
@@ -49,7 +49,7 @@ class RestaurantController {
     }
 
     // Create a new restaurant
-    static createRestaurant(req, res) {
+    static async createRestaurant(req, res) {
         try {
             const { name, description, location, image, category } = req.body;
             const owner = req.headers['x-user-id'];
@@ -57,7 +57,7 @@ class RestaurantController {
                 return res.status(401).json({ error: 'Unauthorized: Missing user ID' });
             }
 
-            const user = userService.getUserById(owner);
+            const user = await userService.getUserById(owner);
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
@@ -70,16 +70,19 @@ class RestaurantController {
                 return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
             }
 
-            const restaurant = RestaurantService.create({ name, description, location, owner, image, category });
+            const restaurant = await RestaurantService.create({ name, description, location, owner, image, category });
             res.setHeader('Location', `/api/restaurants/${restaurant.id}`);
             return res.status(201).send();
         } catch (error) {
+            if (error.name === 'ValidationError') {
+                return res.status(400).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
 
     // Update an existing restaurant's details
-    static updateRestaurant(req, res) {
+    static async updateRestaurant(req, res) {
         try {
             const { id } = req.params;
             const { name, description, location, image, category } = req.body;
@@ -96,7 +99,7 @@ class RestaurantController {
                 return res.status(400).json({ error: 'invalid location: lat and lng must be numbers' });
             }
 
-            const updatedRestaurant = RestaurantService.update(id, { name, description, location, image, category }, owner);
+            const updatedRestaurant = await RestaurantService.update(id, { name, description, location, image, category }, owner);
             if (!updatedRestaurant) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
@@ -105,12 +108,15 @@ class RestaurantController {
             if (error.message.includes("owner")) {
                 return res.status(403).json({ error: error.message });
             }
+            if (error.name === 'ValidationError') {
+                return res.status(400).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }
 
     // Delete a restaurant
-    static deleteRestaurant(req, res) {
+    static async deleteRestaurant(req, res) {
         try {
             const { id } = req.params;
             const owner = req.headers['x-user-id'];
@@ -123,7 +129,7 @@ class RestaurantController {
                 return res.status(400).json({ error: 'Restaurant ID is required' });
             }
 
-            const success = RestaurantService.delete(id, owner);
+            const success = await RestaurantService.delete(id, owner);
             if (!success) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
@@ -137,7 +143,7 @@ class RestaurantController {
     }
 
     // Rate a specific restaurant
-    static rateRestaurant(req, res) {
+    static async rateRestaurant(req, res) {
         try {
             const { id } = req.params;
             const { rating } = req.body;
@@ -151,13 +157,16 @@ class RestaurantController {
                 return res.status(400).json({ error: 'Rating must be a number between 1 and 5' });
             }
 
-            const updatedRestaurant = RestaurantService.rate(id, rating, userId);
+            const updatedRestaurant = await RestaurantService.rate(id, rating, userId);
             if (!updatedRestaurant) {
                 return res.status(404).json({ error: 'Restaurant not found' });
             }
 
             return res.status(200).json(updatedRestaurant);
         } catch (error) {
+            if (error.name === 'ValidationError') {
+                return res.status(400).json({ error: error.message });
+            }
             return res.status(500).json({ error: error.message });
         }
     }

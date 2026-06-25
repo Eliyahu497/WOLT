@@ -8,17 +8,17 @@ class SearchService {
      * @param {string} query - The text to search for (e.g., "pizza" or "pasta")
      * @returns {Object} An object with two lists: matching restaurants and matching products
      */
-    static search(query) {
+    static async search(query) {
         // If the search query is empty or undefined, return empty lists immediately
         if (!query) {
             return { restaurants: [], products: [] };
         }
 
         // 1. Delegate search to RestaurantService
-        const matchedRestaurants = RestaurantService.search(query);
+        const matchedRestaurants = await RestaurantService.search(query);
 
         // 2. Delegate search to ProductService
-        const matchedProducts = ProductService.search(query);
+        const matchedProducts = await ProductService.search(query);
 
         // Return the grouped search results
         return {
