@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
 import CartSheet from '../components/CartSheet';
 import FloatingCartButton from '../components/FloatingCartButton';
+import { ThemeProvider, useTheme } from '../context/ThemeContext';
 
 /**
  * Inner layout that reads auth state and redirects accordingly.
@@ -17,6 +18,7 @@ function RootNavigator() {
   const { isLoggedIn, isLoading, role } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const { colors, isDarkMode } = useTheme();
 
   useEffect(() => {
     if (isLoading) return; // Still restoring session – do nothing yet
@@ -35,15 +37,15 @@ function RootNavigator() {
   // Show a loading spinner while restoring the session from AsyncStorage
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6B00" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
 
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style={isDarkMode ? 'light' : 'dark'} />
       <Slot />
       {/* Global Cart UI overlay */}
       {isLoggedIn && (
@@ -61,11 +63,13 @@ function RootNavigator() {
  */
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <RootNavigator />
-      </CartProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <RootNavigator />
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

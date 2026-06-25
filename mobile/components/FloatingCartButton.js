@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const ACCENT = '#FF6B00';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * A floating sticky button that appears globally when the cart has items.
@@ -13,6 +12,8 @@ const WHITE = '#FFFFFF';
 export default function FloatingCartButton() {
   const { itemCount, total, setCartSheetVisible, restaurantInfo } = useCart();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   if (itemCount === 0) return null;
 
@@ -42,7 +43,7 @@ export default function FloatingCartButton() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     position: 'absolute',
     left: 20,
@@ -52,18 +53,18 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 60,
     borderRadius: 30,
     paddingHorizontal: 20,
-    shadowColor: ACCENT,
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.35,
     shadowRadius: 10,
     elevation: 8,
   },
   badge: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.white,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badgeText: {
-    color: ACCENT,
+    color: colors.accent,
     fontWeight: '800',
     fontSize: 14,
   },
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   viewCartText: {
-    color: WHITE,
+    color: colors.white,
     fontWeight: '700',
     fontSize: 16,
   },
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   priceText: {
-    color: WHITE,
+    color: colors.white,
     fontWeight: '800',
     fontSize: 16,
   },

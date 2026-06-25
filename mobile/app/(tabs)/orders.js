@@ -14,14 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { get, patch, del } from '../../services/api';
 
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
-const RED = '#FF3B30';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function OrdersScreen() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [orders, setOrders] = useState([]);
   const [restaurantsMap, setRestaurantsMap] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -163,14 +160,14 @@ export default function OrdersScreen() {
                   disabled={isUpdating}
                   onPress={() => updateItemQuantity(order, item.productId, -1)}
                 >
-                  <Ionicons name="remove" size={16} color={DARK} />
+                  <Ionicons name="remove" size={16} color={colors.text} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.qtyBtn}
                   disabled={isUpdating}
                   onPress={() => updateItemQuantity(order, item.productId, 1)}
                 >
-                  <Ionicons name="add" size={16} color={DARK} />
+                  <Ionicons name="add" size={16} color={colors.text} />
                 </TouchableOpacity>
               </View>
 
@@ -181,13 +178,13 @@ export default function OrdersScreen() {
         {/* Actions */}
         <View style={styles.actionsRow}>
           {isUpdating ? (
-            <ActivityIndicator color={ACCENT} size="small" />
+            <ActivityIndicator color={colors.accent} size="small" />
           ) : (
             <TouchableOpacity
               style={styles.cancelBtn}
               onPress={() => handleCancelOrder(order.id)}
             >
-              <Ionicons name="close-circle-outline" size={18} color={RED} />
+              <Ionicons name="close-circle-outline" size={18} color={colors.error} />
               <Text style={styles.cancelBtnText}>Cancel Order</Text>
             </TouchableOpacity>
           )}
@@ -200,7 +197,7 @@ export default function OrdersScreen() {
     if (isLoading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="receipt-outline" size={64} color={LIGHT_GRAY} />
+        <Ionicons name="receipt-outline" size={64} color={colors.subtext} />
         <Text style={styles.emptyTitle}>No past orders</Text>
         <Text style={styles.emptySubtitle}>
           You haven't placed any orders yet. Once you do, they will appear here.
@@ -212,7 +209,7 @@ export default function OrdersScreen() {
   if (isLoading && !refreshing) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={ACCENT} />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -220,7 +217,7 @@ export default function OrdersScreen() {
   if (error) {
     return (
       <View style={styles.centerContainer}>
-        <Ionicons name="cloud-offline-outline" size={48} color={GRAY} />
+        <Ionicons name="cloud-offline-outline" size={48} color={colors.subtext} />
         <Text style={styles.errorTitle}>Oops!</Text>
         <Text style={styles.errorMsg}>{error}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={fetchOrders}>
@@ -244,36 +241,36 @@ export default function OrdersScreen() {
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={ACCENT} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />
         }
       />
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.background,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.background,
     padding: 24,
   },
   header: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   listContent: {
     padding: 16,
@@ -283,7 +280,7 @@ const styles = StyleSheet.create({
 
   /* Card */
   card: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
@@ -300,23 +297,23 @@ const styles = StyleSheet.create({
   restName: {
     fontSize: 18,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     marginBottom: 2,
   },
   orderId: {
     fontSize: 13,
-    color: GRAY,
+    color: colors.subtext,
     fontWeight: '500',
   },
   totalPrice: {
     fontSize: 18,
     fontWeight: '800',
-    color: ACCENT,
+    color: colors.accent,
   },
 
   divider: {
     height: 1,
-    backgroundColor: '#F4F4F4',
+    backgroundColor: colors.border,
     marginVertical: 14,
   },
 
@@ -335,12 +332,12 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 15,
     fontWeight: '600',
-    color: DARK,
+    color: colors.text,
     marginBottom: 2,
   },
   itemPrice: {
     fontSize: 13,
-    color: GRAY,
+    color: colors.subtext,
   },
   qtyControls: {
     flexDirection: 'row',
@@ -352,7 +349,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -370,11 +367,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#FFEBEB',
-    backgroundColor: '#FFF5F5',
+    borderColor: colors.error + '30', // 30 is hex for roughly 20% opacity
+    backgroundColor: colors.error + '10', // 10 is hex for roughly 6% opacity
   },
   cancelBtnText: {
-    color: RED,
+    color: colors.error,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -388,11 +385,11 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   emptySubtitle: {
     fontSize: 15,
-    color: GRAY,
+    color: colors.subtext,
     textAlign: 'center',
     paddingHorizontal: 32,
     lineHeight: 22,
@@ -402,23 +399,23 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   errorMsg: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   retryBtn: {
     marginTop: 12,
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: WHITE,
+    color: colors.white,
     fontWeight: '700',
     fontSize: 15,
   },

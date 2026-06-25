@@ -1,12 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
-/**
- * Profile screen placeholder.
- * Shows basic user info and a logout button.
- */
 export default function ProfileScreen() {
   const { user, role, logout } = useAuth();
+  const { isDarkMode, toggleDarkMode, colors } = useTheme();
+  
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.container}>
@@ -18,6 +18,16 @@ export default function ProfileScreen() {
         <Text style={styles.badgeText}>{role || 'customer'}</Text>
       </View>
 
+      <View style={styles.settingRow}>
+        <Text style={styles.settingText}>Dark Mode</Text>
+        <Switch
+          value={isDarkMode}
+          onValueChange={toggleDarkMode}
+          trackColor={{ false: colors.border, true: colors.accent }}
+          thumbColor={colors.white}
+        />
+      </View>
+
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
@@ -25,12 +35,12 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: colors.background,
     padding: 24,
   },
   emoji: {
@@ -40,35 +50,53 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: colors.text,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: colors.subtext,
     marginBottom: 16,
   },
   badge: {
-    backgroundColor: '#FF6B00',
+    backgroundColor: colors.accent,
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
     marginBottom: 32,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 13,
     fontWeight: '600',
     textTransform: 'capitalize',
   },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: 300,
+    backgroundColor: colors.card,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 32,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  settingText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
   logoutButton: {
-    backgroundColor: '#E74C3C',
+    backgroundColor: colors.error,
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
   },
   logoutText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '700',
   },

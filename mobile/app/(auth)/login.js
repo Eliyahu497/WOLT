@@ -14,18 +14,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-
-// ─── Theme ──────────────────────────────────────────────────────────────────────
-const ACCENT = '#FF6B00';
-const ACCENT_LIGHT = '#FFF3E8';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const ERROR_RED = '#FF3B30';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function LoginScreen() {
   const { login } = useAuth();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   // Form state
   const [userName, setUserName] = useState('');
@@ -76,7 +70,7 @@ export default function LoginScreen() {
           {/* ── Header ─────────────────────────────────────────────────── */}
           <View style={styles.header}>
             <View style={styles.logoCircle}>
-              <Ionicons name="fast-food" size={32} color={WHITE} />
+              <Ionicons name="fast-food" size={32} color={colors.white} />
             </View>
             <Text style={styles.brand}>Want</Text>
             <Text style={styles.tagline}>Delicious food, delivered fast</Text>
@@ -93,7 +87,7 @@ export default function LoginScreen() {
               <Ionicons
                 name="bag-handle-outline"
                 size={26}
-                color={role === 'customer' ? ACCENT : GRAY}
+                color={role === 'customer' ? colors.accent : colors.subtext}
               />
               <Text style={[styles.roleLabel, role === 'customer' && styles.roleLabelActive]}>
                 Customer
@@ -108,7 +102,7 @@ export default function LoginScreen() {
               <Ionicons
                 name="storefront-outline"
                 size={26}
-                color={role === 'manager' ? ACCENT : GRAY}
+                color={role === 'manager' ? colors.accent : colors.subtext}
               />
               <Text style={[styles.roleLabel, role === 'manager' && styles.roleLabelActive]}>
                 Manager
@@ -119,11 +113,11 @@ export default function LoginScreen() {
           {/* ── Username ───────────────────────────────────────────────── */}
           <View style={styles.fieldWrapper}>
             <View style={[styles.inputRow, errors.userName && styles.inputError]}>
-              <Ionicons name="person-outline" size={20} color={GRAY} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color={colors.subtext} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Username"
-                placeholderTextColor={GRAY}
+                placeholderTextColor={colors.subtext}
                 autoCapitalize="none"
                 autoCorrect={false}
                 value={userName}
@@ -139,11 +133,11 @@ export default function LoginScreen() {
           {/* ── Password ───────────────────────────────────────────────── */}
           <View style={styles.fieldWrapper}>
             <View style={[styles.inputRow, errors.password && styles.inputError]}>
-              <Ionicons name="lock-closed-outline" size={20} color={GRAY} style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={20} color={colors.subtext} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor={GRAY}
+                placeholderTextColor={colors.subtext}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={(t) => {
@@ -155,7 +149,7 @@ export default function LoginScreen() {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color={GRAY}
+                  color={colors.subtext}
                 />
               </TouchableOpacity>
             </View>
@@ -165,7 +159,7 @@ export default function LoginScreen() {
           {/* ── Server error ───────────────────────────────────────────── */}
           {serverError !== '' && (
             <View style={styles.serverErrorBox}>
-              <Ionicons name="alert-circle" size={18} color={ERROR_RED} />
+              <Ionicons name="alert-circle" size={18} color={colors.error} />
               <Text style={styles.serverErrorText}>{serverError}</Text>
             </View>
           )}
@@ -178,7 +172,7 @@ export default function LoginScreen() {
             activeOpacity={0.85}
           >
             {isSubmitting ? (
-              <ActivityIndicator color={WHITE} />
+              <ActivityIndicator color={colors.white} />
             ) : (
               <Text style={styles.primaryBtnText}>Log In</Text>
             )}
@@ -201,10 +195,10 @@ export default function LoginScreen() {
 
 // ─── Styles ─────────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
   },
   flex: {
     flex: 1,
@@ -224,11 +218,11 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: ACCENT,
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
@@ -237,12 +231,12 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 30,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     letterSpacing: -0.5,
   },
   tagline: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     marginTop: 4,
   },
 
@@ -250,7 +244,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: GRAY,
+    color: colors.subtext,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 10,
@@ -268,21 +262,21 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   roleCardActive: {
-    backgroundColor: ACCENT_LIGHT,
-    borderColor: ACCENT,
+    backgroundColor: colors.accentLight,
+    borderColor: colors.accent,
   },
   roleLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: GRAY,
+    color: colors.subtext,
   },
   roleLabelActive: {
-    color: ACCENT,
+    color: colors.accent,
   },
 
   /* Inputs */
@@ -292,7 +286,7 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 14,
     paddingHorizontal: 14,
     height: 52,
@@ -300,8 +294,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   inputError: {
-    borderColor: ERROR_RED,
-    backgroundColor: '#FFF5F5',
+    borderColor: colors.error,
+    backgroundColor: colors.error + '10',
   },
   inputIcon: {
     marginRight: 10,
@@ -309,14 +303,14 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: DARK,
+    color: colors.text,
   },
   eyeBtn: {
     padding: 6,
   },
   errorText: {
     fontSize: 12,
-    color: ERROR_RED,
+    color: colors.error,
     marginTop: 4,
     marginLeft: 4,
   },
@@ -326,7 +320,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#FFF0F0',
+    backgroundColor: colors.error + '15',
     padding: 12,
     borderRadius: 12,
     marginBottom: 16,
@@ -334,19 +328,19 @@ const styles = StyleSheet.create({
   serverErrorText: {
     flex: 1,
     fontSize: 13,
-    color: ERROR_RED,
+    color: colors.error,
     fontWeight: '500',
   },
 
   /* Primary button */
   primaryBtn: {
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 54,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 4,
-    shadowColor: ACCENT,
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -356,7 +350,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   primaryBtnText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
@@ -370,10 +364,10 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
   },
   footerBold: {
-    color: ACCENT,
+    color: colors.accent,
     fontWeight: '700',
   },
 });

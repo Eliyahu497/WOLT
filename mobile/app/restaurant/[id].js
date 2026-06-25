@@ -17,13 +17,7 @@ import { get } from '../../services/api';
 import ProductCard from '../../components/ProductCard';
 import ProductModal from '../../components/ProductModal';
 import { useCart } from '../../context/CartContext';
-
-// ─── Theme ──────────────────────────────────────────────────────────────────────
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_HEIGHT = 260;
@@ -33,6 +27,8 @@ export default function RestaurantScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { addToCart } = useCart();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   // Data state
   const [restaurant, setRestaurant] = useState(null);
@@ -81,7 +77,7 @@ export default function RestaurantScreen() {
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={ACCENT} />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -90,7 +86,7 @@ export default function RestaurantScreen() {
   if (error || !restaurant) {
     return (
       <View style={styles.centerContainer}>
-        <Ionicons name="alert-circle-outline" size={48} color={GRAY} />
+        <Ionicons name="alert-circle-outline" size={48} color={colors.subtext} />
         <Text style={styles.errorTitle}>Couldn't load restaurant</Text>
         <Text style={styles.errorMsg}>{error}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={fetchData}>
@@ -124,13 +120,13 @@ export default function RestaurantScreen() {
             onPress={() => router.back()}
             activeOpacity={0.8}
           >
-            <Ionicons name="arrow-back" size={22} color={WHITE} />
+            <Ionicons name="arrow-back" size={22} color={colors.white} />
           </TouchableOpacity>
 
           {/* Delivery time pill on banner */}
           {restaurant.deliveryTime && (
             <View style={styles.bannerTimePill}>
-              <Ionicons name="time-outline" size={14} color={WHITE} />
+              <Ionicons name="time-outline" size={14} color={colors.white} />
               <Text style={styles.bannerTimeText}>{restaurant.deliveryTime}</Text>
             </View>
           )}
@@ -167,7 +163,7 @@ export default function RestaurantScreen() {
             )}
             {restaurant.deliveryPrice != null && (
               <View style={styles.metaChip}>
-                <Ionicons name="bicycle-outline" size={14} color={ACCENT} />
+                <Ionicons name="bicycle-outline" size={14} color={colors.accent} />
                 <Text style={styles.metaChipText}>
                   {restaurant.deliveryPrice === 0 ? 'Free' : `₪${restaurant.deliveryPrice}`}
                 </Text>
@@ -175,7 +171,7 @@ export default function RestaurantScreen() {
             )}
             {restaurant.distanceKm != null && (
               <View style={styles.metaChip}>
-                <Ionicons name="location-outline" size={14} color={ACCENT} />
+                <Ionicons name="location-outline" size={14} color={colors.accent} />
                 <Text style={styles.metaChipText}>
                   {Number(restaurant.distanceKm).toFixed(1)} km
                 </Text>
@@ -200,7 +196,7 @@ export default function RestaurantScreen() {
   function renderEmpty() {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="fast-food-outline" size={48} color={LIGHT_GRAY} />
+        <Ionicons name="fast-food-outline" size={48} color={colors.subtext} />
         <Text style={styles.emptyText}>No items on the menu yet</Text>
       </View>
     );
@@ -209,7 +205,7 @@ export default function RestaurantScreen() {
   // ── Main render ───────────────────────────────────────────────────────────
   return (
     <View style={styles.screen}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={colors.background === '#1A1A2E' ? 'light-content' : 'dark-content'} />
 
       <FlatList
         data={products}
@@ -235,21 +231,21 @@ export default function RestaurantScreen() {
 
 // ─── Styles ─────────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
     gap: 10,
     padding: 24,
   },
   listContent: {
-    paddingBottom: 32,
+    paddingBottom: 160,
   },
 
   /* Banner */
@@ -260,7 +256,7 @@ const styles = StyleSheet.create({
   bannerImage: {
     width: SCREEN_WIDTH,
     height: BANNER_HEIGHT,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: colors.border,
   },
   bannerOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -290,7 +286,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   bannerTimeText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -310,17 +306,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 24,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#FFF8E1',
+    backgroundColor: colors.card,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
     marginTop: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   ratingText: {
     fontSize: 15,
@@ -329,7 +327,7 @@ const styles = StyleSheet.create({
   },
   restDescription: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     lineHeight: 20,
     marginBottom: 14,
   },
@@ -345,7 +343,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 10,
@@ -353,14 +351,14 @@ const styles = StyleSheet.create({
   metaChipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: DARK,
+    color: colors.text,
     textTransform: 'capitalize',
   },
 
   /* Divider */
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.border,
     marginBottom: 18,
   },
 
@@ -368,12 +366,12 @@ const styles = StyleSheet.create({
   menuHeading: {
     fontSize: 20,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     marginBottom: 2,
   },
   menuSubheading: {
     fontSize: 13,
-    color: GRAY,
+    color: colors.subtext,
     marginBottom: 16,
   },
 
@@ -385,29 +383,29 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 15,
-    color: GRAY,
+    color: colors.subtext,
   },
 
   /* Error */
   errorTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   errorMsg: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     textAlign: 'center',
   },
   retryBtn: {
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
     marginTop: 8,
   },
   retryText: {
-    color: WHITE,
+    color: colors.white,
     fontWeight: '700',
     fontSize: 15,
   },
@@ -416,7 +414,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   backLinkText: {
-    color: ACCENT,
+    color: colors.accent,
     fontSize: 14,
     fontWeight: '600',
   },

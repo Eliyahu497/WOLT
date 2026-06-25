@@ -1,11 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * A stylish restaurant card with cover image, name, description,
@@ -17,6 +13,8 @@ const WHITE = '#FFFFFF';
  */
 export default function RestaurantCard({ restaurant, onPress }) {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   const {
     id,
@@ -56,7 +54,7 @@ export default function RestaurantCard({ restaurant, onPress }) {
         {/* Delivery time pill */}
         {deliveryTime && (
           <View style={styles.timePill}>
-            <Ionicons name="time-outline" size={12} color={WHITE} />
+            <Ionicons name="time-outline" size={12} color={colors.white} />
             <Text style={styles.timeText}>{deliveryTime}</Text>
           </View>
         )}
@@ -86,7 +84,7 @@ export default function RestaurantCard({ restaurant, onPress }) {
         <View style={styles.metaRow}>
           {deliveryPrice != null && (
             <View style={styles.metaItem}>
-              <Ionicons name="bicycle-outline" size={14} color={GRAY} />
+              <Ionicons name="bicycle-outline" size={14} color={colors.subtext} />
               <Text style={styles.metaText}>
                 {deliveryPrice === 0 ? 'Free delivery' : `₪${deliveryPrice} delivery`}
               </Text>
@@ -95,7 +93,7 @@ export default function RestaurantCard({ restaurant, onPress }) {
 
           {distanceKm != null && (
             <View style={styles.metaItem}>
-              <Ionicons name="location-outline" size={14} color={GRAY} />
+              <Ionicons name="location-outline" size={14} color={colors.subtext} />
               <Text style={styles.metaText}>
                 {Number(distanceKm).toFixed(1)} km
               </Text>
@@ -107,9 +105,9 @@ export default function RestaurantCard({ restaurant, onPress }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderRadius: 16,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -119,6 +117,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
 
   /* Image */
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 180,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: colors.border,
   },
   categoryBadge: {
     position: 'absolute',
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   categoryText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'capitalize',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   timeText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -177,14 +177,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
     marginRight: 8,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: '#FFF8E1',
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
 
   description: {
     fontSize: 13,
-    color: GRAY,
+    color: colors.subtext,
     lineHeight: 18,
     marginBottom: 10,
   },
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: GRAY,
+    color: colors.subtext,
     fontWeight: '500',
   },
 });

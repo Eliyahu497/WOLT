@@ -16,12 +16,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { post, patch } from '../services/api';
-
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * Modal for creating or editing a product.
@@ -38,6 +33,8 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
   const [imageUri, setImageUri] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   // Populate form if editing
   useEffect(() => {
@@ -112,7 +109,7 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Ionicons name="close" size={24} color={DARK} />
+            <Ionicons name="close" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.title}>{product ? 'Edit Product' : 'New Product'}</Text>
           <View style={{ width: 24 }} />
@@ -126,7 +123,7 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
               <Image source={{ uri: imageUri }} style={styles.imagePreview} />
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Ionicons name="image-outline" size={32} color={GRAY} />
+                <Ionicons name="image-outline" size={32} color={colors.subtext} />
                 <Text style={styles.imagePlaceholderText}>Add Product Image *</Text>
               </View>
             )}
@@ -134,13 +131,13 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
 
           {/* Form Fields */}
           <Text style={styles.label}>Product Name *</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g. Classic Cheeseburger" />
+          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g. Classic Cheeseburger" placeholderTextColor={colors.subtext} />
 
           <Text style={styles.label}>Price (₪) *</Text>
-          <TextInput style={styles.input} value={price} onChangeText={setPrice} placeholder="e.g. 58" keyboardType="numeric" />
+          <TextInput style={styles.input} value={price} onChangeText={setPrice} placeholder="e.g. 58" keyboardType="numeric" placeholderTextColor={colors.subtext} />
 
           <Text style={styles.label}>Description</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Ingredients, size, etc." multiline />
+          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Ingredients, size, etc." multiline placeholderTextColor={colors.subtext} />
 
           <View style={styles.bottomSpace} />
         </ScrollView>
@@ -148,7 +145,7 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
         {/* Footer Actions */}
         <View style={styles.footer}>
           <TouchableOpacity style={[styles.submitBtn, isLoading && styles.disabledBtn]} onPress={handleSubmit} disabled={isLoading}>
-            {isLoading ? <ActivityIndicator color={WHITE} /> : <Text style={styles.submitBtnText}>Save Product</Text>}
+            {isLoading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitBtnText}>Save Product</Text>}
           </TouchableOpacity>
         </View>
 
@@ -157,10 +154,10 @@ export default function ProductFormModal({ visible, onClose, restaurantId, produ
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -168,12 +165,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 18,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   closeBtn: {
     padding: 4,
@@ -185,17 +182,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
     marginBottom: 6,
     marginTop: 12,
   },
   input: {
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: DARK,
+    color: colors.text,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   textArea: {
     height: 100,
@@ -204,12 +203,14 @@ const styles = StyleSheet.create({
   imagePicker: {
     width: 140,
     height: 140,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 16,
     overflow: 'hidden',
     alignSelf: 'center',
     marginBottom: 10,
     marginTop: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   imagePreview: {
     width: '100%',
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   },
   imagePlaceholderText: {
     marginTop: 8,
-    color: GRAY,
+    color: colors.subtext,
     fontWeight: '600',
     fontSize: 12,
     textAlign: 'center',
@@ -233,10 +234,11 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   submitBtn: {
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 50,
     borderRadius: 12,
     justifyContent: 'center',
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   submitBtnText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 16,
     fontWeight: '700',
   },

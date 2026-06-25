@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 
-/**
- * Search screen placeholder.
- * Will be replaced with a search bar and results list.
- */
 export default function SearchScreen() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>🔍</Text>
@@ -14,13 +14,16 @@ export default function SearchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: colors.background,
     padding: 24,
+  },
+  listContent: {
+    paddingBottom: 160,
   },
   emoji: {
     fontSize: 48,
@@ -29,12 +32,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: colors.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: colors.subtext,
     textAlign: 'center',
   },
 });
