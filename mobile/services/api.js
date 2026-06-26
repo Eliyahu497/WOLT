@@ -6,7 +6,7 @@ let BASE_URL = 'http://localhost:1234'; // Default for web
 if (Platform.OS === 'android') {
   BASE_URL = 'http://10.0.2.2:1234';
 } else if (Platform.OS === 'ios') {
-  BASE_URL = 'http://172.18.66.193:1234'; // For physical iPhone on local Wi-Fi
+  BASE_URL = 'https://common-ghosts-teach.loca.lt'; // Tunneled to bypass firewall
 }
 
 /**
@@ -22,6 +22,18 @@ async function getToken() {
 }
 
 /**
+ * Retrieves the stored user object from AsyncStorage.
+ */
+async function getUser() {
+  try {
+    const userStr = await AsyncStorage.getItem('authUser');
+    return userStr ? JSON.parse(userStr) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Builds the default headers for every API request.
  * Automatically attaches the Authorization header with the Bearer token
  * if one exists in AsyncStorage.
@@ -31,12 +43,18 @@ async function getToken() {
 async function buildHeaders(extra = {}) {
   const headers = {
     'Content-Type': 'application/json',
+    'Bypass-Tunnel-Reminder': 'true',
     ...extra,
   };
 
   const token = await getToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const user = await getUser();
+  if (user && user.id) {
+    headers['X-User-Id'] = user.id;
   }
 
   return headers;
