@@ -50,7 +50,7 @@ export default function LoginScreen() {
 
     setIsSubmitting(true);
     try {
-      await login(userName.trim(), password);
+      await login(userName.trim(), password, role);
       // Navigation handled automatically by _layout.js auth redirect
     } catch (err) {
       setServerError(err.message || 'Login failed. Please try again.');
@@ -185,6 +185,13 @@ export default function LoginScreen() {
                 Don't have an account?{' '}
                 <Text style={styles.footerBold}>Sign Up</Text>
               </Text>
+            </TouchableOpacity>
+          </Link>
+
+          {/* ── Continue as Guest ──────────────────────────────────────── */}
+          <Link href="/(tabs)" asChild>
+            <TouchableOpacity style={styles.guestLink}>
+              <Text style={styles.guestText}>Continue as Guest</Text>
             </TouchableOpacity>
           </Link>
         </View>
@@ -369,5 +376,16 @@ const createStyles = (colors) => StyleSheet.create({
   footerBold: {
     color: colors.accent,
     fontWeight: '700',
+  },
+  guestLink: {
+    alignSelf: 'center',
+    marginTop: 8,
+    padding: 8,
+  },
+  guestText: {
+    fontSize: 14,
+    color: colors.subtext,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

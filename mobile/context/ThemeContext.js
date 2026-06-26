@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Colors = {
   light: {
-    accent: '#FF6B00',
-    accentLight: '#FFF3E8',
+    accent: '#009DE0',
+    accentLight: '#E5F5FC',
     background: '#FFFFFF',
     card: '#F2F2F7',
     text: '#1A1A2E',
@@ -18,8 +18,8 @@ export const Colors = {
     overlay: 'rgba(0,0,0,0.5)',
   },
   dark: {
-    accent: '#FF6B00',
-    accentLight: '#4A2500', // Darker shade of orange for subtle backgrounds
+    accent: '#00A3FF',
+    accentLight: '#00334D',
     background: '#121212',
     card: '#1E1E1E',
     text: '#F0F0F0',
@@ -78,8 +78,17 @@ export function ThemeProvider({ children }) {
 
   const colors = isDarkMode ? Colors.dark : Colors.light;
 
+  const resetTheme = async () => {
+    try {
+      setIsDarkMode(false);
+      await AsyncStorage.setItem('appTheme', 'light');
+    } catch (error) {
+      console.error('Error resetting theme:', error);
+    }
+  };
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, colors }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, resetTheme, colors }}>
       {children}
     </ThemeContext.Provider>
   );

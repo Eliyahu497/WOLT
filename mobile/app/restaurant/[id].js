@@ -13,11 +13,12 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { get } from '../../services/api';
+import { get, post } from '../../services/api';
 import ProductCard from '../../components/ProductCard';
 import ProductModal from '../../components/ProductModal';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_HEIGHT = 260;
@@ -27,6 +28,7 @@ export default function RestaurantScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { addToCart } = useCart();
+  const { isLoggedIn, user } = useAuth();
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
@@ -35,6 +37,7 @@ export default function RestaurantScreen() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isRating, setIsRating] = useState(false);
 
   // Modal state
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -68,8 +71,29 @@ export default function RestaurantScreen() {
   }
 
   function handleAddToCart({ product, quantity }) {
+    if (!isLoggedIn) {
+      router.push('/(auth)/login');
+      return;
+    }
     if (restaurant) {
       addToCart(product, quantity, restaurant.id, restaurant);
+    }
+  }
+
+  async function handleRateRestaurant(rating) {
+    if (!isLoggedIn) {
+      router.push('/(auth)/login');
+      return;
+    }
+    if (isRating) return;
+    setIsRating(true);
+    try {
+      const updatedRest = await post(`/api/restaurants/${id}/rate`, { rating });
+      setRestaurant(updatedRest); // Update with new rating
+    } catch (err) {
+      console.error('Failed to rate restaurant:', err.message);
+    } finally {
+      setIsRating(false);
     }
   }
 
@@ -101,6 +125,8 @@ export default function RestaurantScreen() {
 
   // ── List header (banner + info) ───────────────────────────────────────────
   function renderHeader() {
+    const myRating = (restaurant && restaurant.ratings && user) ? restaurant.ratings[user.id] : 0;
+
     return (
       <View>
         {/* Banner image */}
@@ -147,6 +173,24 @@ export default function RestaurantScreen() {
                 </Text>
               </View>
             )}
+          </View>
+
+          {/* Interactive Rating */}
+          <View style={styles.ratingStarsContainer}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <TouchableOpacity
+                key={star}
+                onPress={() => handleRateRestaurant(star)}
+                disabled={isRating}
+                style={styles.starBtn}
+              >
+                <Ionicons 
+                  name="star" 
+                  size={24} 
+                  color={myRating && star <= myRating ? '#FFB800' : colors.border} 
+                />
+              </TouchableOpacity>
+            ))}
           </View>
 
           {/* Description */}
@@ -324,6 +368,16 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     color: '#D4A600',
+  },
+  ratingStarsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    marginTop: 4,
+    gap: 4,
+  },
+  starBtn: {
+    padding: 2,
   },
   restDescription: {
     fontSize: 14,

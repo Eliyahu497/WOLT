@@ -80,20 +80,31 @@ export function AuthProvider({ children }) {
    * @returns {Promise<object>} The user profile object.
    * @throws Will throw if credentials are invalid.
    */
-  const login = useCallback(async (userName, password) => {
+  const login = useCallback(async (userName, password, expectedRole) => {
     // POST /api/tokens → { id, token }
     const data = await post('/api/tokens', { userName, password });
 
-    // Persist token
+    // Temporarily persist token so API calls work
     await AsyncStorage.setItem(TOKEN_KEY, data.token);
-    setToken(data.token);
 
-    // Fetch full user profile using the returned id
-    const profile = await get(`/api/users/${data.id}`);
-    await AsyncStorage.setItem(USER_KEY, JSON.stringify(profile));
-    setUser(profile);
+    try {
+      // Fetch full user profile using the returned id
+      const profile = await get(`/api/users/${data.id}`);
 
-    return profile;
+      if (expectedRole && profile.role !== expectedRole) {
+        throw new Error(`Access denied. You are registered as a ${profile.role}, not a ${expectedRole}.`);
+      }
+
+      setToken(data.token);
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(profile));
+      setUser(profile);
+
+      return profile;
+    } catch (err) {
+      await AsyncStorage.removeItem(TOKEN_KEY);
+      setToken(null);
+      throw err;
+    }
   }, []);
 
   // ── Register ──────────────────────────────────────────────────────────────────

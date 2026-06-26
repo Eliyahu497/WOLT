@@ -9,15 +9,18 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { get, patch, del } from '../../services/api';
 
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function OrdersScreen() {
   const { colors } = useTheme();
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
   const styles = createStyles(colors);
   const [orders, setOrders] = useState([]);
   const [restaurantsMap, setRestaurantsMap] = useState({});
@@ -54,11 +57,12 @@ export default function OrdersScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      fetchOrders();
-    }, [fetchOrders])
+      if (isLoggedIn) fetchOrders();
+    }, [fetchOrders, isLoggedIn])
   );
 
   const onRefresh = () => {
+    if (!isLoggedIn) return;
     setRefreshing(true);
     fetchOrders();
   };
@@ -129,7 +133,7 @@ export default function OrdersScreen() {
       <View style={styles.card}>
         {/* Card Header */}
         <View style={styles.cardHeader}>
-          <View>
+          <View style={{ flex: 1, marginRight: 12 }}>
             <Text style={styles.restName} numberOfLines={1}>{restName}</Text>
             <Text style={styles.orderId}>Order #{shortId}</Text>
           </View>
@@ -206,6 +210,26 @@ export default function OrdersScreen() {
     );
   }
 
+  if (!isLoggedIn) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Your Orders</Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="lock-closed-outline" size={64} color={colors.subtext} />
+          <Text style={styles.emptyTitle}>Login Required</Text>
+          <Text style={styles.emptySubtitle}>
+            Please log in to view your past orders.
+          </Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => router.push('/(auth)/login')}>
+            <Text style={styles.retryText}>Log In</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   if (isLoading && !refreshing) {
     return (
       <View style={styles.centerContainer}>
@@ -262,7 +286,8 @@ const createStyles = (colors) => StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
     backgroundColor: colors.background,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,

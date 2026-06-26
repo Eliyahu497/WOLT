@@ -59,6 +59,9 @@ class OrderService {
 
         const finalId = orderId || crypto.randomUUID();
 
+        // 6. Add delivery fee to total price
+        totalPrice += (restaurant.deliveryPrice || 0);
+
         // 7. Instantiate the Order and save it to MongoDB
         const newOrder = new Order({
             _id: finalId,
