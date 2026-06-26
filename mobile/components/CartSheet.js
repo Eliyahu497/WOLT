@@ -14,11 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
 import { useRouter } from 'expo-router';
 
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * Bottom sheet modal displaying the cart contents, totals, and submit button.
@@ -39,8 +35,10 @@ export default function CartSheet() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
+  const { colors } = useTheme();
+  
   if (!isCartSheetVisible) return null;
+  const styles = createStyles(colors);
 
   async function handleCheckout() {
     if (items.length === 0) return;
@@ -72,11 +70,11 @@ export default function CartSheet() {
               else removeFromCart(product.id);
             }}
           >
-            <Ionicons name="remove" size={16} color={DARK} />
+            <Ionicons name="remove" size={16} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.qtyText}>{quantity}</Text>
           <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(product.id, 1)}>
-            <Ionicons name="add" size={16} color={DARK} />
+            <Ionicons name="add" size={16} color={colors.text} />
           </TouchableOpacity>
         </View>
 
@@ -110,13 +108,13 @@ export default function CartSheet() {
               style={styles.closeBtn}
               onPress={() => setCartSheetVisible(false)}
             >
-              <Ionicons name="close-circle" size={28} color={LIGHT_GRAY} />
+              <Ionicons name="close-circle" size={28} color={colors.subtext} />
             </TouchableOpacity>
           </View>
 
           {items.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="cart-outline" size={48} color={LIGHT_GRAY} />
+              <Ionicons name="cart-outline" size={48} color={colors.subtext} />
               <Text style={styles.emptyText}>Your cart is empty</Text>
             </View>
           ) : (
@@ -150,7 +148,7 @@ export default function CartSheet() {
                 activeOpacity={0.8}
               >
                 {isSubmitting ? (
-                  <ActivityIndicator color={WHITE} />
+                  <ActivityIndicator color={colors.white} />
                 ) : (
                   <>
                     <Text style={styles.checkoutBtnText}>Submit Order</Text>
@@ -168,17 +166,17 @@ export default function CartSheet() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: colors.overlay,
   },
   sheet: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '90%',
@@ -188,7 +186,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#DDD',
+    backgroundColor: colors.border,
     alignSelf: 'center',
     marginTop: 10,
     marginBottom: 10,
@@ -197,17 +195,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.border,
     alignItems: 'center',
   },
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   subtitle: {
     fontSize: 13,
-    color: GRAY,
+    color: colors.subtext,
     marginTop: 2,
   },
   closeBtn: {
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 12,
     fontSize: 16,
-    color: GRAY,
+    color: colors.subtext,
   },
   itemList: {
     paddingHorizontal: 20,
@@ -233,12 +231,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#F8F8F8',
+    borderBottomColor: colors.border,
   },
   qtyControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.background,
     borderRadius: 20,
     padding: 4,
     marginRight: 12,
@@ -247,7 +245,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -259,7 +257,7 @@ const styles = StyleSheet.create({
   qtyText: {
     fontSize: 15,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
     width: 24,
     textAlign: 'center',
   },
@@ -272,14 +270,14 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 15,
     fontWeight: '600',
-    color: DARK,
+    color: colors.text,
     flex: 1,
     paddingRight: 10,
   },
   itemPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   summarySection: {
     paddingHorizontal: 20,
@@ -293,38 +291,38 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
   },
   summaryValue: {
     fontSize: 14,
-    color: DARK,
+    color: colors.text,
     fontWeight: '500',
   },
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.border,
     marginVertical: 12,
   },
   totalLabel: {
     fontSize: 18,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   totalValue: {
     fontSize: 18,
     fontWeight: '800',
-    color: ACCENT,
+    color: colors.accent,
   },
   checkoutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 56,
     borderRadius: 16,
     marginHorizontal: 20,
     paddingHorizontal: 24,
-    shadowColor: ACCENT,
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -334,7 +332,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   checkoutBtnText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 17,
     fontWeight: '700',
   },
@@ -345,7 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   checkoutBtnPriceText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 15,
     fontWeight: '800',
   },

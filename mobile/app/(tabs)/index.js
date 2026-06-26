@@ -19,14 +19,7 @@ import SearchBar from '../../components/SearchBar';
 import CategoryList from '../../components/CategoryList';
 import RestaurantCard from '../../components/RestaurantCard';
 import RestaurantFormModal from '../../components/RestaurantFormModal';
-
-// ─── Theme ──────────────────────────────────────────────────────────────────────
-const ACCENT = '#FF6B00';
-const ACCENT_LIGHT = '#FFF3E8';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../../context/ThemeContext';
 
 // ─── Sort options ───────────────────────────────────────────────────────────────
 const SORT_OPTIONS = [
@@ -38,6 +31,9 @@ const SORT_OPTIONS = [
 export default function DashboardScreen() {
   const { user, role } = useAuth();
   const router = useRouter();
+  const { colors } = useTheme();
+  
+  const styles = createStyles(colors);
 
   // Data state
   const [restaurants, setRestaurants] = useState([]);
@@ -165,7 +161,7 @@ export default function DashboardScreen() {
             onPress={() => setShowSortModal(true)}
             activeOpacity={0.75}
           >
-            <Ionicons name="swap-vertical-outline" size={18} color={ACCENT} />
+            <Ionicons name="swap-vertical-outline" size={18} color={colors.accent} />
             <Text style={styles.sortBtnText}>Sort</Text>
           </TouchableOpacity>
         </View>
@@ -175,7 +171,7 @@ export default function DashboardScreen() {
             style={styles.addRestaurantBtn} 
             onPress={() => setShowRestaurantModal(true)}
           >
-            <Ionicons name="add-circle" size={24} color={WHITE} />
+            <Ionicons name="add-circle" size={24} color={colors.white} />
             <Text style={styles.addRestaurantText}>Add New Restaurant</Text>
           </TouchableOpacity>
         )}
@@ -207,7 +203,7 @@ export default function DashboardScreen() {
     if (isLoading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="restaurant-outline" size={56} color={LIGHT_GRAY} />
+        <Ionicons name="restaurant-outline" size={56} color={colors.subtext} />
         <Text style={styles.emptyTitle}>No restaurants found</Text>
         <Text style={styles.emptySubtitle}>
           Try adjusting your search or category filter
@@ -246,14 +242,14 @@ export default function DashboardScreen() {
                     <Ionicons
                       name={option.icon}
                       size={22}
-                      color={isActive ? ACCENT : GRAY}
+                      color={isActive ? colors.accent : colors.subtext}
                     />
                     <Text style={[styles.sortOptionText, isActive && styles.sortOptionTextActive]}>
                       {option.label}
                     </Text>
                   </View>
                   {isActive && (
-                    <Ionicons name="checkmark-circle" size={22} color={ACCENT} />
+                    <Ionicons name="checkmark-circle" size={22} color={colors.accent} />
                   )}
                 </TouchableOpacity>
               );
@@ -268,7 +264,7 @@ export default function DashboardScreen() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={ACCENT} />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -276,7 +272,7 @@ export default function DashboardScreen() {
   if (error) {
     return (
       <View style={styles.loadingContainer}>
-        <Ionicons name="cloud-offline-outline" size={48} color={GRAY} />
+        <Ionicons name="cloud-offline-outline" size={48} color={colors.subtext} />
         <Text style={styles.errorTitle}>Oops!</Text>
         <Text style={styles.errorMsg}>{error}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={onRefresh}>
@@ -300,8 +296,8 @@ export default function DashboardScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={ACCENT}
-            colors={[ACCENT]}
+            tintColor={colors.accent}
+            colors={[colors.accent]}
           />
         }
       />
@@ -325,16 +321,16 @@ function getGreeting() {
 
 // ─── Styles ─────────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
     gap: 12,
   },
   listContent: {
@@ -352,13 +348,13 @@ const styles = StyleSheet.create({
   },
   greetHello: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     fontWeight: '500',
   },
   greetName: {
     fontSize: 22,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     marginTop: 2,
   },
 
@@ -367,7 +363,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     marginHorizontal: 16,
     marginTop: 12,
     marginBottom: 4,
@@ -376,7 +372,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   addRestaurantText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -386,17 +382,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: ACCENT_LIGHT,
+    backgroundColor: colors.accentLight,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: ACCENT,
+    borderColor: colors.accent,
   },
   sortBtnText: {
     fontSize: 13,
     fontWeight: '700',
-    color: ACCENT,
+    color: colors.accent,
   },
 
   /* Result row */
@@ -410,11 +406,11 @@ const styles = StyleSheet.create({
   resultCount: {
     fontSize: 14,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   sortLabel: {
     fontSize: 12,
-    color: GRAY,
+    color: colors.subtext,
   },
 
   /* Empty */
@@ -426,11 +422,11 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
@@ -439,23 +435,23 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
   },
   errorMsg: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
   retryBtn: {
     marginTop: 12,
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: WHITE,
+    color: colors.white,
     fontWeight: '700',
     fontSize: 15,
   },
@@ -463,11 +459,11 @@ const styles = StyleSheet.create({
   /* Sort modal */
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   modalSheet: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -478,14 +474,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#DDD',
+    backgroundColor: colors.border,
     alignSelf: 'center',
     marginBottom: 16,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     marginBottom: 16,
   },
   sortOption: {
@@ -498,7 +494,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   sortOptionActive: {
-    backgroundColor: ACCENT_LIGHT,
+    backgroundColor: colors.accentLight,
   },
   sortOptionLeft: {
     flexDirection: 'row',
@@ -508,9 +504,9 @@ const styles = StyleSheet.create({
   sortOptionText: {
     fontSize: 16,
     fontWeight: '600',
-    color: DARK,
+    color: colors.text,
   },
   sortOptionTextActive: {
-    color: ACCENT,
+    color: colors.accent,
   },
 });

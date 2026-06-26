@@ -10,12 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -29,6 +24,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
  * @param {function}    onAddToCart - Called with ({ product, quantity }) when the user taps "Add to Cart".
  */
 export default function ProductModal({ product, visible, onClose, onAddToCart }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [quantity, setQuantity] = useState(1);
 
   // Reset quantity when a new product opens
@@ -87,7 +84,7 @@ export default function ProductModal({ product, visible, onClose, onAddToCart })
 
           {/* Close button */}
           <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.8}>
-            <Ionicons name="close" size={22} color={DARK} />
+            <Ionicons name="close" size={22} color={colors.text} />
           </TouchableOpacity>
 
           {/* Content */}
@@ -113,14 +110,14 @@ export default function ProductModal({ product, visible, onClose, onAddToCart })
                   <Ionicons
                     name="remove"
                     size={22}
-                    color={quantity <= 1 ? '#CCC' : ACCENT}
+                    color={quantity <= 1 ? colors.subtext : colors.accent}
                   />
                 </TouchableOpacity>
 
                 <Text style={styles.qtyValue}>{quantity}</Text>
 
                 <TouchableOpacity style={styles.qtyBtn} onPress={increment} activeOpacity={0.7}>
-                  <Ionicons name="add" size={22} color={ACCENT} />
+                  <Ionicons name="add" size={22} color={colors.accent} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -139,17 +136,17 @@ export default function ProductModal({ product, visible, onClose, onAddToCart })
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: colors.overlay,
   },
   sheet: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '85%',
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#DDD',
+    backgroundColor: colors.border,
     alignSelf: 'center',
     marginTop: 10,
     marginBottom: 4,
@@ -174,7 +171,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: colors.card + 'E6', // slightly transparent card background
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 20,
@@ -189,7 +186,7 @@ const styles = StyleSheet.create({
   image: {
     width: SCREEN_WIDTH,
     height: 220,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.border,
   },
 
   /* Content */
@@ -199,19 +196,19 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: GRAY,
+    color: colors.subtext,
     lineHeight: 20,
     marginBottom: 12,
   },
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: ACCENT,
+    color: colors.accent,
     marginBottom: 20,
   },
 
@@ -224,12 +221,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 4,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: colors.border,
   },
   quantityLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: DARK,
+    color: colors.text,
   },
   quantityRow: {
     flexDirection: 'row',
@@ -240,7 +237,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -250,7 +247,7 @@ const styles = StyleSheet.create({
   qtyValue: {
     fontSize: 20,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
     minWidth: 40,
     textAlign: 'center',
   },
@@ -260,18 +257,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 56,
     borderRadius: 16,
     paddingHorizontal: 24,
-    shadowColor: ACCENT,
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
   addBtnText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 17,
     fontWeight: '700',
   },
@@ -282,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   addBtnPriceText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 15,
     fontWeight: '800',
   },

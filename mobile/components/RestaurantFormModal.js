@@ -16,12 +16,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { post, patch } from '../services/api';
-
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * Modal for creating or editing a restaurant.
@@ -41,6 +36,8 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
   const [imageUri, setImageUri] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   // Populate form if editing
   useEffect(() => {
@@ -129,7 +126,7 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Ionicons name="close" size={24} color={DARK} />
+            <Ionicons name="close" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.title}>{restaurant ? 'Edit Restaurant' : 'New Restaurant'}</Text>
           <View style={{ width: 24 }} />
@@ -143,7 +140,7 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
               <Image source={{ uri: imageUri }} style={styles.imagePreview} />
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Ionicons name="camera-outline" size={32} color={GRAY} />
+                <Ionicons name="camera-outline" size={32} color={colors.subtext} />
                 <Text style={styles.imagePlaceholderText}>Add Cover Image *</Text>
               </View>
             )}
@@ -151,35 +148,35 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
 
           {/* Form Fields */}
           <Text style={styles.label}>Restaurant Name *</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g. Burger Room" />
+          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g. Burger Room" placeholderTextColor={colors.subtext} />
 
           <Text style={styles.label}>Category *</Text>
-          <TextInput style={styles.input} value={category} onChangeText={setCategory} placeholder="e.g. burgers, sushi, pizza" autoCapitalize="none" />
+          <TextInput style={styles.input} value={category} onChangeText={setCategory} placeholder="e.g. burgers, sushi, pizza" autoCapitalize="none" placeholderTextColor={colors.subtext} />
 
           <Text style={styles.label}>Description</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Briefly describe the restaurant..." multiline />
+          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Briefly describe the restaurant..." multiline placeholderTextColor={colors.subtext} />
 
           <View style={styles.row}>
             <View style={styles.flex1}>
               <Text style={styles.label}>Delivery Time</Text>
-              <TextInput style={styles.input} value={deliveryTime} onChangeText={setDeliveryTime} placeholder="e.g. 20-30 min" />
+              <TextInput style={styles.input} value={deliveryTime} onChangeText={setDeliveryTime} placeholder="e.g. 20-30 min" placeholderTextColor={colors.subtext} />
             </View>
             <View style={styles.space} />
             <View style={styles.flex1}>
               <Text style={styles.label}>Delivery Price (₪)</Text>
-              <TextInput style={styles.input} value={deliveryPrice} onChangeText={setDeliveryPrice} placeholder="e.g. 15" keyboardType="numeric" />
+              <TextInput style={styles.input} value={deliveryPrice} onChangeText={setDeliveryPrice} placeholder="e.g. 15" keyboardType="numeric" placeholderTextColor={colors.subtext} />
             </View>
           </View>
 
           <View style={styles.row}>
             <View style={styles.flex1}>
               <Text style={styles.label}>Latitude *</Text>
-              <TextInput style={styles.input} value={latitude} onChangeText={setLatitude} placeholder="e.g. 32.0853" keyboardType="numeric" />
+              <TextInput style={styles.input} value={latitude} onChangeText={setLatitude} placeholder="e.g. 32.0853" keyboardType="numeric" placeholderTextColor={colors.subtext} />
             </View>
             <View style={styles.space} />
             <View style={styles.flex1}>
               <Text style={styles.label}>Longitude *</Text>
-              <TextInput style={styles.input} value={longitude} onChangeText={setLongitude} placeholder="e.g. 34.7818" keyboardType="numeric" />
+              <TextInput style={styles.input} value={longitude} onChangeText={setLongitude} placeholder="e.g. 34.7818" keyboardType="numeric" placeholderTextColor={colors.subtext} />
             </View>
           </View>
 
@@ -189,7 +186,7 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
         {/* Footer Actions */}
         <View style={styles.footer}>
           <TouchableOpacity style={[styles.submitBtn, isLoading && styles.disabledBtn]} onPress={handleSubmit} disabled={isLoading}>
-            {isLoading ? <ActivityIndicator color={WHITE} /> : <Text style={styles.submitBtnText}>Save Restaurant</Text>}
+            {isLoading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitBtnText}>Save Restaurant</Text>}
           </TouchableOpacity>
         </View>
 
@@ -198,10 +195,10 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -209,12 +206,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 18,
     fontWeight: '800',
-    color: DARK,
+    color: colors.text,
   },
   closeBtn: {
     padding: 4,
@@ -226,17 +223,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
     marginBottom: 6,
     marginTop: 12,
   },
   input: {
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: DARK,
+    color: colors.text,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   textArea: {
     height: 100,
@@ -253,10 +252,12 @@ const styles = StyleSheet.create({
   },
   imagePicker: {
     height: 180,
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   imagePreview: {
     width: '100%',
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   },
   imagePlaceholderText: {
     marginTop: 8,
-    color: GRAY,
+    color: colors.subtext,
     fontWeight: '600',
   },
   bottomSpace: {
@@ -278,10 +279,11 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   submitBtn: {
-    backgroundColor: ACCENT,
+    backgroundColor: colors.accent,
     height: 50,
     borderRadius: 12,
     justifyContent: 'center',
@@ -291,7 +293,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   submitBtnText: {
-    color: WHITE,
+    color: colors.white,
     fontSize: 16,
     fontWeight: '700',
   },

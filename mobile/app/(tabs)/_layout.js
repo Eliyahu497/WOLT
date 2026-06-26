@@ -1,27 +1,30 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * Bottom Tab Navigator for authenticated users.
  * Contains four main tabs: Dashboard, Search, Orders, Profile.
  */
 export default function TabsLayout() {
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#FF6B00',
+          backgroundColor: colors.accent,
         },
-        headerTintColor: '#FFFFFF',
+        headerTintColor: colors.white,
         headerTitleStyle: {
           fontWeight: '700',
         },
-        tabBarActiveTintColor: '#FF6B00',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.subtext,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.background,
           borderTopWidth: 1,
-          borderTopColor: '#F0F0F0',
+          borderTopColor: colors.border,
           paddingBottom: 6,
           paddingTop: 6,
           height: 60,

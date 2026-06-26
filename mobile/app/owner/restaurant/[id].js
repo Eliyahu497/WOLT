@@ -18,13 +18,7 @@ import { get, del } from '../../../services/api';
 
 import ProductFormModal from '../../../components/ProductFormModal';
 import RestaurantFormModal from '../../../components/RestaurantFormModal';
-
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const LIGHT_GRAY = '#F2F2F7';
-const WHITE = '#FFFFFF';
-const RED = '#FF3B30';
+import { useTheme } from '../../../context/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_HEIGHT = 260;
@@ -33,6 +27,8 @@ export default function OwnerRestaurantScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   // Data state
   const [restaurant, setRestaurant] = useState(null);
@@ -127,7 +123,7 @@ export default function OwnerRestaurantScreen() {
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={ACCENT} />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -135,7 +131,7 @@ export default function OwnerRestaurantScreen() {
   if (error || !restaurant) {
     return (
       <View style={styles.centerContainer}>
-        <Ionicons name="alert-circle-outline" size={48} color={GRAY} />
+        <Ionicons name="alert-circle-outline" size={48} color={colors.subtext} />
         <Text style={styles.errorTitle}>Error</Text>
         <Text style={styles.errorMsg}>{error}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={fetchData}>
@@ -159,7 +155,7 @@ export default function OwnerRestaurantScreen() {
             style={[styles.backBtn, { top: insets.top + 8 }]}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={22} color={WHITE} />
+            <Ionicons name="arrow-back" size={22} color={colors.white} />
           </TouchableOpacity>
         </View>
 
@@ -169,10 +165,10 @@ export default function OwnerRestaurantScreen() {
             
             <View style={styles.actionIcons}>
               <TouchableOpacity style={styles.iconBtn} onPress={handleEditRestaurant}>
-                <Ionicons name="pencil" size={20} color={DARK} />
+                <Ionicons name="pencil" size={20} color={colors.text} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn} onPress={handleDeleteRestaurant}>
-                <Ionicons name="trash" size={20} color={RED} />
+                <Ionicons name="trash" size={20} color={colors.error} />
               </TouchableOpacity>
             </View>
           </View>
@@ -186,7 +182,7 @@ export default function OwnerRestaurantScreen() {
               <Text style={styles.metaChipText}>{restaurant.category}</Text>
             </View>
             <View style={styles.metaChip}>
-              <Ionicons name="bicycle-outline" size={14} color={ACCENT} />
+              <Ionicons name="bicycle-outline" size={14} color={colors.accent} />
               <Text style={styles.metaChipText}>
                 {restaurant.deliveryPrice === 0 ? 'Free' : `₪${restaurant.deliveryPrice}`}
               </Text>
@@ -201,7 +197,7 @@ export default function OwnerRestaurantScreen() {
               <Text style={styles.menuSubheading}>{products.length} products</Text>
             </View>
             <TouchableOpacity style={styles.addProductBtn} onPress={handleAddProduct}>
-              <Ionicons name="add" size={16} color={WHITE} />
+              <Ionicons name="add" size={16} color={colors.white} />
               <Text style={styles.addProductText}>Add Product</Text>
             </TouchableOpacity>
           </View>
@@ -212,7 +208,7 @@ export default function OwnerRestaurantScreen() {
 
   return (
     <View style={styles.screen}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={colors.background === '#1A1A2E' ? 'light-content' : 'dark-content'} />
 
       <FlatList
         data={products}
@@ -237,10 +233,10 @@ export default function OwnerRestaurantScreen() {
             {/* Actions Overlay */}
             <View style={styles.productActions}>
               <TouchableOpacity style={styles.actionBtn} onPress={() => handleEditProduct(item)}>
-                <Ionicons name="pencil" size={16} color={WHITE} />
+                <Ionicons name="pencil" size={16} color={colors.white} />
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, styles.deleteBtn]} onPress={() => handleDeleteProduct(item.id)}>
-                <Ionicons name="trash" size={16} color={WHITE} />
+                <Ionicons name="trash" size={16} color={colors.white} />
               </TouchableOpacity>
             </View>
           </View>
@@ -265,50 +261,50 @@ export default function OwnerRestaurantScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: WHITE },
-  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: WHITE, padding: 24, gap: 10 },
+const createStyles = (colors) => StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.background },
+  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background, padding: 24, gap: 10 },
   listContent: { paddingBottom: 40 },
   
   bannerWrapper: { height: BANNER_HEIGHT, position: 'relative' },
-  bannerImage: { width: SCREEN_WIDTH, height: BANNER_HEIGHT, backgroundColor: '#E8E8E8' },
+  bannerImage: { width: SCREEN_WIDTH, height: BANNER_HEIGHT, backgroundColor: colors.border },
   bannerOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.2)' },
   backBtn: { position: 'absolute', left: 16, width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
 
   infoSection: { padding: 20 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-  restName: { flex: 1, fontSize: 24, fontWeight: '800', color: DARK, paddingRight: 10 },
+  restName: { flex: 1, fontSize: 24, fontWeight: '800', color: colors.text, paddingRight: 10 },
   actionIcons: { flexDirection: 'row', gap: 10 },
-  iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: LIGHT_GRAY, justifyContent: 'center', alignItems: 'center' },
-  restDescription: { fontSize: 14, color: GRAY, lineHeight: 20, marginBottom: 14 },
+  iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, justifyContent: 'center', alignItems: 'center' },
+  restDescription: { fontSize: 14, color: colors.subtext, lineHeight: 20, marginBottom: 14 },
   
   metaRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  metaChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: LIGHT_GRAY, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
-  metaChipText: { fontSize: 13, fontWeight: '600', color: DARK, textTransform: 'capitalize' },
+  metaChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.card, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  metaChipText: { fontSize: 13, fontWeight: '600', color: colors.text, textTransform: 'capitalize' },
   
-  divider: { height: 1, backgroundColor: '#F0F0F0', marginVertical: 16 },
+  divider: { height: 1, backgroundColor: colors.border, marginVertical: 16 },
   
   menuHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  menuHeading: { fontSize: 20, fontWeight: '800', color: DARK },
-  menuSubheading: { fontSize: 13, color: GRAY },
-  addProductBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: ACCENT, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, gap: 4 },
-  addProductText: { color: WHITE, fontSize: 13, fontWeight: '700' },
+  menuHeading: { fontSize: 20, fontWeight: '800', color: colors.text },
+  menuSubheading: { fontSize: 13, color: colors.subtext },
+  addProductBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.accent, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, gap: 4 },
+  addProductText: { color: colors.white, fontSize: 13, fontWeight: '700' },
 
-  productCard: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 12, backgroundColor: WHITE, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: '#F0F0F0' },
+  productCard: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 12, backgroundColor: colors.card, borderRadius: 14, padding: 12, borderWidth: 1, borderColor: colors.border },
   productInfo: { flex: 1, justifyContent: 'center', paddingRight: 12 },
-  productName: { fontSize: 16, fontWeight: '700', color: DARK, marginBottom: 4 },
-  productPrice: { fontSize: 15, fontWeight: '800', color: ACCENT, marginBottom: 4 },
-  productDesc: { fontSize: 12, color: GRAY, lineHeight: 16 },
-  productImg: { width: 80, height: 80, borderRadius: 10, backgroundColor: LIGHT_GRAY },
+  productName: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 4 },
+  productPrice: { fontSize: 15, fontWeight: '800', color: colors.accent, marginBottom: 4 },
+  productDesc: { fontSize: 12, color: colors.subtext, lineHeight: 16 },
+  productImg: { width: 80, height: 80, borderRadius: 10, backgroundColor: colors.card },
   
   productActions: { position: 'absolute', right: 8, top: -8, flexDirection: 'row', gap: 6 },
-  actionBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#4A4A4A', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { height: 2 } },
-  deleteBtn: { backgroundColor: RED },
+  actionBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.border, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { height: 2 } },
+  deleteBtn: { backgroundColor: colors.error },
 
-  errorTitle: { fontSize: 18, fontWeight: '700', color: DARK },
-  errorMsg: { fontSize: 14, color: GRAY, textAlign: 'center' },
-  retryBtn: { backgroundColor: ACCENT, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12, marginTop: 8 },
-  retryText: { color: WHITE, fontWeight: '700', fontSize: 15 },
+  errorTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  errorMsg: { fontSize: 14, color: colors.subtext, textAlign: 'center' },
+  retryBtn: { backgroundColor: colors.accent, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12, marginTop: 8 },
+  retryText: { color: colors.white, fontWeight: '700', fontSize: 15 },
   backLink: { padding: 8 },
-  backLinkText: { color: ACCENT, fontSize: 14, fontWeight: '600' },
+  backLinkText: { color: colors.accent, fontSize: 14, fontWeight: '600' },
 });

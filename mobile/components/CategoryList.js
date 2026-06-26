@@ -1,10 +1,6 @@
 import { FlatList, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 
-const ACCENT = '#FF6B00';
-const ACCENT_LIGHT = '#FFF3E8';
-const LIGHT_GRAY = '#F2F2F7';
-const GRAY = '#8E8E93';
-const DARK = '#1A1A2E';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * Horizontal scrollable category list with emoji icons.
@@ -15,6 +11,9 @@ const DARK = '#1A1A2E';
  * @param {function} onSelect         - Callback with category ID (or null for "All").
  */
 export default function CategoryList({ categories, selectedCategory, onSelect }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+  
   // Prepend an "All" option
   const data = [{ id: null, name: 'All', icon: '🔥' }, ...categories];
 
@@ -49,7 +48,7 @@ export default function CategoryList({ categories, selectedCategory, onSelect })
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   wrapper: {
     paddingVertical: 10,
   },
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 24,
@@ -69,8 +68,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   chipActive: {
-    backgroundColor: ACCENT_LIGHT,
-    borderColor: ACCENT,
+    backgroundColor: colors.accentLight,
+    borderColor: colors.accent,
   },
   chipIcon: {
     fontSize: 18,
@@ -78,9 +77,9 @@ const styles = StyleSheet.create({
   chipLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: GRAY,
+    color: colors.subtext,
   },
   chipLabelActive: {
-    color: ACCENT,
+    color: colors.accent,
   },
 });

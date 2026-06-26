@@ -1,10 +1,7 @@
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const ACCENT = '#FF6B00';
-const LIGHT_GRAY = '#F2F2F7';
-const GRAY = '#8E8E93';
-const DARK = '#1A1A2E';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * A search bar component with a magnifying glass icon and clear button.
@@ -14,23 +11,25 @@ const DARK = '#1A1A2E';
  * @param {string}   [placeholder] - Placeholder text.
  */
 export default function SearchBar({ value, onChangeText, placeholder = 'Search restaurants...' }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <Ionicons name="search" size={20} color={GRAY} style={styles.icon} />
+        <Ionicons name="search" size={20} color={colors.subtext} style={styles.icon} />
         <TextInput
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={GRAY}
+          placeholderTextColor={colors.subtext}
           autoCapitalize="none"
           autoCorrect={false}
           returnKeyType="search"
         />
         {value.length > 0 && (
           <TouchableOpacity onPress={() => onChangeText('')} style={styles.clearBtn}>
-            <Ionicons name="close-circle" size={18} color={GRAY} />
+            <Ionicons name="close-circle" size={18} color={colors.subtext} />
           </TouchableOpacity>
         )}
       </View>
@@ -38,7 +37,7 @@ export default function SearchBar({ value, onChangeText, placeholder = 'Search r
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -47,10 +46,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LIGHT_GRAY,
+    backgroundColor: colors.card,
     borderRadius: 14,
     paddingHorizontal: 14,
     height: 46,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   icon: {
     marginRight: 8,
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: DARK,
+    color: colors.text,
   },
   clearBtn: {
     padding: 4,

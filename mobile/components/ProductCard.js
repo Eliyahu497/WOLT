@@ -1,10 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const ACCENT = '#FF6B00';
-const DARK = '#1A1A2E';
-const GRAY = '#8E8E93';
-const WHITE = '#FFFFFF';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * A compact product card with image, name, description, and price.
@@ -13,6 +10,8 @@ const WHITE = '#FFFFFF';
  * @param {function} onPress  - Called when the card is tapped.
  */
 export default function ProductCard({ product, onPress }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { name, description, price, image } = product;
 
   return (
@@ -38,10 +37,10 @@ export default function ProductCard({ product, onPress }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: WHITE,
+    backgroundColor: colors.card,
     borderRadius: 14,
     marginHorizontal: 16,
     marginBottom: 12,
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: colors.border,
   },
   textSection: {
     flex: 1,
@@ -62,23 +61,23 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 15,
     fontWeight: '700',
-    color: DARK,
+    color: colors.text,
     marginBottom: 4,
   },
   description: {
     fontSize: 12,
-    color: GRAY,
+    color: colors.subtext,
     lineHeight: 17,
     marginBottom: 8,
   },
   price: {
     fontSize: 15,
     fontWeight: '800',
-    color: ACCENT,
+    color: colors.accent,
   },
   image: {
     width: 110,
     height: 110,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.border,
   },
 });
