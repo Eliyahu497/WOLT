@@ -29,7 +29,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function DashboardScreen() {
-  const { user, role } = useAuth();
+  const { user, role, isLoggedIn } = useAuth();
   const router = useRouter();
   const { colors } = useTheme();
   
@@ -155,15 +155,25 @@ export default function DashboardScreen() {
               {user?.name || user?.userName || 'Food Lover'}
             </Text>
           </View>
-          {/* Sort button */}
-          <TouchableOpacity
-            style={styles.sortBtn}
-            onPress={() => setShowSortModal(true)}
-            activeOpacity={0.75}
-          >
-            <Ionicons name="swap-vertical-outline" size={18} color={colors.accent} />
-            <Text style={styles.sortBtnText}>Sort</Text>
-          </TouchableOpacity>
+          <View style={styles.headerRight}>
+            {!isLoggedIn && (
+              <TouchableOpacity 
+                style={styles.loginBtn}
+                onPress={() => router.push('/(auth)/login')}
+              >
+                <Text style={styles.loginBtnText}>Log In</Text>
+              </TouchableOpacity>
+            )}
+            {/* Sort button */}
+            <TouchableOpacity
+              style={styles.sortBtn}
+              onPress={() => setShowSortModal(true)}
+              activeOpacity={0.75}
+            >
+              <Ionicons name="swap-vertical-outline" size={18} color={colors.accent} />
+              <Text style={styles.sortBtnText}>Sort</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {isManager && (
@@ -358,6 +368,24 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 2,
   },
 
+  /* Header Right */
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  /* Login Btn */
+  loginBtn: {
+    backgroundColor: colors.accent,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  loginBtnText: {
+    color: colors.white,
+    fontWeight: '700',
+    fontSize: 13,
+  },
   /* Add Restaurant Btn */
   addRestaurantBtn: {
     flexDirection: 'row',

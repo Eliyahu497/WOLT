@@ -111,6 +111,7 @@ const InMemoryDB = {
             category: "asian",
             image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&auto=format&fit=crop&q=60",
             rating: 4.6,
+            ratings: { "mock-1": 5, "mock-2": 4, "mock-3": 5, "mock-4": 4, "mock-5": 5 },
             deliveryTime: "25-35 min",
             deliveryPrice: 15,
             products: [
@@ -157,6 +158,7 @@ const InMemoryDB = {
             category: "burgers",
             image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=60",
             rating: 4.8,
+            ratings: { "mock-1": 5, "mock-2": 5, "mock-3": 5, "mock-4": 4, "mock-5": 5 },
             deliveryTime: "20-30 min",
             deliveryPrice: 12,
             products: [
@@ -195,6 +197,7 @@ const InMemoryDB = {
             category: "pizza",
             image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=60",
             rating: 4.5,
+            ratings: { "mock-1": 4, "mock-2": 5, "mock-3": 4, "mock-4": 5, "mock-5": 4 },
             deliveryTime: "15-25 min",
             deliveryPrice: 10,
             products: [
@@ -225,6 +228,7 @@ const InMemoryDB = {
             category: "sushi",
             image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&auto=format&fit=crop&q=60",
             rating: 4.7,
+            ratings: { "mock-1": 5, "mock-2": 4, "mock-3": 5, "mock-4": 5, "mock-5": 4 },
             deliveryTime: "30-40 min",
             deliveryPrice: 18,
             products: [
@@ -255,6 +259,7 @@ const InMemoryDB = {
             category: "desserts",
             image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=60",
             rating: 4.9,
+            ratings: { "mock-1": 5, "mock-2": 5, "mock-3": 5, "mock-4": 5, "mock-5": 4 },
             deliveryTime: "15-30 min",
             deliveryPrice: 14,
             products: [
@@ -277,6 +282,7 @@ const InMemoryDB = {
             category: "indian",
             image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&auto=format&fit=crop&q=80",
             rating: 4.7,
+            ratings: { "mock-1": 5, "mock-2": 4, "mock-3": 5, "mock-4": 5, "mock-5": 4 },
             deliveryTime: "30-45 min",
             deliveryPrice: 15,
             products: [
@@ -307,6 +313,7 @@ const InMemoryDB = {
             category: "mexican",
             image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=80",
             rating: 4.6,
+            ratings: { "mock-1": 5, "mock-2": 4, "mock-3": 5, "mock-4": 4, "mock-5": 5 },
             deliveryTime: "20-35 min",
             deliveryPrice: 10,
             products: [
@@ -337,6 +344,7 @@ const InMemoryDB = {
             category: "italian",
             image: "https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=800&auto=format&fit=crop&q=80",
             rating: 4.8,
+            ratings: { "mock-1": 5, "mock-2": 5, "mock-3": 5, "mock-4": 4, "mock-5": 5 },
             deliveryTime: "25-35 min",
             deliveryPrice: 12,
             products: [

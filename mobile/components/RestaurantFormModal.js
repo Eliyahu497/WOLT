@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { post, patch } from '../services/api';
+import { post, patch, get } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
 /**
@@ -34,10 +34,24 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [imageUri, setImageUri] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const styles = createStyles(colors);
+
+  // Fetch categories
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const data = await get('/api/categories');
+        setCategories(data);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    }
+    fetchCategories();
+  }, []);
 
   // Populate form if editing
   useEffect(() => {
@@ -151,7 +165,24 @@ export default function RestaurantFormModal({ visible, onClose, restaurant, onSu
           <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g. Burger Room" placeholderTextColor={colors.subtext} />
 
           <Text style={styles.label}>Category *</Text>
-          <TextInput style={styles.input} value={category} onChangeText={setCategory} placeholder="e.g. burgers, sushi, pizza" autoCapitalize="none" placeholderTextColor={colors.subtext} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+            {categories.map((cat) => (
+              <TouchableOpacity
+                key={cat.id}
+                style={[
+                  styles.categoryChip,
+                  category === cat.id && styles.categoryChipActive
+                ]}
+                onPress={() => setCategory(cat.id)}
+              >
+                <Text style={styles.categoryChipIcon}>{cat.icon}</Text>
+                <Text style={[
+                  styles.categoryChipText,
+                  category === cat.id && styles.categoryChipTextActive
+                ]}>{cat.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
           <Text style={styles.label}>Description</Text>
           <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Briefly describe the restaurant..." multiline placeholderTextColor={colors.subtext} />
@@ -236,6 +267,37 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  categoryScroll: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  categoryChipActive: {
+    backgroundColor: colors.accentLight,
+    borderColor: colors.accent,
+  },
+  categoryChipIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  categoryChipText: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: '600',
+  },
+  categoryChipTextActive: {
+    color: colors.accent,
   },
   textArea: {
     height: 100,

@@ -37,26 +37,28 @@ async function seedData() {
             console.log('Users seeded.');
 
             // Seed restaurants
-            await Restaurant.insertMany(InMemoryDB.restaurants.map(r => ({
-                _id: r.id,
-                name: r.name,
-                description: r.description,
-                location: r.location,
-                owner: r.owner,
-                category: r.category,
-                image: r.image,
-                rating: r.rating,
-                ratings: r.ratings || {},
-                deliveryTime: r.deliveryTime || "25-35 min",
-                deliveryPrice: r.deliveryPrice || 15,
-                products: r.products.map(p => ({
-                    _id: p.id,
-                    name: p.name,
-                    description: p.description,
-                    price: p.price,
-                    image: p.image
-                }))
-            })));
+            await Promise.all(InMemoryDB.restaurants.map(r => {
+                return Restaurant.create({
+                    _id: r.id,
+                    name: r.name,
+                    description: r.description,
+                    location: r.location,
+                    owner: r.owner,
+                    category: r.category,
+                    image: r.image,
+                    rating: r.rating,
+                    ratings: r.ratings || {},
+                    deliveryTime: r.deliveryTime || "25-35 min",
+                    deliveryPrice: r.deliveryPrice || 15,
+                    products: r.products.map(p => ({
+                        _id: p.id,
+                        name: p.name,
+                        description: p.description,
+                        price: p.price,
+                        image: p.image
+                    }))
+                });
+            }));
             console.log('Restaurants seeded.');
             
             if (InMemoryDB.orders && InMemoryDB.orders.length > 0) {

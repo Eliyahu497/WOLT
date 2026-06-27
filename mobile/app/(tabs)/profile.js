@@ -1,13 +1,40 @@
 import { View, Text, StyleSheet, TouchableOpacity, Switch, Image, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 export default function ProfileScreen() {
-  const { user, role, logout } = useAuth();
-  const { isDarkMode, toggleDarkMode, colors } = useTheme();
+  const { user, role, logout, isLoggedIn } = useAuth();
+  const { isDarkMode, toggleDarkMode, resetTheme, colors } = useTheme();
+  const router = useRouter();
   const styles = createStyles(colors);
+
+  async function handleLogout() {
+    await resetTheme();
+    logout();
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.displayName}>Your Profile</Text>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="lock-closed-outline" size={64} color={colors.subtext} />
+          <Text style={styles.emptyTitle}>Login Required</Text>
+          <Text style={styles.emptySubtitle}>
+            Please log in to view your profile settings.
+          </Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => router.push('/(auth)/login')}>
+            <Text style={styles.retryText}>Log In</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -96,7 +123,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* ── Logout ──────────────────────────────────────── */}
-        <TouchableOpacity style={styles.logoutButton} onPress={logout} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.85}>
           <Ionicons name="log-out-outline" size={20} color={colors.error} />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
@@ -281,5 +308,44 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.error,
     fontSize: 16,
     fontWeight: '700',
+  },
+
+  /* Empty State / Guest Mode */
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    paddingTop: 80,
+    gap: 12,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  emptySubtitle: {
+    fontSize: 15,
+    color: colors.subtext,
+    textAlign: 'center',
+    paddingHorizontal: 32,
+    lineHeight: 22,
+  },
+  retryBtn: {
+    marginTop: 12,
+    backgroundColor: colors.accent,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  retryText: {
+    color: colors.white,
+    fontWeight: '700',
+    fontSize: 15,
   },
 });

@@ -25,10 +25,7 @@ function RootNavigator() {
 
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (!isLoggedIn && !inAuthGroup) {
-      // User is NOT signed in and NOT on the auth screens → redirect to login
-      router.replace('/(auth)/login');
-    } else if (isLoggedIn && inAuthGroup) {
+    if (isLoggedIn && inAuthGroup) {
       // User IS signed in but still on auth screens → redirect to main app
       router.replace('/(tabs)');
     }
