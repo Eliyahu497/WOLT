@@ -2,6 +2,15 @@
 
 This project is an online food ordering system (named **Want**) that integrates a NodeJS/Express RESTful API web server with a high-performance C++ TCP Recommendation Engine backend and an interactive React frontend client. The Express web server manages online ordering features (users, restaurants, products, search, and orders) and utilizes an asynchronous TCP network socket client to update user views and purchase history in the C++ database to compile personalized recommendations.
 
+> [!TIP]
+> **Comprehensive Documentation (Wiki)**
+> Check out the `wiki/` folder for step-by-step guides with screenshots!
+> * [Home / Setup Environment](wiki/Home.md)
+> * [Authentication & Registration](wiki/Authentication.md)
+> * [Management Dashboard (Restaurants & Dishes)](wiki/Management.md)
+> * [Customer Journey (Orders & Marketplace)](wiki/Customers.md)
+> * [Mobile App (Expo)](wiki/MobileApp.md)
+
 ---
 
 ## Architecture & Design Principles

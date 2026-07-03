@@ -6,7 +6,7 @@ let BASE_URL = 'http://localhost:1234'; // Default for web
 if (Platform.OS === 'android') {
   BASE_URL = 'http://10.0.2.2:1234';
 } else if (Platform.OS === 'ios') {
-  BASE_URL = 'http://10.0.0.3:1234'; // Local IP for stability
+  BASE_URL = 'http://172.20.10.3:1234'; // Local IP for stability
 }
 
 /**
